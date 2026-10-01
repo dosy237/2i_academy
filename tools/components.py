@@ -12,6 +12,8 @@ BROCHURES = {
     "mastere": ("assets/docs/brochure-mastere-strategie-leadership-a21.pdf", "Mastère Stratégie, Leadership & Transformation des Organisations"),
     "executive-mba": ("assets/docs/brochure-executive-mba-a21.pdf", "Executive MBA Gouvernance, Leadership & Transformation"),
     "ia-marketing-reseau": ("assets/docs/fiche-ia-marketing-reseau-a21.pdf", "IA appliquée au Marketing de Réseau"),
+    "institution": ("assets/docs/presentation-institutionnelle-a21-university.pdf", "Présentation institutionnelle — Institutional Profile"),
+    "international": ("assets/docs/ouverture-internationale-a21-university.pdf", "Ouverture internationale — Global Engagement"),
 }
 
 def pdf_size(key):

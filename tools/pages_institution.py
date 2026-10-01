@@ -1,6 +1,6 @@
 # Pages institutionnelles issues de la présentation institutionnelle et du document Global Engagement :
 # L'école (identité, raison d'être, fondateur, valeurs, modèle, expérience, gouvernance, ambition) et International.
-from components import I, ring, page, cta_band, simple_hero, notice, founder_block
+from components import I, BROCHURES, pdf_size, ring, page, cta_band, simple_hero, notice, founder_block
 
 
 def build_ecole():
@@ -54,10 +54,11 @@ def build_ecole():
                ("Reconnaître &amp; être reconnu", "Inscrire progressivement l'institution et ses programmes dans les cadres de qualité, de certification et de reconnaissance pertinents, en France et à l'international.")]
     road_html = "".join(f'<li><h3>{t}</h3><p>{d}</p></li>' for t, d in roadmap)
 
+    dl_inst = f'<a class="btn btn--glass" href="{BROCHURES["institution"][0]}" download>{I["download"]} Présentation institutionnelle ({pdf_size("institution")})</a>'
     body = f'''
 {simple_hero([("ecole.html", "L'école")], "Academy Twenty One University",
   "A global school for management, leadership and entrepreneurship — une institution d'enseignement supérieur tournée vers le monde, l'entreprise, l'innovation et l'impact.", "Institutional profile",
-  f'<ul class="hero-badges"><li class="glass-chip">{I["graduation"]}Du Bac au Bac+5 &amp; Executive Education</li><li class="glass-chip">{I["globe"]}Présentiel · Distanciel · Hybride · Mobilités</li><li class="glass-chip">{I["spark"]}Learn. Lead. Transform.</li></ul>', photo="amphi")}
+  f'<ul class="hero-badges"><li class="glass-chip">{I["graduation"]}Du Bac au Bac+5 &amp; Executive Education</li><li class="glass-chip">{I["globe"]}Présentiel · Distanciel · Hybride · Mobilités</li><li class="glass-chip">{I["spark"]}Learn. Lead. Transform.</li></ul><div class="btn-row">' + dl_inst + '</div>', photo="amphi")}
 
 <section class="section" aria-labelledby="id-title">
   <div class="container split split--top">
@@ -184,7 +185,7 @@ def build_ecole():
     <div class="mt-3">{notice("<p><strong>* Repères institutionnels.</strong> La présente plateforme s'appuie sur l'héritage public d'Academy Twenty One : présence internationale revendiquée sur cinq continents et plus de 75 pays, culture de formation, de leadership et de développement humain. Les orientations universitaires, la gamme de programmes et les ambitions académiques présentées ici constituent le projet institutionnel d'A21 University.</p>")}</div>
   </div>
 </section>
-{cta_band("Rejoignez Academy Twenty One University", "Découvrez le programme qui correspond à votre trajectoire et déposez votre candidature en ligne.")}
+{cta_band("Rejoignez Academy Twenty One University", "Découvrez le programme qui correspond à votre trajectoire et déposez votre candidature en ligne.", secondary=dl_inst)}
 '''
     page("ecole.html", "L'école — Academy 21 University", "Identité, mission, fondateur, valeurs, modèle académique et ambition d'Academy Twenty One University.", body)
 
@@ -222,10 +223,11 @@ def build_international():
               ("Rayonnement", "Créer un Global Leadership Summit, développer la marque A21 University à l'international et consolider le réseau Alumni."),
               ("Excellence", "Évaluer l'impact, renforcer les standards de qualité et inscrire la stratégie internationale dans les référentiels pertinents.")]
     ph_html = "".join(f'<li><h3>{t}</h3><p>{d}</p></li>' for t, d in phases)
+    dl_int = f'<a class="btn btn--glass" href="{BROCHURES["international"][0]}" download>{I["download"]} Document Global Engagement ({pdf_size("international")})</a>'
     body = f'''
 {simple_hero([("international.html", "International")], "Une université ouverte sur le monde",
   "From a global community to a global university : faire du monde un espace d'apprentissage, de coopération et d'opportunités.", "Global engagement",
-  f'<ul class="hero-badges"><li class="glass-chip">{I["globe"]}5 continents · 75+ pays*</li><li class="glass-chip">{I["map"]}Ambition Erasmus+</li><li class="glass-chip">{I["users"]}A21 Global Network</li></ul>', photo="groupe")}
+  f'<ul class="hero-badges"><li class="glass-chip">{I["globe"]}5 continents · 75+ pays*</li><li class="glass-chip">{I["map"]}Ambition Erasmus+</li><li class="glass-chip">{I["users"]}A21 Global Network</li></ul><div class="btn-row">' + dl_int + '</div>', photo="groupe")}
 
 <section class="section" aria-labelledby="coeur-title">
   <div class="container split">
@@ -331,6 +333,6 @@ def build_international():
     <div class="mt-2">{notice("<p>* Présence revendiquée par la communauté Academy Twenty One. La Charte Erasmus pour l'enseignement supérieur (ECHE) est un préalable pour participer aux mobilités Erasmus+ ; Erasmus+ prévoit aussi, sous conditions, des mobilités impliquant des pays tiers non associés au programme.</p>")}</div>
   </div>
 </section>
-{cta_band("Vivez une formation ouverte sur le monde", "Déposez votre candidature et rejoignez une communauté présente sur cinq continents.")}
+{cta_band("Vivez une formation ouverte sur le monde", "Déposez votre candidature et rejoignez une communauté présente sur cinq continents.", secondary=dl_int)}
 '''
     page("international.html", "International — Academy 21 University", "Ouverture internationale d'A21 University : A21 Global Network, stratégie Erasmus+, mobilités et expériences internationales.", body)

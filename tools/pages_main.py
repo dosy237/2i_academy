@@ -407,7 +407,7 @@ def build_brochures():
   <div class="doc-card__thumb" aria-hidden="true">PDF</div>
   <div>
     <p class="program-card__type">{p["type"]} · {p["level_big"]}</p>
-    <h2 style="font-size:1.15rem">{name}</h2>
+    <h3 style="font-size:1.15rem">{name}</h3>
     <p class="doc-card__meta">{pdf_size(k)} · Programme, admission, modalités, débouchés</p>
     <div class="btn-row">
       <a class="btn btn--primary btn--sm" href="{pdf}" download>{I["download"]} Télécharger <span class="visually-hidden">la brochure {name}</span></a>
@@ -415,12 +415,31 @@ def build_brochures():
     </div>
   </div>
 </article>'''
+    inst = ""
+    for k, desc, href, label in [("institution", "Identité, mission, valeurs, modèle académique, gouvernance, ambition 2030+", "ecole.html", "Voir L'école"),
+                                 ("international", "A21 Global Network, stratégie Erasmus+, mobilités, feuille de route internationale", "international.html", "Voir International")]:
+        pdf, name = BROCHURES[k]
+        inst += f'''<article class="card card--hover doc-card">
+  <div class="doc-card__thumb" aria-hidden="true">PDF</div>
+  <div>
+    <p class="program-card__type">A21 University · Institution</p>
+    <h3 style="font-size:1.15rem">{name}</h3>
+    <p class="doc-card__meta">{pdf_size(k)} · {desc}</p>
+    <div class="btn-row">
+      <a class="btn btn--primary btn--sm" href="{pdf}" download>{I["download"]} Télécharger <span class="visually-hidden">{name}</span></a>
+      <a class="btn btn--ghost btn--sm" href="{href}">{label}</a>
+    </div>
+  </div>
+</article>'''
     body = f'''
 {simple_hero([("brochures.html", "Brochures")], "Brochures &amp; documentation",
-  "Téléchargez la brochure complète de chaque programme : objectifs, contenus, volumes horaires, conditions d'admission, évaluation et débouchés.", "Documentation")}
-<section class="section" aria-label="Brochures à télécharger">
+  "Téléchargez la brochure de chaque programme ainsi que les documents institutionnels d'A21 University : présentation de l'école et ouverture internationale.", "Documentation")}
+<section class="section" aria-labelledby="doc-prog-title">
   <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">Programmes</p><h2 id="doc-prog-title">Brochures des formations</h2></div>
     <div class="grid grid--2 reveal-stagger">{cards}</div>
+    <div class="section-head reveal mt-3"><p class="eyebrow">Institution</p><h2 id="doc-inst-title">Documents institutionnels</h2></div>
+    <div class="grid grid--2 reveal-stagger" aria-labelledby="doc-inst-title">{inst}</div>
     <div class="mt-3 reveal">{notice("<p>Les brochures sont au format PDF. Si vous avez besoin d'un document dans un autre format accessible, <a href='contact.html?objet=information'>écrivez-nous</a> : nous vous l'adresserons.</p>", "info")}</div>
   </div>
 </section>
