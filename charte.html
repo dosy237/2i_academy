@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charte graphique — Academy 21 University</title>
+<meta name="description" content="Charte graphique et design system du site Academy 21 University : logo, couleurs, typographies, composants, accessibilité.">
+<meta name="theme-color" content="#172033">
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Source+Serif+4:ital,wght@1,400;1,600&amp;display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<a class="skip-link" href="#contenu">Aller au contenu principal</a>
+<div class="topbar on-dark">
+  <div class="container">
+    <p class="mb-0">Candidatures ouvertes — rentrée prochaine</p>
+    <ul>
+      <li><a href="tel:+33000000000">+33 (0)0 00 00 00 00</a></li>
+      <li><a href="mailto:admissions@a21-university.example">admissions@a21-university.example</a></li>
+    </ul>
+  </div>
+</div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/img/logo-a21-university.png" width="320" height="326" alt="Academy 21 University — accueil">
+      <span class="brand__name" aria-hidden="true">Academy Twenty One<span>University</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span class="nav-toggle__bars" aria-hidden="true"><span></span></span> Menu
+    </button>
+    <nav class="nav" id="main-nav" aria-label="Navigation principale">
+      <ul class="nav__list">
+        <li><a class="nav__link" href="index.html">Accueil</a></li><li><a class="nav__link" href="formations.html">Formations</a></li><li><a class="nav__link" href="admissions.html">Admissions</a></li><li><a class="nav__link" href="charte.html" aria-current="page">Charte graphique</a></li><li><a class="nav__link" href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav__cta"><a class="btn btn--primary btn--sm" href="contact.html?programme=candidature">Candidater</a></div>
+    </nav>
+  </div>
+</header>
+<main id="contenu" tabindex="-1">
+
+<section class="page-hero page-hero--simple on-dark" aria-labelledby="page-title">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="pha" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#da0612"/><stop offset="1" stop-color="#da0612" stop-opacity=".25"/></linearGradient>
+    <linearGradient id="phb" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fccd01"/><stop offset="1" stop-color="#fccd01" stop-opacity=".2"/></linearGradient>
+  </defs>
+  <path d="M150 30 A86 86 0 1 0 170 150" fill="none" stroke="url(#pha)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M60 45 A64 64 0 0 1 160 120" fill="none" stroke="url(#phb)" stroke-width="10" stroke-linecap="round"/>
+</svg>
+  <div class="container"><div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane"><ol><li><a href="index.html">Accueil</a></li><li><span aria-current="page">Charte graphique</span></li></ol></nav>
+    <h1 id="page-title">Charte graphique &amp; design system</h1>
+    <p class="lead">Logo, couleurs, typographies et composants du site Academy 21 University. Toutes les combinaisons de couleurs de texte respectent le niveau AA des WCAG 2.2 / RGAA 4.1.</p>
+  </div></div>
+</section>
+<div class="section"><div class="container">
+  <section class="content-block" aria-labelledby="c-logo">
+    <p class="eyebrow">01 · Logo</p>
+    <h2 id="c-logo">Le logo Academy 21 University</h2>
+    <p>Logo extrait des brochures officielles. Il est utilisé sans déformation ni recoloration de l'emblème. La version « fond sombre » ne modifie que le texte (ACADEMY, UNIVERSITY, ™) passé en blanc.</p>
+    <div class="grid grid--3">
+      <div class="visual-panel" style="min-height:260px;background:#fff"><img src="assets/img/logo-a21-university.png" alt="Logo Academy 21 University, version couleur sur fond clair" width="320" height="326" style="height:200px;width:auto"></div>
+      <div class="visual-panel visual-panel--navy" style="min-height:260px"><img src="assets/img/logo-a21-university-light.png" alt="Logo Academy 21 University, version pour fond sombre" width="320" height="326" style="height:200px;width:auto"></div>
+      <div class="visual-panel" style="min-height:260px"><img src="assets/img/emblem-21.png" alt="Emblème 21 seul, utilisé pour l'icône du site" width="256" height="256" style="height:160px;width:auto"></div>
+    </div>
+    <ul class="check-list mt-2">
+      <li>Zone de protection minimale : la hauteur de la lettre « A » du mot ACADEMY tout autour du logo.</li>
+      <li>Taille minimale : 48 px de hauteur à l'écran (en-tête : 62 px).</li>
+      <li>Ne pas étirer, incliner, ombrer ni placer l'emblème couleur sur une photo chargée.</li>
+    </ul>
+  </section>
+  <section class="content-block" aria-labelledby="c-col">
+    <p class="eyebrow">02 · Couleurs</p>
+    <h2 id="c-col">Palette</h2>
+    <p>Deux familles : les couleurs <strong>institutionnelles</strong> (navy, rouge, or) prélevées sur les brochures, et les couleurs <strong>du logo</strong> (rouge, jaune, vert, bleu) réservées aux accents et aux éléments décoratifs.</p>
+    <ul class="swatches"><li class="swatch"><div class="swatch__chip" style="background:#172033"></div><div class="swatch__info"><strong>Navy institutionnel</strong><code>#172033 · var(--navy)</code><br>Fonds, en-têtes de tableaux, texte titre</div></li><li class="swatch"><div class="swatch__chip" style="background:#0c1220"></div><div class="swatch__info"><strong>Navy profond</strong><code>#0c1220 · var(--navy-950)</code><br>Pied de page, barre supérieure</div></li><li class="swatch"><div class="swatch__chip" style="background:#b71c1c"></div><div class="swatch__info"><strong>Rouge Academy</strong><code>#b71c1c · var(--red)</code><br>Boutons principaux, liens, surtitres</div></li><li class="swatch"><div class="swatch__chip" style="background:#9a7b3f"></div><div class="swatch__info"><strong>Or Executive</strong><code>#9a7b3f · var(--gold)</code><br>Surtitres Executive (grand texte), filets</div></li><li class="swatch"><div class="swatch__chip" style="background:#da0612"></div><div class="swatch__info"><strong>Rouge logo</strong><code>#da0612 · var(--logo-red)</code><br>Anneau du logo — décoratif uniquement</div></li><li class="swatch"><div class="swatch__chip" style="background:#fccd01"></div><div class="swatch__info"><strong>Jaune logo</strong><code>#fccd01 · var(--logo-yellow)</code><br>Boutons sur fond navy, accents</div></li><li class="swatch"><div class="swatch__chip" style="background:#a7dd63"></div><div class="swatch__info"><strong>Vert logo</strong><code>#a7dd63 · var(--logo-green)</code><br>Accents, badges certification</div></li><li class="swatch"><div class="swatch__chip" style="background:#2f86ab"></div><div class="swatch__info"><strong>Bleu logo</strong><code>#2f86ab · var(--logo-blue)</code><br>Anneau de focus clavier, accents</div></li><li class="swatch"><div class="swatch__chip" style="background:#535c6e"></div><div class="swatch__info"><strong>Gris texte</strong><code>#535c6e · var(--muted)</code><br>Texte secondaire</div></li><li class="swatch"><div class="swatch__chip" style="background:#f4f6f8"></div><div class="swatch__info"><strong>Surface</strong><code>#f4f6f8 · var(--surface)</code><br>Fonds de sections alternées</div></li></ul>
+    <h3 class="mt-2">Contrastes vérifiés</h3>
+    <div class="table-wrap" role="region" aria-label="Ratios de contraste des combinaisons de texte" tabindex="0">
+<table class="data-table"><caption>Ratios de contraste des combinaisons de texte</caption><thead><tr><th scope="col">Combinaison</th><th scope="col">Ratio</th><th scope="col">Usage autorisé</th></tr></thead><tbody><tr><th scope="row">Blanc sur Rouge Academy #b71c1c</th><td>6,6 : 1</td><td>Tout texte (AA)</td></tr><tr><th scope="row">Rouge Academy sur blanc</th><td>6,6 : 1</td><td>Tout texte (AA)</td></tr><tr><th scope="row">Navy #172033 sur blanc</th><td>16,3 : 1</td><td>Tout texte (AAA)</td></tr><tr><th scope="row">Gris texte #535c6e sur blanc</th><td>6,7 : 1</td><td>Tout texte (AA)</td></tr><tr><th scope="row">Navy sur Jaune logo #fccd01</th><td>10,8 : 1</td><td>Tout texte (AAA)</td></tr><tr><th scope="row">Jaune logo sur Navy</th><td>10,8 : 1</td><td>Tout texte (AAA)</td></tr><tr><th scope="row">#c3cad6 sur Navy</th><td>9,9 : 1</td><td>Texte courant sur fond sombre</td></tr><tr><th scope="row">Or #9a7b3f sur blanc</th><td>4,0 : 1</td><td>Grand texte uniquement (≥ 24 px)</td></tr><tr><th scope="row">Or foncé #7a5f2c sur blanc</th><td>6,0 : 1</td><td>Tout texte (AA)</td></tr></tbody></table></div>
+  </section>
+  <section class="content-block" aria-labelledby="c-type">
+    <p class="eyebrow">03 · Typographie</p>
+    <h2 id="c-type">Trois voix complémentaires</h2>
+    <div class="type-sample"><p class="small text-muted mb-0">Titres — Plus Jakarta Sans 700/800</p><p style="font-family:var(--font-display);font-weight:800;font-size:2.4rem;color:var(--ink);line-height:1.1;margin:.3rem 0">Former ceux qui dirigeront demain</p><p class="small text-muted mb-0">Géométrique et affirmée, elle fait écho aux capitales du logotype ACADEMY.</p></div>
+    <div class="type-sample"><p class="small text-muted mb-0">Texte courant — Inter 400/600</p><p style="margin:.3rem 0">Le programme ne cherche pas à accumuler des enseignements. Il concentre l'apprentissage sur les questions auxquelles un dirigeant est réellement confronté.</p><p class="small text-muted mb-0">Excellente lisibilité à l'écran, chiffres tabulaires pour les volumes horaires.</p></div>
+    <div class="type-sample"><p class="small text-muted mb-0">Citations &amp; sous-titres — Source Serif 4 italique</p><p class="quote" style="margin:.3rem 0">Piloter la performance • Développer l'activité • Manager les équipes</p><p class="small text-muted mb-0">Reprend la touche « grande école » des sous-titres en italique des brochures.</p></div>
+  </section>
+  <section class="content-block" aria-labelledby="c-comp">
+    <p class="eyebrow">04 · Composants</p>
+    <h2 id="c-comp">Boutons, étiquettes, notes</h2>
+    <div class="btn-row mb-2"><a class="btn btn--primary" href="#c-comp">Bouton principal</a><a class="btn btn--ghost" href="#c-comp">Bouton secondaire</a><a class="btn btn--navy" href="#c-comp">Bouton navy</a></div>
+    <div class="card card--navy on-dark mb-2"><div class="btn-row"><a class="btn btn--accent" href="#c-comp">Bouton sur fond sombre</a><a class="btn btn--ghost-light" href="#c-comp">Secondaire sur fond sombre</a></div></div>
+    <ul class="chips mb-2" style="gap:.5rem"><li class="tag">420 h</li><li class="tag tag--rncp">RNCP38666</li><li class="tag tag--exec">Executive</li></ul>
+    <div class="notice" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><div><p>Les notes réglementaires (RNCP, certificateur, dénomination MBA) utilisent toujours ce composant afin de rester visibles et fidèles aux documents officiels.</p></div></div>
+  </section>
+  <section class="content-block" aria-labelledby="c-a11y">
+    <p class="eyebrow">05 · Accessibilité</p>
+    <h2 id="c-a11y">Engagements RGAA / WCAG 2.2 AA</h2>
+    <div class="grid grid--2">
+      <ul class="check-list mb-0"><li>Lien d'évitement « Aller au contenu » et repères ARIA (header, nav, main, footer).</li><li>Focus clavier visible sur tous les éléments (double anneau blanc + bleu).</li><li>Cibles cliquables d'au moins 44 × 44 px.</li><li>Hiérarchie de titres cohérente, un seul H1 par page.</li></ul>
+      <ul class="check-list mb-0"><li>Tableaux avec légende et en-têtes associés.</li><li>Formulaire : étiquettes visibles, aides, messages d'erreur liés et récapitulatif focalisable.</li><li>Animations désactivées si « réduire les animations » est activé.</li><li>Contenu utilisable sans JavaScript et zoom jusqu'à 200 % sans perte.</li></ul>
+    </div>
+  </section>
+</div></div>
+
+</main>
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="assets/img/logo-a21-university-light.png" width="320" height="326" alt="Academy 21 University">
+        <p class="motto">Apprendre. Diriger. Transformer.</p>
+        <p class="small">Une offre cohérente du Bac+3 à l'Executive Education, centrée sur le management, l'entrepreneuriat et le leadership.</p>
+        <div class="socials">
+          <a href="#" aria-label="LinkedIn (lien à compléter)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21h-4z"/></svg></a>
+          <a href="#" aria-label="Facebook (lien à compléter)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v7h4v-7h3l.5-4h-3.5V8.8c0-.5.3-.8.5-.8z"/></svg></a>
+          <a href="#" aria-label="Instagram (lien à compléter)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a>
+          <a href="#" aria-label="YouTube (lien à compléter)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1c.4-1.2.4-3.8.4-3.8s0-2.6-.4-3.8zM10 15V9l5.2 3z"/></svg></a>
+        </div>
+      </div>
+      <nav aria-labelledby="f-formations">
+        <h2 id="f-formations">Formations</h2>
+        <ul>
+          <li><a href="bachelor.html">Bachelor Management (Bac+3)</a></li>
+          <li><a href="mastere.html">Mastère Stratégie &amp; Leadership (Bac+5)</a></li>
+          <li><a href="executive-mba.html">Executive MBA</a></li>
+          <li><a href="ia-marketing-reseau.html">IA &amp; Marketing de réseau</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="f-ecole">
+        <h2 id="f-ecole">L'école</h2>
+        <ul>
+          <li><a href="formations.html">Toutes les formations</a></li>
+          <li><a href="admissions.html">Admissions</a></li>
+          <li><a href="admissions.html#faq">Questions fréquentes</a></li>
+          <li><a href="contact.html">Nous contacter</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li>Adresse du campus — à compléter</li>
+          <li><a href="tel:+33000000000">+33 (0)0 00 00 00 00</a></li>
+          <li><a href="mailto:admissions@a21-university.example">admissions@a21-university.example</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="mb-0">© <span id="year">2026</span> Academy Twenty One University. Tous droits réservés.</p>
+      <ul>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#">Politique de confidentialité</a></li>
+        <li><a href="#">Accessibilité : partiellement conforme</a></li>
+        <li><a href="#">Plan du site</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
