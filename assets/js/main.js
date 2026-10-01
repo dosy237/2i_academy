@@ -7,7 +7,7 @@
   var params = new URLSearchParams(window.location.search);
   var CONTACT = (d.querySelector('meta[name="a21-contact"]') || {}).content || "";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var desktop = window.matchMedia("(min-width: 1141px)");
+  var desktop = window.matchMedia("(min-width: 1281px)");
 
   function $(sel, ctx) { return (ctx || d).querySelector(sel); }
   function $$(sel, ctx) { return Array.prototype.slice.call((ctx || d).querySelectorAll(sel)); }

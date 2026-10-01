@@ -1,5 +1,5 @@
 # Pages institutionnelles : accueil, école, pédagogie, entreprises, formations, brochures.
-from components import (photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
+from components import (founder_block, photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
                         simple_hero, table, notice, pdf_size)
 
 
@@ -54,7 +54,7 @@ def build_index():
         <path d="M169 42 A90 90 0 1 0 158 169" fill="none" stroke="url(#hr)" stroke-width="5" stroke-linecap="round"/>
         <path d="M17 52 A96 96 0 0 1 193 125" fill="none" stroke="url(#hy)" stroke-width="3" stroke-linecap="round"/>
       </svg>
-      <div class="hero-visual__disc"{photo_style("etudiante")}></div>
+      <div class="hero-visual__disc"></div>
       <div class="float-card float-card--a"><span class="float-card__icon" style="background:#eef8e2;color:#3f6e12">{I["award"]}</span><span><strong>RNCP38666</strong>Titre pro. niveau 6</span></div>
       <div class="float-card float-card--b"><span class="float-card__icon" style="background:#fff6cc;color:#5f4a00">{I["layers"]}</span><span><strong>Hybride</strong>Sur site ou à distance</span></div>
       <div class="float-card float-card--c"><span class="float-card__icon" style="background:#fbecec;color:#b71c1c">{I["leader"]}</span><span><strong>Leadership</strong>la signature de nos parcours</span></div>
@@ -72,7 +72,6 @@ def build_index():
         <li><a href="mastere.html">Mastère<span>Bac+5 · Niveau 7</span></a></li>
         <li><a href="executive-mba.html">Executive MBA<span>Dirigeants · 12 mois</span></a></li>
         <li><a href="ia-marketing-reseau.html">Formation IA<span>20 h · à distance</span></a></li>
-        <li class="is-cta"><a href="contact.html?objet=orientation">Être conseillé·e<span>Entretien d'orientation</span></a></li>
       </ul>
     </div>
   </div>
@@ -100,6 +99,12 @@ def build_index():
         <div><strong>20 h</strong><span>Formation IA</span></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="section section--surface" aria-label="Le fondateur">
+  <div class="container">
+    {founder_block("h2")}
   </div>
 </section>
 
@@ -151,6 +156,25 @@ def build_index():
   </div>
 </section>
 
+<section class="section section--navy on-dark" aria-labelledby="world-title">
+  <div class="grid-texture" aria-hidden="true"></div>
+  <div class="container split" style="position:relative">
+    <div class="reveal">
+      <p class="eyebrow">Global engagement</p>
+      <h2 id="world-title">The world is our campus.</h2>
+      <p class="lead">Une communauté Academy Twenty One présente sur 5 continents et dans plus de 75 pays*, une ambition Erasmus+ et un réseau de leaders pour faire du monde un espace d'apprentissage.</p>
+      <a class="btn btn--accent" href="international.html">Notre ouverture internationale {I["arrow"]}</a>
+      <p class="small mt-1 mb-0">* Présence revendiquée par la communauté Academy Twenty One.</p>
+    </div>
+    <ul class="stats reveal">
+      <li><strong>5</strong><span>continents</span></li>
+      <li><strong>75+</strong><span>pays</span></li>
+      <li><strong>8</strong><span>formats d'expérience internationale</span></li>
+      <li><strong>1</strong><span>réseau mondial : A21 Global Network</span></li>
+    </ul>
+  </div>
+</section>
+
 <section class="section section--surface" aria-labelledby="ent-title">
   <div class="container split">
     <div class="reveal">
@@ -187,79 +211,10 @@ def build_index():
   </div>
 </section>
 
-{cta_band("Votre prochaine responsabilité commence ici", "Échangez avec un conseiller pour identifier le programme adapté à votre niveau, votre expérience et votre ambition.", secondary='<a class="btn btn--glass" href="contact.html?objet=orientation">Demander un entretien</a>')}
+{cta_band("Votre prochaine responsabilité commence ici", "Choisissez le programme adapté à votre niveau, votre expérience et votre ambition, puis déposez votre candidature en ligne.", secondary=f'<a class="btn btn--glass" href="brochures.html">{I["download"]} Brochures</a>')}
 '''
     page("index.html", "Academy 21 University — Former ceux qui dirigeront demain",
          "Academy Twenty One University : Bachelor, Mastère, Executive MBA et formation IA en management, entrepreneuriat et leadership.", body)
-
-
-def build_ecole():
-    pillars = [("leader", "", "Leadership", "Décider dans l'incertitude, donner du sens, créer l'adhésion et assumer la responsabilité des résultats."),
-               ("chart", "icon-badge--blue", "Maîtrise du management", "Finance, pilotage, organisation, marketing, ressources humaines : les fondamentaux de la décision."),
-               ("rocket", "icon-badge--yellow", "Culture entrepreneuriale", "Créer, reprendre, développer : l'entrepreneuriat irrigue tous nos programmes."),
-               ("refresh", "icon-badge--green", "Transformation", "Conduite du changement, innovation, data et intelligence artificielle appliquées au management."),
-               ("shield", "", "Responsabilité", "Éthique, RSE, parties prenantes et création de valeur durable.")]
-    pil = "".join(f'<article class="card card--hover"><span class="icon-badge {c}">{I[i]}</span><h3>{t}</h3><p>{d}</p></article>' for i, c, t, d in pillars)
-    body = f'''
-{simple_hero([("ecole.html", "L'école")], "Une école du management, de l'entrepreneuriat et du leadership",
-  "Academy Twenty One University construit une offre cohérente du Bac+3 à l'Executive Education, avec une signature professionnalisante, internationale et connectée aux transformations contemporaines des organisations.", "L'école", photo="amphi")}
-
-<section class="section" aria-labelledby="amb-title">
-  <div class="container split">
-    <div class="reveal">
-      <p class="eyebrow">Notre ambition</p>
-      <h2 id="amb-title">Former ceux qui dirigeront demain</h2>
-      <p>Notre ambition est de faire émerger des managers et des leaders capables d'assumer des responsabilités croissantes : piloter une activité, transformer une organisation, puis la gouverner.</p>
-      <p>Pour l'Executive Education, nous visons un niveau d'exigence et une philosophie comparables aux standards des grandes business schools : sélection des participants, confrontation des expériences, intervenants de haut niveau, pédagogie par la décision, ouverture internationale et impact direct sur les organisations.</p>
-      <p class="quote">« L'objectif n'est pas de reproduire un modèle existant, mais de construire progressivement une signature propre. »</p>
-    </div>
-    <div class="visual-panel on-dark reveal">
-      {ring("deco", uid="ea")}
-      <p class="motto">Nos devises</p>
-      <ul class="stats" style="grid-template-columns:1fr">
-        <li><strong style="font-size:var(--step-2)">Apprendre. Diriger. Transformer.</strong><span>La promesse de nos parcours diplômants.</span></li>
-        <li><strong style="font-size:var(--step-2)">Think. Decide. Lead. Transform.</strong><span>La signature de l'Executive MBA.</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="section section--mesh" aria-labelledby="pil-title">
-  <div class="container">
-    <div class="section-head section-head--center reveal"><p class="eyebrow">Notre signature</p><h2 id="pil-title">Cinq piliers dans chacun de nos programmes</h2></div>
-    <div class="grid grid--3 reveal-stagger">{pil}
-      <article class="card card--navy on-dark"><span class="icon-badge icon-badge--navy">{I["graduation"]}</span><h3>Une filière complète</h3><p>Du Bachelor à l'Executive MBA, chaque programme prolonge le précédent.</p><a class="link-arrow card__link" href="formations.html">Voir les formations {I["arrow"]}</a></article>
-    </div>
-  </div>
-</section>
-
-<section class="section section--navy on-dark" aria-labelledby="fil-title">
-  <div class="grid-texture" aria-hidden="true"></div>
-  <div class="container" style="position:relative">
-    <div class="section-head reveal"><p class="eyebrow">Architecture de formation</p><h2 id="fil-title">La filière Management &amp; Leadership</h2>
-      <p class="lead">Le Mastère forme au niveau Bac+5 des managers capables de conduire la transformation ; l'Executive MBA s'adresse à des professionnels déjà expérimentés et travaille la responsabilité globale du dirigeant.</p></div>
-    <div class="grid grid--4 reveal-stagger">
-      <a class="card card--glass-dark" href="bachelor.html" style="text-decoration:none"><span class="num">Bachelor · Bac+3</span><h3>Manager</h3><p>Piloter une activité, une équipe et la performance opérationnelle.</p></a>
-      <a class="card card--glass-dark" href="mastere.html" style="text-decoration:none"><span class="num">Mastère · Bac+5 / Niveau 7</span><h3>Strategic Leader</h3><p>Concevoir et conduire la transformation d'une organisation.</p></a>
-      <div class="card card--glass-dark"><span class="num">MBA · Niveau 7</span><h3>Business Leader</h3><p>Élargir sa maîtrise de la stratégie, de la finance et du développement.</p><span class="pathway__soon" style="align-self:flex-start">Programme en préparation</span></div>
-      <a class="card card--glass-dark" href="executive-mba.html" style="text-decoration:none"><span class="num">Executive MBA</span><h3>Executive Leader</h3><p>Gouverner, arbitrer, transformer et assumer la responsabilité globale.</p></a>
-    </div>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="eng-title">
-  <div class="container">
-    <div class="section-head reveal"><p class="eyebrow">Nos engagements</p><h2 id="eng-title">Exigence, transparence et ouverture</h2></div>
-    <div class="grid grid--3 reveal-stagger">
-      <article class="card card--hover"><span class="icon-badge">{I["award"]}</span><h3>Transparence sur les certifications</h3><p>Chaque certification est identifiée explicitement : numéro RNCP, certificateur et cadre d'habilitation. Nos diplômes d'établissement sont présentés comme tels.</p><a class="link-arrow card__link" href="admissions.html#certifications">En savoir plus {I["arrow"]}</a></article>
-      <article class="card card--hover"><span class="icon-badge icon-badge--blue">{I["handshake"]}</span><h3>Partenaires habilités</h3><p>Le Bachelor est conduit en partenariat avec GREEN UP ACADEMY, partenaire habilité pour la préparation et la présentation au Titre professionnel RNCP38666.</p><a class="link-arrow card__link" href="bachelor.html#certification">Voir le Bachelor {I["arrow"]}</a></article>
-      <article class="card card--hover"><span class="icon-badge icon-badge--green">{I["users"]}</span><h3>Inclusion &amp; accessibilité</h3><p>L'inclusion et le handicap font partie de nos enseignements. Toute demande d'aménagement de parcours est étudiée avec attention.</p><a class="link-arrow card__link" href="contact.html?objet=handicap">Nous contacter {I["arrow"]}</a></article>
-    </div>
-  </div>
-</section>
-{cta_band("Rejoignez Academy Twenty One University", "Découvrez le programme qui correspond à votre trajectoire et déposez votre candidature en ligne.")}
-'''
-    page("ecole.html", "L'école — Academy 21 University", "Ambition, signature pédagogique et engagements d'Academy Twenty One University.", body)
 
 
 def build_pedagogie():
@@ -438,7 +393,7 @@ def build_formations():
     <p class="small text-muted mt-1">* La présentation effective à la certification suppose le cadre conventionnel et l'inscription auprès du certificateur.</p>
   </div>
 </section>
-{cta_band("Vous hésitez entre deux programmes ?", "Un entretien d'orientation permet de valider votre niveau d'entrée et le format le plus adapté.", secondary='<a class="btn btn--glass" href="contact.html?objet=orientation">Demander un entretien</a>')}
+{cta_band("Vous hésitez entre deux programmes ?", "Le formulaire de candidature vous indique la voie d'accès correspondant à votre profil. Une question ? Écrivez-nous.")}
 '''
     page("formations.html", "Formations — Academy 21 University", "Catalogue des formations Academy 21 University : Bachelor, Mastère, Executive MBA, formation IA.", body)
 

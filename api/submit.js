@@ -45,7 +45,7 @@ const VALUES = {
   situation: { etudiant: "Étudiant·e", salarie: "Salarié·e", manager: "Manager / cadre", dirigeant: "Dirigeant·e", entrepreneur: "Entrepreneur·e / indépendant·e", recherche: "En recherche d'emploi", autre: "Autre" },
   experience: { "0-2": "Moins de 3 ans", "3-4": "3 à 4 ans", "5-6": "5 à 6 ans", "7-9": "7 à 9 ans", "10+": "10 ans et plus" },
   experience_management: { aucune: "Aucune", moins3: "Moins de 3 ans", "3plus": "3 ans et plus" },
-  objet: { information: "Demande d'information", orientation: "Entretien d'orientation", entreprise: "Entreprise / partenariat", rappel: "Être rappelé·e", handicap: "Aménagement / handicap", autre: "Autre" },
+  objet: { information: "Demande d'information", entreprise: "Entreprise / partenariat", rappel: "Être rappelé·e", handicap: "Aménagement / handicap", autre: "Autre" },
   source: { recherche: "Moteur de recherche", reseaux: "Réseaux sociaux", recommandation: "Recommandation", entreprise: "Entreprise", salon: "Salon / événement", autre: "Autre" },
   programme: PROGRAMMES,
 };

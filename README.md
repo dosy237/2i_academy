@@ -3,9 +3,9 @@
 Site statique (HTML/CSS/JS sans dépendance) + une fonction serverless Vercel pour recevoir les candidatures.
 Contenus issus des brochures officielles (Bachelor, Mastère, Executive MBA, formation IA).
 
-## Pages (19)
+## Pages (20)
 
-Accueil · L'école · Formations (catalogue filtrable) · 4 fiches programme · Pédagogie & modalités · Entreprises ·
+Accueil · L'école (identité, fondateur, valeurs, ambition 2030+) · International (Global Network, Erasmus+) · Formations (catalogue filtrable) · 4 fiches programme · Pédagogie & modalités · Entreprises ·
 Admissions (+ FAQ, certifications) · **Candidature en ligne** (5 étapes) · Contact · Brochures (PDF) · Merci ·
 Mentions légales · Confidentialité · Accessibilité · Plan du site · 404.
 
@@ -29,12 +29,13 @@ Tant que rien n'est configuré, le site propose automatiquement au visiteur l'en
 Les pages sont générées par `tools/` (en-tête, pied et composants communs) :
 
 ```bash
-python3 tools/build_pages.py     # régénère les 19 pages
+python3 tools/build_pages.py     # régénère les 20 pages
 python3 -m http.server           # aperçu sur http://localhost:8000 (sans l'API)
 ```
 
 - Coordonnées : `CONTACT_EMAIL` dans `tools/components.py`.
-- Photos : `assets/img/photos/` (dictionnaire `PHOTOS` dans `tools/components.py`).
+- Photos : `assets/img/photos/` (dictionnaire `PHOTOS` dans `tools/components.py`) ; photos du fondateur : `dr-raoul-njionou-1/2/3.jpg`.
+- Polices : Montserrat (titres, harmonisée avec le site Academy21), Inter (texte), Source Serif 4 (citations).
 - Styles : `assets/css/styles.css` · Interactions : `assets/js/main.js`.
 
 ## Accessibilité & qualité

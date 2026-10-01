@@ -23,7 +23,7 @@ def build_mentions():
   <h2>Certifications</h2>
   <p>Les informations relatives aux certifications professionnelles (RNCP38666, RNCP39994) sont présentées conformément aux habilitations effectivement détenues et précisent le certificateur et le cadre applicable. Le détail figure sur la page <a href="admissions.html#certifications">Admissions</a>.</p>
   <h2>Crédits</h2>
-  <p>Polices de caractères : Inter, Plus Jakarta Sans et Source Serif 4, distribuées sous licence SIL Open Font License et hébergées sur ce site.</p>
+  <p>Polices de caractères : Montserrat, Inter et Source Serif 4, distribuées sous licence SIL Open Font License et hébergées sur ce site.</p>
   <h2>Données personnelles</h2>
   <p>Le traitement des données collectées via les formulaires est décrit dans la <a href="confidentialite.html">politique de confidentialité</a>.</p>
 </div></section>'''
@@ -103,7 +103,7 @@ def build_plan():
     body = f'''
 {simple_hero([("plan-du-site.html", "Plan du site")], "Plan du site", "L'ensemble des pages du site Academy Twenty One University.")}
 <section class="section"><div class="container sitemap">
-  <div class="card"><h2 style="font-size:1.1rem">L'école</h2><ul><li><a href="index.html">Accueil</a></li><li><a href="ecole.html">L'école</a></li><li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li><li><a href="entreprises.html">Entreprises</a></li><li><a href="brochures.html">Brochures</a></li></ul></div>
+  <div class="card"><h2 style="font-size:1.1rem">L'école</h2><ul><li><a href="index.html">Accueil</a></li><li><a href="ecole.html">L'école</a></li><li><a href="ecole.html#fondateur">Le fondateur</a></li><li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li><li><a href="international.html">International</a></li><li><a href="entreprises.html">Entreprises</a></li><li><a href="brochures.html">Brochures</a></li></ul></div>
   <div class="card"><h2 style="font-size:1.1rem">Formations</h2><ul><li><a href="formations.html">Toutes les formations</a></li>{progs}</ul></div>
   <div class="card"><h2 style="font-size:1.1rem">Candidats &amp; informations</h2><ul><li><a href="admissions.html">Admissions</a></li><li><a href="candidature.html">Candidater en ligne</a></li><li><a href="contact.html">Contact</a></li><li><a href="mentions-legales.html">Mentions légales</a></li><li><a href="confidentialite.html">Confidentialité</a></li><li><a href="accessibilite.html">Accessibilité</a></li></ul></div>
 </div></section>'''

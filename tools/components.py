@@ -108,7 +108,8 @@ PROGRAMS = [
 P = {p["key"]: p for p in PROGRAMS}
 
 NAV = [("ecole.html", "L'école"), ("formations.html", "Formations"), ("pedagogie.html", "Pédagogie"),
-       ("admissions.html", "Admissions"), ("entreprises.html", "Entreprises"), ("contact.html", "Contact")]
+       ("international.html", "International"), ("admissions.html", "Admissions"), ("entreprises.html", "Entreprises"),
+       ("contact.html", "Contact")]
 PROGRAM_FILES = {p["href"] for p in PROGRAMS}
 
 def mega_menu():
@@ -176,7 +177,7 @@ def footer():
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="assets/img/logo-a21-university-light.png" width="320" height="326" alt="Academy 21 University">
-        <p class="motto">Apprendre. Diriger. Transformer.</p>
+        <p class="motto">Learn. Lead. Transform.</p>
         <p class="small">Une école de management, d'entrepreneuriat et de leadership — du Bachelor à l'Executive Education, en présentiel, à distance ou en hybride.</p>
       </div>
       <nav aria-labelledby="f-formations">
@@ -187,7 +188,9 @@ def footer():
         <h2 id="f-ecole">L'école</h2>
         <ul>
           <li><a href="ecole.html">Notre ambition</a></li>
+          <li><a href="ecole.html#fondateur">Le fondateur</a></li>
           <li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li>
+          <li><a href="international.html">International</a></li>
           <li><a href="entreprises.html">Entreprises</a></li>
           <li><a href="brochures.html">Brochures</a></li>
         </ul>
@@ -236,7 +239,7 @@ def page(fname, title, desc, body, active=None, noindex=False):
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css">
 <script>document.documentElement.className=document.documentElement.className.replace("no-js","js");</script>
 </head>
@@ -360,7 +363,6 @@ def related(keys, title="Poursuivre votre réflexion"):
 PHOTOS = {
     "amphi": "/assets/img/photos/etudiants-amphi.jpg",
     "groupe": "/assets/img/photos/etudiants-groupe.jpg",
-    "etudiante": "/assets/img/photos/etudiante-campus.jpg",
     "leadership": "/assets/img/photos/leadership-entreprise.jpg",
     "accompagnement": "/assets/img/photos/accompagnement.jpg",
 }
@@ -381,3 +383,36 @@ def simple_hero(crumb_items, title, lead, eyebrow=None, extra="", uid="ph", phot
     {extra}
   </div></div>
 </section>'''
+
+
+# --- Fondateur : Dr Raoul Ruben NJIONOU ---
+# Déposez les photos dans assets/img/photos/ sous ces noms : elles sont prises en compte automatiquement.
+FOUNDER_PHOTOS = ["dr-raoul-njionou-1.jpg", "dr-raoul-njionou-2.jpg", "dr-raoul-njionou-3.jpg"]
+
+def founder_photos():
+    return [f"/assets/img/photos/{f}" for f in FOUNDER_PHOTOS if os.path.exists(os.path.join(ROOT, "assets/img/photos", f))]
+
+FOUNDER_TEXT = ("Fondateur, Chairman &amp; CEO d'A21. Avec près de 15 ans d'expérience dans le Marketing de Réseau "
+                "et plus de 20 ans dans le monde des affaires, il a su se faire une place au sommet. "
+                "Leader d'impact reconnu sur 5 continents.")
+
+def founder_block(heading="h2", more_href="ecole.html#fondateur", more_label="En savoir plus", gallery=False, hid="founder-title"):
+    photos = founder_photos()
+    portrait_style = f' style="--photo:url({photos[0]})"' if photos else ""
+    gal = ""
+    if gallery and len(photos) > 1:
+        gal = '<div class="founder__gallery" aria-hidden="true">' + "".join(f'<div style="--photo:url({ph})"></div>' for ph in photos[1:]) + "</div>"
+    ext = ' rel="noopener" target="_blank"' if more_href.startswith("http") else ""
+    sr = '<span class="visually-hidden"> (nouvel onglet)</span>' if ext else ""
+    label = 'role="img" aria-label="Portrait du Dr Raoul Ruben NJIONOU"' if photos else 'aria-hidden="true"'
+    full = " founder--full" if gal else ""
+    return f'''<article class="founder{full} reveal" aria-labelledby="{hid}">
+  <div class="founder__portrait"{portrait_style} {label}>RRN</div>
+  <div>
+    <p class="eyebrow">Le fondateur</p>
+    <{heading} id="{hid}">Dr. Raoul Ruben NJIONOU</{heading}>
+    <p class="founder__text">{FOUNDER_TEXT}</p>
+    <a class="link-arrow" href="{more_href}"{ext}>{more_label}{sr} {I["arrow"]}</a>
+    {gal}
+  </div>
+</article>'''
