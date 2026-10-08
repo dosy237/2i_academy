@@ -10,8 +10,10 @@ def build_mentions():
 <section class="section"><div class="container prose">
   <h2>Éditeur du site</h2>
   <p><strong>{LEGAL_NAME}</strong> (Academy Twenty One University — Academy 21 University)<br>
-  SIREN : {SIREN}<br>
-  Forme juridique et capital : {TODO}<br>
+  Nom commercial : A21<br>
+  SIREN : {SIREN} — inscrite au Registre national des entreprises<br>
+  Capital social : 2 000 €<br>
+  Forme juridique : {TODO}<br>
   Siège social : {TODO}<br>
   Numéro de déclaration d'activité de formation : {TODO}<br>
   E-mail : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a><br>
