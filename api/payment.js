@@ -12,7 +12,7 @@
  *  MOBILE_PROVIDER (facultatif), MOBILE_CURRENCIES (défaut "XAF,XOF"), SITE_URL (facultatif), + variables d'e-mail.
  */
 const crypto = require("crypto");
-const { esc, sendMail, layout, button, siteUrl, schoolInboxes, copyInboxes, mailConfigured } = require("./_lib/mail");
+const { esc, sendMail, layout, button, details, callout, signature, siteUrl, schoolInboxes, copyInboxes, mailConfigured } = require("./_lib/mail");
 const pay = require("./_lib/pay");
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -56,17 +56,18 @@ const refGen = () => {
 const splitEmails = (v) => [...new Set(String(v || "").split(/[\s,;]+/).map((x) => x.trim().toLowerCase()).filter(Boolean))];
 const MAX_BATCH = 50;
 
-function linkEmail(c, s, link, until, note) {
+function linkEmail(c, s, link, until, note, base) {
   const hello = c.prenom ? `Bonjour ${esc(c.prenom)},` : "Bonjour,";
-  const html = layout("Votre dossier a été étudié", `<p>${hello}</p>
-<p>Votre dossier de candidature <strong>${esc(c.ref)}</strong> (${esc(s.programme)}) a été étudié par notre équipe.
-Pour poursuivre votre admission, nous vous invitons à régler les frais d'étude de dossier.</p>
-${note ? `<p style="padding:12px 16px;background:#f5f7fa;border-radius:8px;white-space:pre-wrap">${esc(note)}</p>` : ""}
-<p style="font-size:17px"><strong>${esc(s.labelEur)}</strong> <span style="color:#535c6e">· soit ${esc(s.labelFcfa)} en Mobile Money</span></p>
+  const inner = `<p style="margin:0 0 14px">${hello}</p>
+<p style="margin:0 0 14px">Votre dossier de candidature <strong>${esc(c.ref)}</strong> a été étudié par notre équipe. Pour poursuivre votre admission, nous vous invitons à régler les frais d'étude de dossier.</p>
+${note ? callout(esc(note).replace(/\n/g, "<br>")) : ""}
+${details([["Programme", s.programme], ["Frais d'étude de dossier", s.labelEur], ["En Mobile Money", `${s.labelFcfa} (taux fixe 1 € = 655,957 FCFA)`], ["Lien valable jusqu'au", until]])}
 ${button(link, "Accéder à mon espace de paiement")}
-<p style="font-size:13px;color:#535c6e">Carte bancaire, Orange Money ou MTN Mobile Money. Paiement sécurisé par nos prestataires : l'école n'a jamais accès à vos données bancaires.
-Lien personnel, valable jusqu'au ${esc(until)}. Si le bouton ne fonctionne pas, copiez cette adresse : ${esc(link)}</p>`);
-  const text = `${c.prenom ? `Bonjour ${c.prenom},` : "Bonjour,"}\n\nVotre dossier ${c.ref} (${s.programme}) a été étudié. Pour poursuivre votre admission, merci de régler les frais d'étude de dossier : ${s.labelEur} (soit ${s.labelFcfa} en Mobile Money).\n\n${note ? note + "\n\n" : ""}Votre espace de paiement : ${link}\nLien valable jusqu'au ${until}.\n\nAcademy Twenty One University`;
+<p style="margin:0;font-size:13px;color:#5b6475">Carte bancaire, Orange Money ou MTN Mobile Money. Le paiement est sécurisé par nos prestataires : l'école n'a jamais accès à vos coordonnées bancaires.</p>
+<p style="margin:10px 0 0;font-size:12px;color:#8a92a3;word-break:break-all">Si le bouton ne fonctionne pas, copiez cette adresse dans votre navigateur : ${esc(link)}</p>
+${signature()}`;
+  const html = layout("Votre dossier a été étudié", inner, { hero: true, eyebrow: "Admissions", base, preheader: `Frais d'étude de dossier : ${s.labelEur} — lien personnel` });
+  const text = `${c.prenom ? `Bonjour ${c.prenom},` : "Bonjour,"}\n\nVotre dossier ${c.ref} (${s.programme}) a été étudié. Pour poursuivre votre admission, merci de régler les frais d'étude de dossier : ${s.labelEur} (soit ${s.labelFcfa} en Mobile Money).\n\n${note ? note + "\n\n" : ""}Votre espace de paiement : ${link}\nLien valable jusqu'au ${until}.\n\nL'équipe Academy Twenty One University`;
   return { subject: `Academy 21 University — frais d'étude de dossier (${c.ref})`, html, text };
 }
 
@@ -110,7 +111,7 @@ async function createLink(req, res, body) {
     const until = new Date(s.expires).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
     const r = { email, ref: c.ref, link, sent: false };
     if (wantSend) {
-      const m = linkEmail(c, s, link, until, note);
+      const m = linkEmail(c, s, link, until, note, siteUrl(req));
       try {
         await sendMail({ to: [email], cc: batch ? [] : [...school, ...copyInboxes()], replyTo: school[0], subject: m.subject, html: m.html, text: m.text });
         r.sent = true;
@@ -124,10 +125,11 @@ async function createLink(req, res, body) {
 
   // Envoi groupé : un seul récapitulatif à l'école plutôt qu'une copie par candidat.
   if (batch && wantSend && results.some((r) => r.sent)) {
-    const rows = results.map((r) => `<tr><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${esc(r.email)}</td><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${esc(r.ref)}</td><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${r.sent ? "envoyé" : "échec"}</td></tr>`).join("");
     await sendMail({
       to: school, cc: copyInboxes(), subject: `Frais d'étude — ${results.filter((r) => r.sent).length} lien(s) de paiement envoyé(s)`,
-      html: layout("Liens de paiement envoyés", `<p>${esc(s0.programme)} · ${esc(s0.labelEur)} (${esc(s0.labelFcfa)})</p><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><th align="left" style="padding:6px 10px">E-mail</th><th align="left" style="padding:6px 10px">Référence</th><th align="left" style="padding:6px 10px">Statut</th></tr>${rows}</table>`),
+      html: layout("Liens de paiement envoyés", `<p style="margin:0">${esc(s0.programme)} · ${esc(s0.labelEur)} (${esc(s0.labelFcfa)})</p>`
+        + details(results.map((r) => [r.email, `${r.ref} — ${r.sent ? "envoyé" : "échec de l'envoi"}`])),
+        { hero: false, eyebrow: "Espace école", base: siteUrl(req) }),
       text: results.map((r) => `${r.email} — ${r.ref} — ${r.sent ? "envoyé" : "échec"}`).join("\n"),
     }).catch((e) => console.error("[paiement] récapitulatif école", e && e.message));
   }

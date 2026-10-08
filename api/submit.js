@@ -67,7 +67,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CV_MAX = 3 * 1024 * 1024;
 const CV_EXT = /\.(pdf|docx?)$/i;
 
-const { esc, list, smtpConfigured, sendMail, siteUrl } = require("./_lib/mail");
+const { esc, list, smtpConfigured, sendMail, siteUrl, layout, button, details, callout, signature } = require("./_lib/mail");
 
 const clean = (v, max = 3000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const label = (field, value) => (VALUES[field] && VALUES[field][value]) || value;
@@ -110,45 +110,46 @@ function reply(req, res, status, json) {
 }
 
 function buildEmail(type, data, ref, base) {
-  const rows = LABELS[type]
-    .filter(([k]) => data[k])
-    .map(([k, l]) => `<tr><th align="left" style="padding:8px 12px;background:#f5f7fa;border-bottom:1px solid #e1e5ec;width:220px;font:600 14px Arial;color:#172033;vertical-align:top">${esc(l)}</th>`
-      + `<td style="padding:8px 12px;border-bottom:1px solid #e1e5ec;font:14px Arial;color:#2c3445;white-space:pre-wrap">${esc(label(k, data[k]))}</td></tr>`)
-    .join("");
-  const title = type === "candidature"
-    ? `Nouvelle candidature — ${label("programme", data.programme)}`
-    : `Nouvelle demande — ${label("objet", data.objet)}`;
+  const rows = LABELS[type].filter(([k]) => data[k]).map(([k, l]) => [l, label(k, data[k])]);
+  const isCand = type === "candidature";
+  const title = isCand ? `Nouvelle candidature — ${label("programme", data.programme)}` : `Nouvelle demande — ${label("objet", data.objet)}`;
+  const when = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" });
   // Après l'étude du dossier : lien direct vers l'espace école, pré-rempli, pour demander les frais d'étude.
   let feeLink = "";
-  if (type === "candidature" && base) {
+  if (isCand && base) {
     const q = new URLSearchParams({ ref, prenom: data.prenom, nom: data.nom, email: data.email, programme: data.programme });
-    feeLink = `<p style="font:13px Arial;color:#535c6e;margin-top:18px;padding-top:14px;border-top:1px solid #e1e5ec">Dossier étudié et recevable ? `
-      + `<a href="${esc(base)}/espace-ecole.html?${esc(q.toString())}" style="color:#c8102e;font-weight:bold">Envoyer au candidat le lien de paiement des frais d'étude</a>.</p>`;
+    feeLink = `<p style="margin:22px 0 0;padding-top:18px;border-top:1px solid #e4e8ef">Dossier étudié et recevable ?</p>`
+      + button(`${base}/espace-ecole.html?${q.toString()}`, "Envoyer le lien de paiement des frais d'étude");
   }
-  const html = `<div style="font-family:Arial,sans-serif;max-width:720px;margin:auto">
-<div style="background:#172033;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0"><div style="font-size:12px;letter-spacing:2px;color:#fccd01;text-transform:uppercase">Academy 21 University</div>
-<div style="font-size:20px;font-weight:bold;margin-top:6px">${esc(title)}</div><div style="font-size:13px;color:#c3cad6;margin-top:4px">Référence ${esc(ref)} · ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</div></div>
-<table style="width:100%;border-collapse:collapse;border:1px solid #e1e5ec">${rows}</table>
-<p style="font:13px Arial;color:#535c6e">Répondez directement à cet e-mail pour écrire à ${esc(data.prenom)} ${esc(data.nom)}.</p>${feeLink}</div>`;
-  const text = `${title}\nRéférence : ${ref}\n\n` + LABELS[type].filter(([k]) => data[k]).map(([k, l]) => `${l} : ${label(k, data[k])}`).join("\n");
+  const inner = `<p style="margin:0 0 6px">Référence <strong>${esc(ref)}</strong> · reçue le ${esc(when)}</p>
+${details(rows)}
+<p style="margin:0;color:#5b6475;font-size:13px">Pour écrire à ${esc(data.prenom)} ${esc(data.nom)}, répondez simplement à cet e-mail.</p>${feeLink}`;
+  const html = layout(title, inner, { hero: false, eyebrow: isCand ? "Candidature en ligne" : "Formulaire de contact", base, preheader: `${data.prenom} ${data.nom} — ${ref}` });
+  const text = `${title}\nRéférence : ${ref}\n\n` + rows.map(([l, v]) => `${l} : ${v}`).join("\n");
   return { subject: `${title} — ${data.prenom} ${data.nom} (${ref})`, html, text };
 }
 
-function confirmation(type, data, ref) {
-  const what = type === "candidature" ? "votre candidature" : "votre message";
-  const e = type === "candidature" ? "e" : "";
+function confirmation(type, data, ref, base) {
+  const isCand = type === "candidature";
+  const what = isCand ? "votre candidature" : "votre message";
+  const e = isCand ? "e" : "";
   const feeMsg = "Aucun paiement n'est demandé à ce stade : si votre dossier est recevable, vous recevrez un lien personnel pour régler les frais d'étude de dossier (50 €), par carte bancaire ou Mobile Money.";
-  const fee = type === "candidature" ? `\n${feeMsg}` : "";
-  const feeHtml = type === "candidature" ? `<p>${esc(feeMsg)}</p>` : "";
+  const steps = isCand ? `<p style="margin:22px 0 8px;font-weight:700;color:#172033">Les prochaines étapes</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 6px">
+${[["1", "Étude de votre dossier par l'équipe pédagogique."], ["2", "Entretien de positionnement : nous vous contactons pour en fixer la date."], ["3", "Décision de la commission d'admission, puis inscription."]].map(([n, t]) =>
+  `<tr><td style="vertical-align:top;padding:4px 12px 4px 0"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="24" height="24" align="center" valign="middle" style="width:24px;height:24px;border-radius:50%;background:#172033;color:#fccd01;font:800 12px/24px Helvetica,Arial,sans-serif;text-align:center">${n}</td></tr></table></td><td style="padding:6px 0;font-size:14px">${t}</td></tr>`).join("")}
+</table>${callout(esc(feeMsg))}` : "";
+  const inner = `<p style="margin:0 0 14px">Bonjour ${esc(data.prenom)},</p>
+<p style="margin:0 0 14px">Nous avons bien reçu ${what}, enregistré${e} sous la référence <strong>${esc(ref)}</strong>. Merci de votre confiance.</p>
+<p style="margin:0">${isCand ? "Notre équipe étudie votre dossier et revient vers vous dans les meilleurs délais." : "Notre équipe vous répond dans les meilleurs délais."}</p>
+${steps}${signature()}`;
+  const subject = isCand ? `Votre candidature est bien enregistrée (${ref})` : `Nous avons bien reçu votre message (${ref})`;
+  const html = layout(isCand ? "Votre candidature est bien enregistrée" : "Nous avons bien reçu votre message", inner,
+    { hero: true, eyebrow: isCand ? "Admissions" : "Contact", base, preheader: `Référence ${ref} — Academy Twenty One University`,
+      footerNote: "Vous recevez cet e-mail car vous avez utilisé un formulaire du site. Pour nous écrire, répondez simplement à ce message." });
   const text = `Bonjour ${data.prenom},\n\nNous avons bien reçu ${what}, enregistré${e} sous la référence ${ref}.\n` +
-    `Notre équipe revient vers vous dans les meilleurs délais.${fee}\n\nAcademy Twenty One University\nLearn. Lead. Transform.`;
-  const html = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#2c3445">
-<div style="background:#172033;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0"><div style="font-size:12px;letter-spacing:2px;color:#fccd01;text-transform:uppercase">Academy 21 University</div>
-<div style="font-size:20px;font-weight:bold;margin-top:6px">Nous avons bien reçu ${what}</div></div>
-<div style="border:1px solid #e1e5ec;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;font-size:15px;line-height:1.6">
-<p>Bonjour ${esc(data.prenom)},</p><p>Nous avons bien reçu ${what}, enregistré${e} sous la référence <strong>${esc(ref)}</strong>.</p>
-<p>Notre équipe revient vers vous dans les meilleurs délais.</p>${feeHtml}<p style="color:#535c6e">Academy Twenty One University<br>Learn. Lead. Transform.</p></div></div>`;
-  return { subject: `Academy 21 University — nous avons bien reçu ${what} (${ref})`, text, html };
+    `Notre équipe revient vers vous dans les meilleurs délais.${isCand ? `\n\n${feeMsg}` : ""}\n\nL'équipe Academy Twenty One University\nLearn. Lead. Transform.`;
+  return { subject: `Academy 21 University — ${subject}`, text, html };
 }
 
 module.exports = async function handler(req, res) {
@@ -216,7 +217,7 @@ module.exports = async function handler(req, res) {
       const wantsConfirmation = viaSmtp ? process.env.SEND_CONFIRMATION !== "0"
         : process.env.SEND_CONFIRMATION === "1" && Boolean(process.env.MAIL_FROM);
       if (wantsConfirmation) {
-        const c = confirmation(type, data, ref);
+        const c = confirmation(type, data, ref, siteUrl(req));
         jobs.push(sendMail({ to: [data.email], replyTo: school[0], subject: c.subject, html: c.html, text: c.text })
           .catch((e) => console.error("[submit] accusé de réception", e && e.message)));
       }

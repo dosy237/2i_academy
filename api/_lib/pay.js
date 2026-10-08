@@ -3,7 +3,7 @@
  * Aucune base de données : le lien envoyé au candidat contient sa référence, signée (HMAC) avec PAYMENT_SECRET.
  */
 const crypto = require("crypto");
-const { esc, sendMail, layout, schoolInboxes, copyInboxes, mailConfigured } = require("./mail");
+const { esc, sendMail, layout, details, signature, schoolInboxes, copyInboxes, mailConfigured } = require("./mail");
 
 const PROGRAMMES = {
   "bachelor": "Bachelor Management Stratégique & Opérationnel",
@@ -251,29 +251,32 @@ const mobileStatus = (id) => (mobileProvider() === "flutterwave" ? flutterwaveSt
 
 /* ---------------------------------------------------------------- E-mails de paiement */
 function paidRows(st) {
-  const rows = [["Référence du dossier", st.ref], ["Candidat·e", `${st.prenom || ""} ${st.nom || ""}`.trim() || st.email], ["E-mail", st.email],
+  return details([["Référence du dossier", st.ref], ["Candidat·e", `${st.prenom || ""} ${st.nom || ""}`.trim() || st.email], ["E-mail", st.email],
     ["Programme", PROGRAMMES[st.programme] || st.programme], ["Montant", st.amount], ["Moyen de paiement", st.method === "card" ? "Carte bancaire (Stripe)" : `Mobile Money (${st.provider})`],
-    ["N° de transaction", st.transaction], ["Date", new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })]];
-  return `<table style="width:100%;border-collapse:collapse;margin:12px 0">${rows.filter((r) => r[1]).map((r) =>
-    `<tr><th align="left" style="padding:7px 10px;background:#f5f7fa;border-bottom:1px solid #e1e5ec;font-size:14px;width:190px">${esc(r[0])}</th><td style="padding:7px 10px;border-bottom:1px solid #e1e5ec;font-size:14px">${esc(r[1])}</td></tr>`).join("")}</table>`;
+    ["N° de transaction", st.transaction], ["Date", new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" })]]);
 }
 
 async function notifyPaid(st) {
   if (!mailConfigured()) { console.warn("[paiement] reçu mais e-mails non configurés", st.ref, st.transaction); return; }
   const school = schoolInboxes();
   const rows = paidRows(st);
+  const who = `${st.prenom || ""} ${st.nom || ""}`.trim() || st.email;
   const jobs = [sendMail({
     to: school, cc: copyInboxes(), replyTo: st.email,
-    subject: `Frais d'étude réglés — ${`${st.prenom || ""} ${st.nom || ""}`.trim() || st.email} (${st.ref})`,
-    html: layout("Frais d'étude de dossier réglés", `<p>Le paiement suivant vient d'être confirmé par ${esc(st.provider)}.</p>${rows}`),
+    subject: `Frais d'étude réglés — ${who} (${st.ref})`,
+    html: layout("Frais d'étude de dossier réglés", `<p style="margin:0">Le paiement suivant vient d'être confirmé par ${esc(st.provider)}.</p>${rows}`,
+      { hero: false, eyebrow: "Paiement reçu", preheader: `${who} — ${st.amount}` }),
     text: `Frais d'étude réglés — ${st.ref} — ${st.amount} — ${st.transaction}`,
   })];
   if (st.email) {
     jobs.push(sendMail({
       to: [st.email], replyTo: school[0],
       subject: `Academy 21 University — paiement reçu (${st.ref})`,
-      html: layout("Votre paiement a bien été reçu", `<p>Bonjour${st.prenom ? " " + esc(st.prenom) : ""},</p><p>Nous confirmons la réception de vos frais d'étude de dossier. Conservez cet e-mail comme justificatif.</p>${rows}<p>Notre équipe vous recontacte pour la suite de votre admission.</p>`),
-      text: `Bonjour${st.prenom ? " " + st.prenom : ""},\n\nNous confirmons la réception de vos frais d'étude de dossier (${st.amount}).\nRéférence : ${st.ref}\nTransaction : ${st.transaction}\n\nAcademy Twenty One University`,
+      html: layout("Votre paiement a bien été reçu", `<p style="margin:0 0 14px">Bonjour${st.prenom ? " " + esc(st.prenom) : ""},</p>
+<p style="margin:0">Nous confirmons la réception de vos frais d'étude de dossier. Conservez cet e-mail : il vous sert de justificatif.</p>${rows}
+<p style="margin:0">Notre équipe vous recontacte pour la suite de votre admission.</p>${signature()}`,
+        { hero: true, eyebrow: "Reçu de paiement", preheader: `Paiement confirmé — ${st.amount}` }),
+      text: `Bonjour${st.prenom ? " " + st.prenom : ""},\n\nNous confirmons la réception de vos frais d'étude de dossier (${st.amount}).\nRéférence : ${st.ref}\nTransaction : ${st.transaction}\n\nL'équipe Academy Twenty One University`,
     }).catch((e) => console.error("[paiement] reçu candidat", e && e.message)));
   }
   await Promise.all(jobs);
