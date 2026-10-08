@@ -651,9 +651,18 @@
       $("[data-merci-title]").textContent = "Merci, votre message a bien été envoyé";
       $("[data-merci-lead]").textContent = "Notre équipe vous répond par e-mail dans les meilleurs délais.";
       d.title = "Message envoyé — Academy 21 University";
+      // Les étapes d'admission ne concernent pas un simple message
+      $$("[data-merci-steps]").forEach(function (el) { el.hidden = true; });
+      var next = $("[data-merci-next]");
+      if (next) { next.classList.add("section--tight"); next.removeAttribute("aria-labelledby"); next.setAttribute("aria-label", "Poursuivre la visite"); }
     } else {
       $("[data-merci-title]").textContent = "Merci, votre candidature a bien été envoyée";
       d.title = "Candidature envoyée — Academy 21 University";
+      var back = $("[data-merci-back]");
+      if (back) {
+        back.href = "admissions.html";
+        $("[data-merci-back-label]").textContent = "Retour aux admissions";
+      }
     }
   }
 

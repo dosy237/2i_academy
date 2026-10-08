@@ -1198,3 +1198,4 @@ body.lightbox-open { overflow: hidden; }
 }
 .program-sign { margin: 1.2rem 0 0; font-size: .86rem; color: var(--muted); }
 .unfold-grid:has(> .unfold:only-child) { grid-template-columns: 1fr; }
+.section--tight { padding-block: 2.5rem; } .section--tight .btn-row { margin-top: 0; }
