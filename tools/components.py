@@ -381,6 +381,7 @@ def simple_hero(crumb_items, title, lead, eyebrow=None, extra="", uid="ph", phot
 
 # --- Fondateur : Dr Raoul Ruben NJIONOU ---
 # Déposez les photos dans assets/img/photos/ sous ces noms : elles sont prises en compte automatiquement.
+FOUNDER_ALTS = ["Portrait du Dr Raoul Ruben NJIONOU, fondateur d'Academy Twenty One", 'Le Dr Raoul Ruben NJIONOU anime une séance devant les membres de la communauté', "Le Dr Raoul Ruben NJIONOU s'exprime sur scène lors d'un événement Academy Twenty One"]
 FOUNDER_PHOTOS = ["dr-raoul-njionou-1.jpg", "dr-raoul-njionou-2.jpg", "dr-raoul-njionou-3.jpg"]
 
 def founder_photos():
@@ -395,13 +396,14 @@ def founder_block(heading="h2", more_href="ecole.html#fondateur", more_label="En
     portrait_style = f' style="--photo:url({photos[0]})"' if photos else ""
     gal = ""
     if gallery and len(photos) > 1:
-        gal = '<div class="founder__gallery" aria-hidden="true">' + "".join(f'<div style="--photo:url({ph})"></div>' for ph in photos[1:]) + "</div>"
+        gal = '<div class="founder__gallery">' + "".join(
+            f'<div style="--photo:url({ph})">{zoom_btn(ph, FOUNDER_ALTS[n + 1], "fondateur")}</div>' for n, ph in enumerate(photos[1:])) + "</div>"
     ext = ' rel="noopener" target="_blank"' if more_href.startswith("http") else ""
     sr = '<span class="visually-hidden"> (nouvel onglet)</span>' if ext else ""
-    label = 'role="img" aria-label="Portrait du Dr Raoul Ruben NJIONOU"' if photos else 'aria-hidden="true"'
+    label = ""
     full = " founder--full" if gal else ""
     return f'''<article class="founder{full} reveal" aria-labelledby="{hid}">
-  <div class="founder__portrait"{portrait_style} {label}>RRN</div>
+  <div class="founder__portrait"{portrait_style}><span aria-hidden="true">RRN</span>{zoom_btn(photos[0], FOUNDER_ALTS[0], "fondateur") if photos else ""}</div>
   <div>
     <p class="eyebrow">Le fondateur</p>
     <{heading} id="{hid}">Dr. Raoul Ruben NJIONOU</{heading}>
@@ -451,8 +453,17 @@ def hero_light(crumb_items, title, lead, eyebrow=None, extra="", visual="", amb=
 </section>'''
 
 
+def zoom_btn(src, alt, group=""):
+    """Bouton transparent posé sur une image : ouvre la visionneuse (assets/js/main.js)."""
+    g = f' data-zoom-group="{group}"' if group else ""
+    return (f'<button type="button" class="zoom-btn" data-zoom="{src}" data-zoom-alt="{alt}"{g} '
+            f'aria-label="Agrandir la photo : {alt}"><span class="zoom-btn__chip" aria-hidden="true">'
+            f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            f'<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2M11 8.5v5M8.5 11h5"/></svg></span></button>')
+
+
 def photo_img(key, alt, pos="center"):
-    return f'<img src="{PHOTOS[key]}" alt="{alt}" loading="eager" style="object-position:{pos}">'
+    return f'<img src="{PHOTOS[key]}" alt="{alt}" loading="eager" style="object-position:{pos}">{zoom_btn(PHOTOS[key], alt)}'
 
 
 def hero_editorial(crumb_items, title, lead, eyebrow, photo, extra="", amb="gold"):

@@ -1,5 +1,5 @@
 # Pages institutionnelles : accueil, école, pédagogie, entreprises, formations, brochures.
-from components import (ring4, hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, founder_block, photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
+from components import (zoom_btn, PHOTOS, ring4, hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, founder_block, photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
                         simple_hero, table, notice, pdf_size)
 
 
@@ -89,6 +89,7 @@ def build_index():
       <div class="btn-row"><a class="btn btn--navy" href="ecole.html">Découvrir l'école {I["arrow"]}</a><a class="link-arrow" href="formations.html">Comparer les formations {I["arrow"]}</a></div>
     </div>
     <div class="photo-card reveal"{photo_style("bibliotheque")}>
+      {zoom_btn(PHOTOS["bibliotheque"], "Étudiantes et étudiants d'horizons variés réunis dans la bibliothèque")}
       <span class="glass-chip photo-card__tag">{I["layers"]} Présentiel · Distanciel · Hybride</span>
       <div class="photo-card__glass">
         <div><strong>420 h</strong><span>Bachelor</span></div>
