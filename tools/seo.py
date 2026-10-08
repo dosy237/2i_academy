@@ -9,7 +9,7 @@ OG_IMAGE = f"{SITE_URL}/assets/img/og-academy21.jpg"
 
 # Titre (≈ 60 caractères max., affiché en entier par Google) et description (≈ 140-160 caractères).
 META = {
-    "index.html": ("Academy 21 University : école de management et leadership",
+    "index.html": ("Academy Twenty One University (A21) : école de management",
                    "Bachelor Bac+3, Mastère Bac+5, Executive MBA et formation IA, en présentiel, à distance ou en hybride. École de management et de leadership, Paris et Cameroun."),
     "ecole.html": (f"L'école : mission, fondateur et valeurs | {BRAND}",
                    "Découvrez Academy Twenty One University : sa mission, son fondateur le Dr Raoul Ruben Njionou, ses valeurs et son ambition d'école de management internationale."),
