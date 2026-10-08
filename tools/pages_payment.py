@@ -34,6 +34,17 @@ def build_paiement():
         </div>
       </div>
 
+      <div class="pay-state pay-state--done" data-pay-state="paid" hidden>
+        <div class="success-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2 data-pay-paid-title tabindex="-1">Vous avez déjà effectué ce paiement</h2>
+        <p>Les frais d'étude du dossier <strong data-f="ref">—</strong> sont réglés<span data-paid-when></span>. Aucun nouveau paiement n'est nécessaire.</p>
+        <p class="pay-state__note">Votre reçu vous a été envoyé par e-mail. Notre équipe vous recontacte pour la suite de votre admission.</p>
+        <div class="btn-row" style="justify-content:center">
+          <a class="btn btn--primary" href="admissions.html">Retour aux admissions</a>
+          <a class="btn btn--ghost" href="mailto:{CONTACT_EMAIL}?subject=Frais%20d%27%C3%A9tude%20de%20dossier">{I["mail"]} Une question ?</a>
+        </div>
+      </div>
+
       <div class="pay-grid" data-pay-state="ready" hidden>
         <aside class="pay-summary on-dark" aria-labelledby="sum-title">
           {ring("deco", uid="pay")}

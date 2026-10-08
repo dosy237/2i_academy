@@ -684,6 +684,15 @@
     try { return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return ""; }
   }
 
+  function paidMemo(op, ref, value) {
+    if (!ref) return null;
+    try {
+      if (op === "set") window.localStorage.setItem("a21-paid-" + ref, value || "1");
+      else return window.localStorage.getItem("a21-paid-" + ref);
+    } catch (e) { return null; }
+    return null;
+  }
+
   var payBox = $("[data-pay]");
   if (payBox) {
     var token = params.get("t") || "";
@@ -715,6 +724,16 @@
           ref: s.ref, name: ((s.prenom || "") + " " + (s.nom || "")).trim() || s.email, programme: s.programme,
           eur: s.labelEur, fcfa: s.labelFcfa, expires: frDate(s.expires)
         });
+        // Dossier déjà réglé : vérifié chez Stripe / Fapshi, ou mémorisé par ce navigateur après la confirmation.
+        var paidLocal = paidMemo("get", s.ref);
+        if (s.paid || paidLocal) {
+          var when = (s.paid && s.paid.date) || paidLocal;
+          var dt = when && when !== "1" ? frDate(when) : "";
+          $("[data-paid-when]", payBox).textContent = dt ? " depuis le " + dt : "";
+          show("paid");
+          d.title = "Paiement déjà effectué — Academy 21 University";
+          return $("[data-pay-paid-title]", payBox).focus();
+        }
         // Zones Mobile Money (XAF / XOF)
         var zones = s.zones || [];
         if (zones.length > 1) {
@@ -793,6 +812,7 @@
           d.title = "Paiement confirmé — Academy 21 University";
           fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim() || r.email, amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "") + ")", transaction: r.transaction });
           $("[data-paid-details]").hidden = false;
+          paidMemo("set", r.ref, new Date().toISOString());
           return end("paid", "Merci, votre paiement est confirmé", "Vos frais d'étude de dossier sont réglés. Un reçu vous a été envoyé par e-mail ; notre équipe vous recontacte pour la suite de votre admission.");
         }
         if (r.ok && r.status === "failed") {

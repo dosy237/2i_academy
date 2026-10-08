@@ -401,17 +401,20 @@ def simple_hero(crumb_items, title, lead, eyebrow=None, extra="", uid="ph", phot
 </section>'''
 
 
-# --- Fondateur : Dr Raoul Ruben NJIONOU ---
+# --- Fondateur : Dr Raoul Ruben Njionou ---
 # Déposez les photos dans assets/img/photos/ sous ces noms : elles sont prises en compte automatiquement.
-FOUNDER_ALTS = ["Portrait du Dr Raoul Ruben NJIONOU, fondateur d'Academy Twenty One", 'Le Dr Raoul Ruben NJIONOU anime une séance devant les membres de la communauté', "Le Dr Raoul Ruben NJIONOU s'exprime sur scène lors d'un événement Academy Twenty One"]
+FOUNDER_ALTS = ["Portrait du Dr Raoul Ruben Njionou, fondateur d'Academy Twenty One", 'Le Dr Raoul Ruben Njionou anime une séance devant les membres de la communauté', "Le Dr Raoul Ruben Njionou s'exprime sur scène lors d'un événement Academy Twenty One"]
 FOUNDER_PHOTOS = ["dr-raoul-njionou-1.jpg", "dr-raoul-njionou-2.jpg", "dr-raoul-njionou-3.jpg"]
 
 def founder_photos():
     return [f"/assets/img/photos/{f}" for f in FOUNDER_PHOTOS if os.path.exists(os.path.join(ROOT, "assets/img/photos", f))]
 
-FOUNDER_TEXT = ("Fondateur, Chairman &amp; CEO d'A21. Avec près de 15 ans d'expérience dans le Marketing de Réseau "
-                "et plus de 20 ans dans le monde des affaires, il a su se faire une place au sommet. "
-                "Leader d'impact reconnu sur 5 continents.")
+FOUNDER_NAME = "Dr Raoul Ruben Njionou"
+FOUNDER_ROLE = "Founder &amp; Chairman d'Academy Twenty One University"
+FOUNDER_TEXT = ("Conférencier, leader d'impact et auteur, il possède près de 20 ans d'expérience dans le marketing, "
+                "la formation et le monde des affaires. Animé par une vision forte du leadership et un engagement profond "
+                "en faveur du développement personnel et de l'entrepreneuriat, il exerce aujourd'hui une influence "
+                "reconnue sur les cinq continents.")
 
 def founder_block(heading="h2", more_href="ecole.html#fondateur", more_label="En savoir plus", gallery=False, hid="founder-title"):
     photos = founder_photos()
@@ -428,7 +431,8 @@ def founder_block(heading="h2", more_href="ecole.html#fondateur", more_label="En
   <div class="founder__portrait"{portrait_style}><span aria-hidden="true">RRN</span>{zoom_btn(photos[0], FOUNDER_ALTS[0], "fondateur") if photos else ""}</div>
   <div>
     <p class="eyebrow">Le fondateur</p>
-    <{heading} id="{hid}">Dr. Raoul Ruben NJIONOU</{heading}>
+    <{heading} id="{hid}">{FOUNDER_NAME}</{heading}>
+    <p class="founder__role">{FOUNDER_ROLE}</p>
     <p class="founder__text">{FOUNDER_TEXT}</p>
     <a class="link-arrow" href="{more_href}"{ext}>{more_label}{sr} {I["arrow"]}</a>
     {gal}

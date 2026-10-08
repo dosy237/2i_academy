@@ -12,7 +12,7 @@ META = {
     "index.html": ("Academy 21 University : école de management et leadership",
                    "Bachelor Bac+3, Mastère Bac+5, Executive MBA et formation IA, en présentiel, à distance ou en hybride. École de management et de leadership, Paris et Cameroun."),
     "ecole.html": (f"L'école : mission, fondateur et valeurs | {BRAND}",
-                   "Découvrez Academy Twenty One University : sa mission, son fondateur le Dr Raoul Ruben NJIONOU, ses valeurs et son ambition d'école de management internationale."),
+                   "Découvrez Academy Twenty One University : sa mission, son fondateur le Dr Raoul Ruben Njionou, ses valeurs et son ambition d'école de management internationale."),
     "international.html": (f"Ouverture internationale et réseau mondial | {BRAND}",
                            "Une école ouverte sur le monde : réseau international, approche interculturelle et partenariats pour former des managers capables d'agir partout."),
     "formations.html": (f"Formations : Bachelor, Mastère, Executive MBA | {BRAND}",
@@ -86,7 +86,7 @@ ORG = {
     "slogan": "Learn. Lead. Transform.",
     "address": {"@type": "PostalAddress", "streetAddress": "7 boulevard Suchet", "postalCode": "75016",
                 "addressLocality": "Paris", "addressCountry": "FR"},
-    "founder": {"@type": "Person", "name": "Raoul Ruben NJIONOU", "honorificPrefix": "Dr"},
+    "founder": {"@type": "Person", "name": "Raoul Ruben Njionou", "honorificPrefix": "Dr", "jobTitle": "Founder & Chairman"},
     "sameAs": ["https://www.academytwentyone.com/"],
 }
 

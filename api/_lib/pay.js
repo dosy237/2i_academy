@@ -149,6 +149,14 @@ async function stripeNotifyOnce(st) {
   await notifyPaid(st);
 }
 
+/* Paiement déjà réussi pour cette référence ? (recherche Stripe sur les métadonnées) */
+async function stripePaidByRef(ref) {
+  const q = `metadata['ref']:'${String(ref).replace(/[^A-Za-z0-9-]/g, "")}' AND status:'succeeded'`;
+  const r = await stripe(`payment_intents/search?query=${encodeURIComponent(q)}&limit=1`);
+  const pi = r.data && r.data[0];
+  return pi ? { method: "card", date: new Date(pi.created * 1000).toISOString() } : null;
+}
+
 /* ---------------------------------------------------------------- CinetPay (Mobile Money) */
 const CINETPAY = "https://api-checkout.cinetpay.com/v2";
 
@@ -340,7 +348,7 @@ async function fapshiCheckout(c, currency, base) {
     amount: toFcfa(c.amount),
     email: c.email,
     redirectUrl: `${base}/api/fapshi?ext=${encodeURIComponent(ext)}`,
-    userId: ext,
+    userId: refKey(c.ref),
     externalId: ext,
     message: `Frais etude de dossier ${c.ref} - Academy 21`,
   });
@@ -348,13 +356,37 @@ async function fapshiCheckout(c, currency, base) {
   return j.link;
 }
 
-/* Au retour du candidat : retrouve la transaction créée pour cette tentative. */
+const refKey = (ref) => String(ref || "").replace(/[^A-Za-z0-9-]/g, "");
+
+async function fapshiList(userId) {
+  const list = await fapshi(`transaction/${encodeURIComponent(userId)}`);
+  const arr = Array.isArray(list) ? list : [];
+  return arr.sort((a, b) => String(b.dateInitiated || "").localeCompare(String(a.dateInitiated || "")));
+}
+
+/* Au retour du candidat : retrouve la transaction créée pour cette tentative (userId = référence du dossier ;
+   les premières transactions de test utilisaient l'identifiant de tentative). */
 async function fapshiFindTransId(ext) {
   if (!/^[A-Za-z0-9-]{6,80}$/.test(ext)) return "";
-  const list = await fapshi(`transaction/${encodeURIComponent(ext)}`);
-  const arr = Array.isArray(list) ? list : [];
-  arr.sort((a, b) => String(b.dateInitiated || "").localeCompare(String(a.dateInitiated || "")));
-  return (arr[0] && arr[0].transId) || "";
+  const byRef = (await fapshiList(ext.replace(/-[A-F0-9]{6}$/, ""))).find((t) => t.externalId === ext);
+  if (byRef) return byRef.transId || "";
+  const old = await fapshiList(ext);
+  return (old[0] && old[0].transId) || "";
+}
+
+async function fapshiPaidByRef(ref) {
+  const t = (await fapshiList(refKey(ref))).find((x) => String(x.status || "").toUpperCase() === "SUCCESSFUL" && Number(x.amount) >= 100);
+  return t ? { method: "mobile", date: t.dateConfirmed || t.dateInitiated || "" } : null;
+}
+
+/* Le dossier est-il déjà réglé ? Interroge chaque prestataire configuré ; une panne ne bloque jamais le paiement. */
+async function paidByRef(ref) {
+  if (!refKey(ref)) return null;
+  const checks = [];
+  if (stripeReady()) checks.push(stripePaidByRef(ref));
+  if (mobileProvider() === "fapshi") checks.push(fapshiPaidByRef(ref));
+  const res = await Promise.allSettled(checks.map((p) => Promise.race([p, new Promise((r) => setTimeout(() => r(null), 6000))])));
+  return res.map((r) => (r.status === "fulfilled" ? r.value : null)).find(Boolean) || null;
 }
 
 async function fapshiStatus(id) {
@@ -418,5 +450,5 @@ module.exports = {
   PROGRAMMES, EUR_TO_FCFA, feeEur, toFcfa, fmtEur, fmtFcfa, ZONES,
   stripeReady, cinetpayReady, flutterwaveReady, notchpayReady, fapshiReady, fapshiFindTransId, mobileProvider, mobileReady, createToken, readToken, summary,
   stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus, notchpayStatus, fapshiStatus,
-  mobileCheckout, mobileStatus, notifyPaid,
+  mobileCheckout, mobileStatus, notifyPaid, paidByRef,
 };

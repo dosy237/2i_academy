@@ -17,7 +17,7 @@ def build_mentions():
   Inscrite au Registre national des entreprises · Code APE 8559A (formation continue d'adultes)<br>
   E-mail : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a><br>
   Téléphone : <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></p>
-  <p>Directeur de la publication : Dr Raoul Ruben NJIONOU, fondateur.</p>
+  <p>Directeur de la publication : Dr Raoul Ruben Njionou, fondateur.</p>
   <h2>Hébergement</h2>
   <p>Hostinger International Ltd., 61 Lordou Vironos Street, 6023 Larnaca, Chypre — <a href="https://www.hostinger.fr" rel="noopener">hostinger.fr</a>.</p>
   <h2>Propriété intellectuelle</h2>

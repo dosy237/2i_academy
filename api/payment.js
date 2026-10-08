@@ -170,7 +170,9 @@ module.exports = async function handler(req, res) {
 
     if (req.method === "GET" && action === "session") {
       if (!process.env.PAYMENT_SECRET) return json(res, 503, { ok: false, error: "not_configured" });
-      return json(res, 200, { ok: true, ...pay.summary(pay.readToken(q.get("t"))) });
+      const c = pay.readToken(q.get("t"));
+      const paid = await pay.paidByRef(c.ref).catch(() => null);
+      return json(res, 200, { ok: true, ...pay.summary(c), paid });
     }
 
     if (req.method === "GET" && action === "status") {
