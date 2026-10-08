@@ -11,11 +11,10 @@ def build_mentions():
   <h2>Éditeur du site</h2>
   <p><strong>{LEGAL_NAME}</strong> (Academy Twenty One University — Academy 21 University)<br>
   Nom commercial : A21<br>
-  SIREN : {SIREN} — inscrite au Registre national des entreprises<br>
+  Siège social : 7 boulevard Suchet, 75016 Paris, France<br>
+  SIREN : {SIREN} — SIRET du siège : 927 784 314 00019<br>
+  Inscrite au Registre national des entreprises · Code APE 8559A (formation continue d'adultes)<br>
   Capital social : 2 000 €<br>
-  Forme juridique : {TODO}<br>
-  Siège social : {TODO}<br>
-  Numéro de déclaration d'activité de formation : {TODO}<br>
   E-mail : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a><br>
   Téléphone : <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></p>
   <p>Directeur de la publication : Dr Raoul Ruben NJIONOU, fondateur.</p>
@@ -41,7 +40,7 @@ def build_confidentialite():
 <section class="section"><div class="container layout-aside">
   <div class="prose">
     <h2 id="c0">Responsable du traitement</h2>
-    <p>{SCHOOL}, joignable à l'adresse <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> ou au <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a>. Adresse postale : {TODO}.</p>
+    <p>{SCHOOL}, joignable à l'adresse <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> ou au <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a>. Adresse postale : 7 boulevard Suchet, 75016 Paris, France.</p>
     <h2 id="c1">Données collectées</h2>
     <p>Nous collectons uniquement les données que vous saisissez dans nos formulaires :</p>
     <ul>

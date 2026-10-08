@@ -136,7 +136,7 @@ RGAA 4.1 / WCAG 2.2 AA visés : lien d'évitement, navigation clavier, focus vis
 formulaires avec erreurs liées et récapitulatif, `prefers-reduced-motion`, fonctionnement sans JavaScript.
 Polices auto-hébergées (aucun service tiers, aucun cookie).
 
-## À compléter
+## Coordonnées et informations légales
 
-Mentions légales (raison sociale, siège, SIRET, n° de déclaration d'activité, directeur de publication),
-adresse postale du siège, forme juridique, n° de déclaration d'activité. Contact : `admin@academy21france.fr` · 07 51 36 09 44.
+ACADEMY TWENTY ONE (A21) — 7 boulevard Suchet, 75016 Paris — SIRET 927 784 314 00019 — capital 2 000 €.
+Contact : `admin@academy21france.fr` · 07 51 36 09 44 (constantes dans `tools/components.py` et `tools/pages_legal.py`).

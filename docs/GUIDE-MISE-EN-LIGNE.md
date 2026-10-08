@@ -150,8 +150,8 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 
 ## Avant l'ouverture au public
 
-- [ ] Adresse affichée sur le site (à m'envoyer).
-- [ ] Mentions légales complètes : raison sociale, adresse, SIRET, n° de déclaration d'activité, directeur de publication.
+- [x] Adresse affichée sur le site : admin@academy21france.fr.
+- [x] Mentions légales (raison sociale, siège, SIRET, capital, directeur de publication).
 - [ ] Phrase sur les frais d'étude de dossier (remboursables ou non) dans les mentions / conditions.
 - [ ] Désactiver l'ancien déploiement Vercel une fois le domaine actif (éviter deux copies du site en ligne).
 
