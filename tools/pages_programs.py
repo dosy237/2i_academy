@@ -73,7 +73,7 @@ def build_bachelor():
     body = f'''
 {hero("bachelor", "Bachelor · Bac+3", "Management Stratégique &amp; <span class='serif'>Opérationnel</span>", "Piloter la performance • Développer l'activité • Manager les équipes",
   [("award", "Titre RNCP38666"), ("clock", "420 h"), ("layers", "Présentiel · Distanciel · Hybride")],
-  [("Niveau de sortie", "Bac+3 — Niveau 6"), ("Durée", "420 h de formation"), ("Certification", "Titre professionnel — RNCP38666"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Admission", "Bac+2, ou 5 ans d'expérience significative")], photo="groupe")}
+  [("Niveau de sortie", "Bac+3 — Niveau 6"), ("Durée", "420 h de formation"), ("Certification", "Titre professionnel — RNCP38666"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Admission", "Bac+2, ou 5 ans d'expérience significative")], photo="livres")}
 {subnav([("apercu", "Aperçu"), ("admission", "Admission"), ("dimensions", "Les 4 dimensions"), ("programme", "Programme"), ("competences", "Compétences"), ("certification", "Certification"), ("debouches", "Débouchés")], "bachelor")}
 <div class="section">
   <div class="container layout-aside">
@@ -173,7 +173,7 @@ def build_mastere():
   "Former les décideurs capables de penser la stratégie, conduire le changement et transformer durablement les organisations.",
   [("award", "RNCP39994*"), ("clock", "2 ans · 900 h"), ("graduation", "Alternance possible")],
   [("Niveau de sortie", "Bac+5 • Niveau 7"), ("Durée", "2 ans • M1 + M2"), ("Volume indicatif", "900 h"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Rythme", "Initial • Formation continue • Alternance selon convention"), ("Référentiel", "RNCP39994 • Manager des transformations des organisations*")],
-  ("#2f86ab", "#a7dd63"), '<p class="motto">Apprendre. Diriger. Transformer.</p>', photo="amphi")}
+  ("#2f86ab", "#a7dd63"), '<p class="motto">Apprendre. Diriger. Transformer.</p>', photo="bibliotheque")}
 {subnav([("apercu", "Aperçu"), ("dimensions", "Les 6 dimensions"), ("admission", "Admission"), ("programme", "Programme"), ("rncp", "Référentiel RNCP"), ("pedagogie", "Pédagogie"), ("debouches", "Débouchés")], "mastere")}
 <div class="section">
   <div class="container layout-aside">

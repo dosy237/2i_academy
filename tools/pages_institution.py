@@ -57,7 +57,7 @@ def build_ecole():
     dl_inst = f'<a class="btn btn--glass" href="{BROCHURES["institution"][0]}" download>{I["download"]} Présentation institutionnelle ({pdf_size("institution")})</a>'
     body = f'''
 {hero_editorial([("ecole.html", "L'école")], "Academy Twenty One <span class='serif'>University</span>",
-  "Une école de management, de leadership et d'entrepreneuriat, tournée vers le monde et l'entreprise.", '<span lang="en">Institutional profile</span>', "amphi",
+  "Une école de management, de leadership et d'entrepreneuriat, tournée vers le monde et l'entreprise.", '<span lang="en">Institutional profile</span>', "livres",
   '<div class="btn-row">' + dl_inst + f'<a class="btn btn--accent" href="#fondateur">Le fondateur {I["arrow"]}</a></div>', amb="gold")}
 
 <section class="section" aria-labelledby="id-title">

@@ -88,7 +88,7 @@ def build_index():
       </ul>
       <div class="btn-row"><a class="btn btn--navy" href="ecole.html">Découvrir l'école {I["arrow"]}</a><a class="link-arrow" href="formations.html">Comparer les formations {I["arrow"]}</a></div>
     </div>
-    <div class="photo-card reveal"{photo_style("amphi")}>
+    <div class="photo-card reveal"{photo_style("bibliotheque")}>
       <span class="glass-chip photo-card__tag">{I["layers"]} Présentiel · Distanciel · Hybride</span>
       <div class="photo-card__glass">
         <div><strong>420 h</strong><span>Bachelor</span></div>
@@ -252,7 +252,7 @@ def build_pedagogie():
     body = f'''
 {hero_light([("pedagogie.html", "Pédagogie")], "Une pédagogie <span class='serif'>orientée décision</span>",
   "Analyser, arbitrer, produire, défendre : chaque séquence part d'une situation réelle.", "Pédagogie &amp; modalités",
-  visual=photo_img("accompagnement", "Une formatrice accompagne une apprenante sur un document", "40% 30%"), amb="green", shape="galet")}
+  visual=photo_img("projet", "Une équipe d'apprenants aux profils variés travaille ensemble sur un ordinateur", "55% 40%"), amb="green", shape="galet")}
 
 <section class="section" aria-labelledby="pr-title">
   <div class="container">
@@ -320,7 +320,7 @@ def build_entreprises():
 {hero_light([("entreprises.html", "Entreprises")], "Faites grandir vos <span class='serif'>managers</span> et vos dirigeants",
   "Alternance, formation continue, Executive Education ou IA : un dispositif adapté à vos enjeux.", "Entreprises &amp; organisations",
   f'<div class="btn-row"><a class="btn btn--primary" href="contact.html?objet=entreprise">Échanger avec nous {I["arrow"]}</a><a class="btn btn--ghost" href="brochures.html">{I["download"]} Brochures</a></div>',
-  visual=photo_img("leadership", "Un dirigeant anime une séance de travail devant une équipe", "60% 30%"), amb="gold", shape="arche")}
+  visual=photo_img("echange", "Une équipe internationale échange autour d'un ordinateur", "50% 40%"), amb="gold", shape="arche")}
 
 <section class="section" aria-labelledby="off-title">
   <div class="container">

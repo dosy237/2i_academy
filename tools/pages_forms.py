@@ -97,7 +97,7 @@ def build_admissions():
     body = f'''
 {hero_light([("admissions.html", "Admissions")], "Rejoindre <span class='serif'>A21 University</span>",
   "Une admission sélective sur dossier et entretien, fondée sur votre parcours et votre expérience.", "Admissions",
-  ADM_BTNS, visual=photo_img("groupe", "Un groupe d'étudiants souriants sur un campus", "50% 30%"), amb="green", shape="galet")}
+  ADM_BTNS, visual=photo_img("reussite", "Trois étudiants d'horizons différents célèbrent leur réussite", "50% 35%"), amb="green", shape="galet")}
 <section class="section" aria-labelledby="proc-title">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow">Processus</p><h2 id="proc-title">4 étapes pour nous rejoindre</h2></div>

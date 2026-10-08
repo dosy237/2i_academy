@@ -353,10 +353,12 @@ def related(keys, title="Poursuivre votre réflexion"):
 </section>'''
 
 PHOTOS = {
-    "amphi": "/assets/img/photos/etudiants-amphi.jpg",
-    "groupe": "/assets/img/photos/etudiants-groupe.jpg",
+    "bibliotheque": "/assets/img/photos/campus-bibliotheque.jpg",
+    "livres": "/assets/img/photos/etudiants-livres.jpg",
+    "projet": "/assets/img/photos/equipe-projet.jpg",
+    "echange": "/assets/img/photos/equipe-echange.jpg",
+    "reussite": "/assets/img/photos/reussite.jpg",
     "leadership": "/assets/img/photos/leadership-entreprise.jpg",
-    "accompagnement": "/assets/img/photos/accompagnement.jpg",
 }
 
 def photo_style(key):
