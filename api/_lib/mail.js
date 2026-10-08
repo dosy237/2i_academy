@@ -49,14 +49,32 @@ async function sendResend(payload) {
 }
 
 /* Envoi unique, quel que soit le service : { to, cc, replyTo, subject, html, text, attachments } */
+/* Images du gabarit intégrées au message (pièces jointes « inline », cid:) : elles s'affichent
+   même dans les messageries qui bloquent le téléchargement des images distantes. */
+const path = require("path");
+const EMAIL_IMAGES = { "banner.jpg": "a21-banner", "logo-21.png": "a21-logo" };
+function inlineImages(html) {
+  const used = [];
+  const out = String(html || "").replace(/src="[^"]*\/assets\/img\/email\/(banner\.jpg|logo-21\.png)"/g, (m0, file) => {
+    if (!used.includes(file)) used.push(file);
+    return `src="cid:${EMAIL_IMAGES[file]}"`;
+  });
+  const files = used.map((file) => ({
+    filename: file, path: path.join(__dirname, "..", "..", "assets", "img", "email", file), cid: EMAIL_IMAGES[file],
+    contentDisposition: "inline",
+  }));
+  return { html: out, files };
+}
+
 async function sendMail(m) {
   if (smtpConfigured()) {
     const name = (process.env.MAIL_FROM_NAME || "Academy 21 University").replace(/["<>]/g, "");
+    const inl = inlineImages(m.html);
     await smtp().sendMail({
       from: { name, address: process.env.SMTP_USER },
       to: m.to, cc: m.cc && m.cc.length ? m.cc : undefined, replyTo: m.replyTo,
-      subject: m.subject, html: m.html, text: m.text,
-      attachments: (m.attachments || []).map((a) => ({ filename: a.filename, content: a.content, encoding: "base64" })),
+      subject: m.subject, html: inl.html, text: m.text,
+      attachments: (m.attachments || []).map((a) => ({ filename: a.filename, content: a.content, encoding: "base64" })).concat(inl.files),
     });
     return;
   }
@@ -86,8 +104,8 @@ const publicBase = (base) => String(base || process.env.SITE_URL || "").replace(
 function layout(title, inner, opts) {
   const o = Object.assign({ hero: true, eyebrow: "", preheader: "", footerNote: "" }, opts || {});
   const base = publicBase(o.base);
-  const logo = base ? `<img src="${esc(base)}/assets/img/email/logo-21.png" width="42" height="35" alt="A21" style="display:block;border:0;height:35px;width:auto">` : "";
-  const hero = o.hero && base
+  const logo = `<img src="${esc(base)}/assets/img/email/logo-21.png" width="42" height="35" alt="A21" style="display:block;border:0;height:35px;width:auto">`;
+  const hero = o.hero
     ? `<tr><td style="padding:0;background:${C.navy}"><img src="${esc(base)}/assets/img/email/banner.jpg" width="600" alt="Étudiantes et étudiants d'Academy Twenty One University" style="display:block;width:100%;max-width:600px;height:auto;border:0;color:#ffffff;font:14px ${FONT}"></td></tr>`
     : "";
   const rule = `<tr><td style="padding:0;font-size:0;line-height:0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
