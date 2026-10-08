@@ -1,12 +1,12 @@
 # Pages légales, plan du site et page 404.
-from components import I, PROGRAMS, CONTACT_EMAIL, SCHOOL, page, simple_hero, notice
+from components import hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, PROGRAMS, CONTACT_EMAIL, SCHOOL, page, simple_hero, notice
 
 TODO = '<span class="todo">à compléter</span>'
 
 
 def build_mentions():
     body = f'''
-{simple_hero([("mentions-legales.html", "Mentions légales")], "Mentions légales", "Informations relatives à l'éditeur et à l'hébergeur du site, conformément à la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique.")}
+{hero_minimal([("mentions-legales.html", "Mentions légales")], "Mentions légales", "Éditeur et hébergeur du site, conformément à la loi n° 2004-575 du 21 juin 2004.")}
 <section class="section"><div class="container prose">
   <h2>Éditeur du site</h2>
   <p><strong>{SCHOOL}</strong> (Academy 21 University)<br>
@@ -34,7 +34,7 @@ def build_confidentialite():
     toc = ["Responsable du traitement", "Données collectées", "Finalités et bases légales", "Destinataires", "Durées de conservation", "Stockage local et cookies", "Vos droits"]
     toc_html = "".join(f'<li><a href="#c{i}">{t}</a></li>' for i, t in enumerate(toc))
     body = f'''
-{simple_hero([("confidentialite.html", "Confidentialité")], "Politique de confidentialité", "Comment nous collectons, utilisons et protégeons vos données personnelles, conformément au Règlement général sur la protection des données (RGPD).")}
+{hero_minimal([("confidentialite.html", "Confidentialité")], "Politique de confidentialité", "Comment nous collectons, utilisons et protégeons vos données (RGPD).")}
 <section class="section"><div class="container layout-aside">
   <div class="prose">
     <h2 id="c0">Responsable du traitement</h2>
@@ -73,7 +73,7 @@ def build_confidentialite():
 
 def build_accessibilite():
     body = f'''
-{simple_hero([("accessibilite.html", "Accessibilité")], "Déclaration d'accessibilité", "{SCHOOL} s'engage à rendre son site internet accessible conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.")}
+{hero_minimal([("accessibilite.html", "Accessibilité")], "Déclaration d'accessibilité", "Notre engagement pour un site utilisable par toutes et tous.")}
 <section class="section"><div class="container prose">
   <h2>État de conformité</h2>
   <p>Le site est <strong>partiellement conforme</strong> avec le Référentiel général d'amélioration de l'accessibilité (RGAA 4.1) et les WCAG 2.2 niveau AA. Aucun audit externe n'a encore été réalisé ; cette déclaration sera mise à jour à l'issue de l'audit.</p>
@@ -101,7 +101,7 @@ def build_accessibilite():
 def build_plan():
     progs = "".join(f'<li><a href="{p["href"]}">{p["short"]} — {p["title"]}</a></li>' for p in PROGRAMS)
     body = f'''
-{simple_hero([("plan-du-site.html", "Plan du site")], "Plan du site", "L'ensemble des pages du site Academy Twenty One University.")}
+{hero_minimal([("plan-du-site.html", "Plan du site")], "Plan du site", "Toutes les pages du site.")}
 <section class="section"><div class="container sitemap">
   <div class="card"><h2 style="font-size:1.1rem">L'école</h2><ul><li><a href="index.html">Accueil</a></li><li><a href="ecole.html">L'école</a></li><li><a href="ecole.html#fondateur">Le fondateur</a></li><li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li><li><a href="international.html">International</a></li><li><a href="entreprises.html">Entreprises</a></li><li><a href="brochures.html">Brochures</a></li></ul></div>
   <div class="card"><h2 style="font-size:1.1rem">Formations</h2><ul><li><a href="formations.html">Toutes les formations</a></li>{progs}</ul></div>

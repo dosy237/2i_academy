@@ -1,5 +1,5 @@
 # Admissions, candidature en ligne, contact et confirmation.
-from components import I, P, PROGRAMS, CONTACT_EMAIL, ring, page, cta_band, simple_hero, table, notice
+from components import hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, P, PROGRAMS, CONTACT_EMAIL, ring, page, cta_band, simple_hero, table, notice
 
 
 def field(id_, label, kind="text", required=False, hint=None, attrs="", autocomplete=None, span=False):
@@ -93,11 +93,11 @@ def build_admissions():
                        f'<h3>{p["short"]}</h3><p class="small text-muted">{access[p["key"]]}</p>'
                        f'<div class="btn-row card__link"><a class="btn btn--primary btn--sm" href="candidature.html?programme={p["key"]}">Candidater <span class="visually-hidden">au programme {p["short"]}</span></a>'
                        f'<a class="link-arrow" href="{p["href"]}">Fiche <span class="visually-hidden">{p["short"]}</span>{I["arrow"]}</a></div></article>')
-    ADM_BTNS = f'<div class="btn-row mt-2"><a class="btn btn--accent" href="candidature.html">Commencer ma candidature {I["arrow"]}</a><a class="btn btn--glass" href="#conditions">Conditions d&#39;accès</a></div>'
+    ADM_BTNS = f'<div class="btn-row"><a class="btn btn--accent" href="candidature.html">Commencer ma candidature {I["arrow"]}</a><a class="btn btn--ghost" href="#conditions">Conditions d&#39;accès</a></div>'
     body = f'''
-{simple_hero([("admissions.html", "Admissions")], "Admissions",
-  "Une admission sélective sur dossier et entretien, qui tient compte de votre parcours académique comme de votre expérience professionnelle.", "Rejoindre l'école",
-  ADM_BTNS, photo="groupe")}
+{hero_light([("admissions.html", "Admissions")], "Rejoindre <span class='serif'>A21 University</span>",
+  "Une admission sélective sur dossier et entretien, fondée sur votre parcours et votre expérience.", "Admissions",
+  ADM_BTNS, visual=photo_img("groupe", "Un groupe d'étudiants souriants sur un campus", "50% 30%"), amb="green", shape="galet")}
 <section class="section" aria-labelledby="proc-title">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow">Processus</p><h2 id="proc-title">4 étapes pour nous rejoindre</h2></div>
@@ -260,8 +260,8 @@ def build_candidature():
   {nav(4)}
 </section>'''
     body = f'''
-{simple_hero([("admissions.html", "Admissions"), ("candidature.html", "Candidature")], "Candidater en ligne",
-  "Cinq étapes, une dizaine de minutes. Votre brouillon est enregistré sur votre appareil : vous pouvez reprendre plus tard.", "Admissions")}
+{hero_light([("admissions.html", "Admissions"), ("candidature.html", "Candidature")], "Candidater <span class='serif'>en ligne</span>",
+  "Cinq étapes, environ dix minutes. Votre brouillon est enregistré automatiquement.", "Admissions", amb="green")}
 <section class="section section--flush-top" aria-label="Formulaire de candidature">
   <div class="container" style="margin-top:-3.5rem;position:relative;z-index:2">
     <form class="wizard" id="candidature-form" data-wizard data-submit-form action="/api/submit" method="post" novalidate>
@@ -289,9 +289,9 @@ def build_contact():
               ("rappel", "Être rappelé·e"), ("handicap", "Aménagement / situation de handicap"), ("autre", "Autre demande")]
     prog_opts = [(p["key"], f'{p["short"]} — {p["title"]}') for p in PROGRAMS] + [("indecis", "Je ne sais pas encore")]
     body = f'''
-{simple_hero([("contact.html", "Contact")], "Contactez-nous",
-  "Information sur nos programmes, partenariat entreprise ou demande d'aménagement : l'équipe vous répond personnellement.", "Contact",
-  f'<div class="btn-row mt-2"><a class="btn btn--accent" href="candidature.html">Vous souhaitez candidater ? {I["arrow"]}</a></div>')}
+{hero_light([("contact.html", "Contact")], "Contactez-<span class='serif'>nous</span>",
+  "Programmes, partenariats, aménagements : une réponse personnalisée.", "Contact",
+  f'<div class="btn-row"><a class="btn btn--accent" href="candidature.html">Vous souhaitez candidater ? {I["arrow"]}</a></div>', amb="blue")}
 <section class="section section--flush-top" aria-labelledby="form-title">
   <div class="container layout-aside" style="margin-top:-3.5rem;position:relative;z-index:2">
     <div class="wizard__panel">

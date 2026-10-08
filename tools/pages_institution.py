@@ -1,6 +1,6 @@
 # Pages institutionnelles issues de la présentation institutionnelle et du document Global Engagement :
 # L'école (identité, raison d'être, fondateur, valeurs, modèle, expérience, gouvernance, ambition) et International.
-from components import I, BROCHURES, pdf_size, ring, page, cta_band, simple_hero, notice, founder_block
+from components import hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, BROCHURES, pdf_size, ring, page, cta_band, simple_hero, notice, founder_block
 
 
 def build_ecole():
@@ -56,9 +56,9 @@ def build_ecole():
 
     dl_inst = f'<a class="btn btn--glass" href="{BROCHURES["institution"][0]}" download>{I["download"]} Présentation institutionnelle ({pdf_size("institution")})</a>'
     body = f'''
-{simple_hero([("ecole.html", "L'école")], "Academy Twenty One University",
-  "A global school for management, leadership and entrepreneurship — une institution d'enseignement supérieur tournée vers le monde, l'entreprise, l'innovation et l'impact.", "Institutional profile",
-  f'<ul class="hero-badges"><li class="glass-chip">{I["graduation"]}Du Bac au Bac+5 &amp; Executive Education</li><li class="glass-chip">{I["globe"]}Présentiel · Distanciel · Hybride · Mobilités</li><li class="glass-chip">{I["spark"]}Learn. Lead. Transform.</li></ul><div class="btn-row">' + dl_inst + '</div>', photo="amphi")}
+{hero_editorial([("ecole.html", "L'école")], "Academy Twenty One <span class='serif'>University</span>",
+  "Une école de management, de leadership et d'entrepreneuriat, tournée vers le monde et l'entreprise.", '<span lang="en">Institutional profile</span>', "amphi",
+  '<div class="btn-row">' + dl_inst + f'<a class="btn btn--accent" href="#fondateur">Le fondateur {I["arrow"]}</a></div>', amb="gold")}
 
 <section class="section" aria-labelledby="id-title">
   <div class="container split split--top">
@@ -211,7 +211,11 @@ def build_international():
                ("Virtual exchange", "Cours partagés, projets collaboratifs et classes internationales à distance."),
                ("Visiting professors", "Enseignements et masterclasses assurés par des professeurs et professionnels internationaux."),
                ("Global mentoring", "Mise en relation avec des dirigeants, entrepreneurs ou Alumni du réseau international.")]
-    formats_html = "".join(f'<article class="card card--hover"><span class="num">0{i + 1}</span><h3>{t}</h3><p class="small mb-0">{d}</p></article>' for i, (t, d) in enumerate(formats))
+    stamp_icons = ["graduation", "briefcase", "calendar", "target", "map", "monitor", "mic", "users"]
+    stamp_colors = ["#2f86ab", "#b71c1c", "#3f6e12", "#7a5f2c"]
+    formats_html = "".join(
+        f'<li class="stamp"><span class="stamp__seal" aria-hidden="true" style="--c:{stamp_colors[n % 4]};--r:{(-8, 5, -3, 7)[n % 4]}deg">{I[stamp_icons[n]]}</span>'
+        f'<h3 lang="en">{t}</h3><p>{d}</p></li>' for n, (t, d) in enumerate(formats))
     principles = [("Qualité", "Chaque mobilité répond à des objectifs pédagogiques ou professionnels identifiés."), ("Équité", "Les dispositifs tendent à rendre l'international accessible à des profils divers."),
                   ("Reconnaissance", "Les acquis réalisés chez un partenaire sont encadrés et reconnus selon les conventions applicables."), ("Sécurité", "Évaluation des destinations, information, assurance, contacts d'urgence et suivi des participants."),
                   ("Inclusion", "Attention portée aux besoins particuliers et aux obstacles économiques, sociaux ou liés au handicap."), ("Durabilité", "Pratiques de mobilité plus responsables et intégration des enjeux environnementaux.")]
@@ -225,9 +229,9 @@ def build_international():
     ph_html = "".join(f'<li><h3>{t}</h3><p>{d}</p></li>' for t, d in phases)
     dl_int = f'<a class="btn btn--glass" href="{BROCHURES["international"][0]}" download>{I["download"]} Document Global Engagement ({pdf_size("international")})</a>'
     body = f'''
-{simple_hero([("international.html", "International")], "Une université ouverte sur le monde",
-  "From a global community to a global university : faire du monde un espace d'apprentissage, de coopération et d'opportunités.", "Global engagement",
-  f'<ul class="hero-badges"><li class="glass-chip">{I["globe"]}5 continents · 75+ pays*</li><li class="glass-chip">{I["map"]}Ambition Erasmus+</li><li class="glass-chip">{I["users"]}A21 Global Network</li></ul><div class="btn-row">' + dl_int + '</div>', photo="groupe")}
+{hero_visual([("international.html", "International")], "Une université ouverte sur le <span class='serif'>monde</span>",
+  '<span lang="en">From a global community to a global university.</span> Faire du monde un espace d’apprentissage et d’opportunités.', '<span lang="en">Global engagement</span>', GLOBE_SVG,
+  f'<ul class="hero-badges"><li class="glass-chip">{I["globe"]}5 continents · 75+ pays*</li><li class="glass-chip">{I["map"]}Ambition Erasmus+</li></ul><div class="btn-row">' + dl_int + '</div>', amb="blue")}
 
 <section class="section" aria-labelledby="coeur-title">
   <div class="container split">
@@ -276,6 +280,19 @@ def build_international():
     <div class="reveal">
       <h3>04 · Erasmus+… et au-delà de l'Europe</h3>
       <p>Deux cercles complémentaires : un espace européen structuré par Erasmus+ et un espace mondial structuré par les partenariats académiques et le réseau A21.</p>
+      <figure class="venn mb-2" role="img" aria-label="Deux cercles qui se recoupent : l'Europe avec Erasmus+, et le monde avec le réseau A21 ; l'apprenant A21 se trouve à leur intersection.">
+        <svg viewBox="0 0 460 260" aria-hidden="true">
+          <circle cx="165" cy="130" r="110" fill="#2f86ab" fill-opacity=".14" stroke="#2f86ab" stroke-width="2"/>
+          <circle cx="295" cy="130" r="110" fill="#fccd01" fill-opacity=".18" stroke="#7a5f2c" stroke-width="2" stroke-dasharray="6 6"/>
+          <text x="110" y="125" text-anchor="middle" fill="#1e6a8a" font-size="17">Europe</text>
+          <text x="110" y="148" text-anchor="middle" fill="#1e6a8a" font-size="13" font-weight="600">Erasmus+</text>
+          <text x="352" y="125" text-anchor="middle" fill="#5f4a20" font-size="17">Monde</text>
+          <text x="352" y="148" text-anchor="middle" fill="#5f4a20" font-size="13" font-weight="600">Réseau A21</text>
+          <circle cx="230" cy="130" r="30" fill="#172033"/>
+          <text x="230" y="127" text-anchor="middle" fill="#fff" font-size="11">A21</text>
+          <text x="230" y="142" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">apprenant</text>
+        </svg>
+      </figure>
       <ul class="bloc-list">{zones_html}</ul>
     </div>
   </div>
@@ -284,7 +301,7 @@ def build_international():
 <section class="section section--surface" aria-labelledby="xp-title">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow">05 · Pour chaque apprenant</p><h2 id="xp-title">Une expérience internationale, physique ou intégrée au cursus</h2></div>
-    <div class="values reveal-stagger">{formats_html}</div>
+    <ul class="stamps reveal-stagger">{formats_html}</ul>
   </div>
 </section>
 

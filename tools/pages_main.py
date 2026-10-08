@@ -1,5 +1,5 @@
 # Pages institutionnelles : accueil, école, pédagogie, entreprises, formations, brochures.
-from components import (founder_block, photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
+from components import (ring4, hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, founder_block, photo_style, I, P, PROGRAMS, BROCHURES, CONTACT_EMAIL, ring, page, cta_band, program_card,
                         simple_hero, table, notice, pdf_size)
 
 
@@ -12,15 +12,20 @@ def build_index():
 </ol>'''
 
     deliverables = [
-        ("chart", "", "Tableaux de bord &amp; budgets", "Prévisionnels, analyse des écarts, KPI : le pilotage chiffré d'une activité réelle.", "Bachelor"),
-        ("compass", "icon-badge--blue", "Diagnostics stratégiques", "Analyse de marché, de concurrence et d'organisation, puis orientations argumentées.", "Bachelor · Mastère"),
-        ("briefcase", "icon-badge--yellow", "Missions de conseil", "Consulting Projects I et II, mission de transformation et Grand Oral de leadership.", "Mastère"),
-        ("presentation", "", "Board papers &amp; Impact Project", "Un document de direction exploitable, défendu devant un Board.", "Executive MBA"),
-        ("cpu", "icon-badge--green", "Workflow IA personnel", "Bibliothèque de prompts, personas, scripts, tableau de KPI et workflow de prospection.", "Formation IA"),
-        ("users", "icon-badge--blue", "Plans de management", "Recrutement, intégration, plannings, conduite du changement et mobilisation des équipes.", "Bachelor · Mastère"),
+        ("presentation", "", "Board papers &amp; Executive Impact Project", "Un document de direction exploitable — diagnostic, scénarios, arbitrages, plan de mise en œuvre — défendu devant un Board.", "Executive MBA"),
+        ("compass", "icon-badge--blue", "Diagnostics stratégiques", "Marché, concurrence, organisation, puis orientations argumentées.", "Bachelor · Mastère"),
+        ("chart", "", "Tableaux de bord &amp; budgets", "Prévisionnels, écarts, KPI.", "Bachelor"),
+        ("briefcase", "icon-badge--yellow", "Missions de conseil", "Consulting Projects et Grand Oral.", "Mastère"),
+        ("cpu", "icon-badge--green", "Workflow IA personnel", "Prompts, personas, scripts et tableau de KPI.", "Formation IA"),
+        ("users", "icon-badge--blue", "Plans de management", "Recrutement, intégration, conduite du changement.", "Bachelor · Mastère"),
     ]
-    deliv = "".join(f'<article class="card card--hover"><span class="icon-badge {c}">{I[i]}</span><span class="num">{tag}</span><h3>{t}</h3><p>{d}</p></article>'
-                    for i, c, t, d, tag in deliverables)
+    deliv = ""
+    for n, (i, c, t, d, tag) in enumerate(deliverables):
+        if n == 0:
+            deliv += (f'<article class="card card--feature on-dark">{ring4("ring4", "bf")}<span class="icon-badge icon-badge--navy">{I[i]}</span>'
+                      f'<span class="num">{tag}</span><h3>{t}</h3><p>{d}</p></article>')
+        else:
+            deliv += f'<article class="card card--hover"><span class="icon-badge {c}">{I[i]}</span><span class="num">{tag}</span><h3>{t}</h3><p>{d}</p></article>'
     faq = [("Puis-je candidater sans Bac+2 ?", "Oui pour le Bachelor : à défaut du niveau 5, vous pouvez justifier d'au moins 5 années d'expérience professionnelle significative, appréciées lors de l'étude du dossier et de l'entretien."),
            ("Les formations sont-elles accessibles à distance ?", "Le Bachelor, le Mastère et l'Executive MBA se suivent en présentiel, en distanciel synchrone ou en hybride. La formation IA &amp; Marketing de réseau se déroule entièrement à distance, en classe virtuelle."),
            ("Le Mastère est-il possible en alternance ?", "Oui, lorsque le cadre conventionnel le permet. Il peut aussi être suivi en formation initiale ou en formation continue.")]
@@ -32,8 +37,8 @@ def build_index():
   <div class="container">
     <div>
       <p class="eyebrow">Academy Twenty One University</p>
-      <h1 id="hero-title">Former ceux qui <span class="text-gradient">dirigeront demain.</span></h1>
-      <p class="lead">Du Bachelor à l'Executive MBA, nous formons des managers, des leaders et des dirigeants capables de décider, de mobiliser et de transformer les organisations.</p>
+      <h1 id="hero-title">Former ceux qui <span class="serif">dirigeront</span> demain.</h1>
+      <p class="lead">Du Bachelor à l'Executive MBA : des managers, des leaders et des dirigeants qui décident et transforment.</p>
       <div class="btn-row">
         <a class="btn btn--accent" href="formations.html">Découvrir nos formations {I["arrow"]}</a>
         <a class="btn btn--glass" href="candidature.html">Candidater en ligne</a>
@@ -46,14 +51,7 @@ def build_index():
     </div>
     <div class="hero-visual" aria-hidden="true">
       <div class="hero-visual__halo"></div>
-      <svg class="hero-visual__ring" viewBox="0 0 200 200">
-        <defs>
-          <linearGradient id="hr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#da0612"/><stop offset="1" stop-color="#7a0a10"/></linearGradient>
-          <linearGradient id="hy" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fccd01"/><stop offset="1" stop-color="#fccd01" stop-opacity=".1"/></linearGradient>
-        </defs>
-        <path d="M169 42 A90 90 0 1 0 158 169" fill="none" stroke="url(#hr)" stroke-width="5" stroke-linecap="round"/>
-        <path d="M17 52 A96 96 0 0 1 193 125" fill="none" stroke="url(#hy)" stroke-width="3" stroke-linecap="round"/>
-      </svg>
+      {ring4("ring4 hero-visual__ring", "hq")}
       <div class="hero-visual__disc"></div>
       <div class="float-card float-card--a"><span class="float-card__icon" style="background:#eef8e2;color:#3f6e12">{I["award"]}</span><span><strong>RNCP38666</strong>Titre pro. niveau 6</span></div>
       <div class="float-card float-card--b"><span class="float-card__icon" style="background:#fff6cc;color:#5f4a00">{I["layers"]}</span><span><strong>Hybride</strong>Sur site ou à distance</span></div>
@@ -134,10 +132,10 @@ def build_index():
   <div class="container">
     <div class="section-head section-head--center reveal">
       <p class="motto">Apprendre. Diriger. Transformer.</p>
-      <h2 id="deliv-title">Des livrables concrets, pas seulement des copies</h2>
-      <p class="lead">Nos programmes privilégient les situations professionnelles : chaque module débouche sur une production réutilisable dans votre organisation.</p>
+      <h2 id="deliv-title">Des livrables concrets, pas seulement des <span class="serif">copies</span></h2>
+      <p class="lead">Chaque module débouche sur une production réutilisable dans votre organisation.</p>
     </div>
-    <div class="grid grid--3 reveal-stagger">{deliv}</div>
+    <div class="bento reveal-stagger">{deliv}</div>
     <div class="center-row mt-2"><a class="btn btn--ghost" href="pedagogie.html">Notre pédagogie en détail {I["arrow"]}</a></div>
   </div>
 </section>
@@ -146,12 +144,16 @@ def build_index():
   <div class="container">
     <div class="section-head reveal">
       <p class="eyebrow">Modalités</p>
-      <h2 id="mod-title">Se former sans mettre sa vie professionnelle entre parenthèses</h2>
+      <h2 id="mod-title">Se former sans mettre sa vie professionnelle entre <span class="serif">parenthèses</span></h2>
     </div>
-    <div class="grid grid--3 reveal-stagger">
-      <article class="card card--hover card--accent-top"><span class="icon-badge">{I["building"]}</span><h3>Présentiel</h3><p>Cours, ateliers, études de cas, simulations, travaux de groupe, soutenances et accompagnement sur site.</p></article>
-      <article class="card card--hover card--accent-top"><span class="icon-badge icon-badge--blue">{I["monitor"]}</span><h3>Distanciel synchrone</h3><p>Classes virtuelles en direct, ressources numériques, travaux dirigés et activités collaboratives en ligne.</p></article>
-      <article class="card card--hover card--accent-top"><span class="icon-badge icon-badge--yellow">{I["layers"]}</span><h3>Hybride</h3><p>Une organisation combinant les deux modalités. Le calendrier et la répartition des séquences sont communiqués à chaque session.</p></article>
+    <div class="spectrum reveal">
+      <p class="spectrum__ends" aria-hidden="true"><span>Sur site</span><span>À distance</span></p>
+      <div class="spectrum__bar" aria-hidden="true"><span style="left:16.6%"></span><span style="left:50%"></span><span style="left:83.4%"></span></div>
+      <div class="grid grid--3 reveal-stagger">
+        <article class="card card--hover"><span class="icon-badge">{I["building"]}</span><h3>Présentiel</h3><p>Cours, ateliers, études de cas, simulations et soutenances sur site.</p></article>
+        <article class="card card--hover"><span class="icon-badge icon-badge--yellow">{I["layers"]}</span><h3>Hybride</h3><p>Les deux modalités combinées, selon le calendrier de chaque session.</p></article>
+        <article class="card card--hover"><span class="icon-badge icon-badge--blue">{I["monitor"]}</span><h3>Distanciel synchrone</h3><p>Classes virtuelles en direct et activités collaboratives en ligne.</p></article>
+      </div>
     </div>
   </div>
 </section>
@@ -160,8 +162,8 @@ def build_index():
   <div class="grid-texture" aria-hidden="true"></div>
   <div class="container split" style="position:relative">
     <div class="reveal">
-      <p class="eyebrow">Global engagement</p>
-      <h2 id="world-title">The world is our campus.</h2>
+      <p class="eyebrow" lang="en">Global engagement</p>
+      <h2 id="world-title" lang="en">The world is our <span class="serif">campus.</span></h2>
       <p class="lead">Une communauté Academy Twenty One présente sur 5 continents et dans plus de 75 pays*, une ambition Erasmus+ et un réseau de leaders pour faire du monde un espace d'apprentissage.</p>
       <a class="btn btn--accent" href="international.html">Notre ouverture internationale {I["arrow"]}</a>
       <p class="small mt-1 mb-0">* Présence revendiquée par la communauté Academy Twenty One.</p>
@@ -248,8 +250,9 @@ def build_pedagogie():
     <div class="card card--surface"><span class="num">Évaluation</span><p>{ev}</p><a class="link-arrow" href="{P[k]["href"]}">Voir le programme {I["arrow"]}</a></div>
   </div></div></div>'''
     body = f'''
-{simple_hero([("pedagogie.html", "Pédagogie")], "Une pédagogie de grande école, orientée décision",
-  "Nos apprenants analysent, arbitrent, produisent et défendent leurs choix. Les apports conceptuels sont toujours confrontés aux situations réelles.", "Pédagogie &amp; modalités", photo="accompagnement")}
+{hero_light([("pedagogie.html", "Pédagogie")], "Une pédagogie <span class='serif'>orientée décision</span>",
+  "Analyser, arbitrer, produire, défendre : chaque séquence part d'une situation réelle.", "Pédagogie &amp; modalités",
+  visual=photo_img("accompagnement", "Une formatrice accompagne une apprenante sur un document", "40% 30%"), amb="green", shape="galet")}
 
 <section class="section" aria-labelledby="pr-title">
   <div class="container">
@@ -314,9 +317,10 @@ def build_pedagogie():
 
 def build_entreprises():
     body = f'''
-{simple_hero([("entreprises.html", "Entreprises")], "Développez les compétences de vos managers et de vos dirigeants",
-  "Alternance, formation continue, Executive Education ou session dédiée à l'IA : Academy Twenty One University accompagne les organisations dans leurs transformations.", "Entreprises &amp; organisations",
-  f'<div class="btn-row mt-2"><a class="btn btn--accent" href="contact.html?objet=entreprise">Échanger avec nous {I["arrow"]}</a><a class="btn btn--glass" href="brochures.html">{I["download"]} Brochures</a></div>', photo="leadership")}
+{hero_light([("entreprises.html", "Entreprises")], "Faites grandir vos <span class='serif'>managers</span> et vos dirigeants",
+  "Alternance, formation continue, Executive Education ou IA : un dispositif adapté à vos enjeux.", "Entreprises &amp; organisations",
+  f'<div class="btn-row"><a class="btn btn--primary" href="contact.html?objet=entreprise">Échanger avec nous {I["arrow"]}</a><a class="btn btn--ghost" href="brochures.html">{I["download"]} Brochures</a></div>',
+  visual=photo_img("leadership", "Un dirigeant anime une séance de travail devant une équipe", "60% 30%"), amb="gold", shape="arche")}
 
 <section class="section" aria-labelledby="off-title">
   <div class="container">
@@ -367,8 +371,8 @@ def seg(name, opts):
 
 def build_formations():
     body = f'''
-{simple_hero([("formations.html", "Formations")], "Nos formations",
-  "Du pilotage d'une activité à la responsabilité globale du dirigeant : quatre programmes pour progresser à chaque étape de votre trajectoire.", "Catalogue", photo="groupe")}
+{hero_light([("formations.html", "Formations")], "Nos <span class='serif'>formations</span>",
+  "Quatre programmes, du pilotage d'une activité à la direction générale.", "Catalogue", amb="red")}
 <section class="section section--flush-top" aria-labelledby="cat-title">
   <div class="container">
     <h2 id="cat-title" class="visually-hidden">Catalogue filtrable</h2>
@@ -432,8 +436,8 @@ def build_brochures():
   </div>
 </article>'''
     body = f'''
-{simple_hero([("brochures.html", "Brochures")], "Brochures &amp; documentation",
-  "Téléchargez la brochure de chaque programme ainsi que les documents institutionnels d'A21 University : présentation de l'école et ouverture internationale.", "Documentation")}
+{hero_light([("brochures.html", "Brochures")], "Brochures &amp; <span class='serif'>documentation</span>",
+  "Programmes, présentation institutionnelle et ouverture internationale, en PDF.", "Documentation", amb="blue")}
 <section class="section" aria-labelledby="doc-prog-title">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow">Programmes</p><h2 id="doc-prog-title">Brochures des formations</h2></div>

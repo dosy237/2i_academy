@@ -37,6 +37,7 @@ python3 -m http.server           # aperçu sur http://localhost:8000 (sans l'API
 - Photos : `assets/img/photos/` (dictionnaire `PHOTOS` dans `tools/components.py`) ; photos du fondateur : `dr-raoul-njionou-1/2/3.jpg`.
 - Polices : Montserrat (titres, harmonisée avec le site Academy21), Inter (texte), Source Serif 4 (citations).
 - Styles : `assets/css/styles.css` · Interactions : `assets/js/main.js`.
+- En-têtes : un gabarit par type de page (`hero_light`, `hero_editorial`, `hero_visual`, `hero_minimal`, en-tête des fiches) et une ambiance de couleur par page (`amb-red|gold|green|blue`) dans `tools/components.py`.
 
 ## Accessibilité & qualité
 

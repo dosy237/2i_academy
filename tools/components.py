@@ -166,16 +166,6 @@ def footer():
     progs = "".join(f'<li><a href="{p["href"]}">{p["short"]} — {p["level_big"]}</a></li>' for p in PROGRAMS)
     return f'''<footer class="site-footer on-dark">
   <div class="container">
-    <div class="footer-cta">
-      <div>
-        <h2>Prêt·e à franchir un cap ?</h2>
-        <p>Déposez votre candidature en ligne en 10 minutes, ou téléchargez la brochure de votre programme.</p>
-      </div>
-      <div class="btn-row">
-        <a class="btn btn--accent" href="candidature.html">Candidater {I["arrow"]}</a>
-        <a class="btn btn--glass" href="brochures.html">{I["download"]} Brochures</a>
-      </div>
-    </div>
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="assets/img/logo-a21-university-light.png" width="320" height="326" alt="Academy 21 University">
@@ -418,3 +408,127 @@ def founder_block(heading="h2", more_href="ecole.html#fondateur", more_label="En
     {gal}
   </div>
 </article>'''
+
+
+# =====================================================================
+# Ambiances et en-têtes de page variés (une mise en page par type de page)
+# =====================================================================
+
+def ring4(cls="ring4", uid="q"):
+    """Anneau aux quatre couleurs du logo : rouge, jaune, vert, bleu."""
+    return f'''<svg class="{cls}" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+<circle cx="120" cy="120" r="104" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>
+<path d="M120 16 A104 104 0 0 1 224 120" fill="none" stroke="#da0612" stroke-width="7" stroke-linecap="round"/>
+<path d="M224 120 A104 104 0 0 1 120 224" fill="none" stroke="#fccd01" stroke-width="7" stroke-linecap="round" stroke-dasharray="150 400"/>
+<path d="M120 224 A104 104 0 0 1 16 120" fill="none" stroke="#a7dd63" stroke-width="7" stroke-linecap="round" stroke-dasharray="120 400"/>
+<path d="M16 120 A104 104 0 0 1 120 16" fill="none" stroke="#2f86ab" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 400"/>
+<circle cx="120" cy="120" r="80" fill="none" stroke="currentColor" stroke-opacity=".08" stroke-width="1" stroke-dasharray="2 6"/>
+</svg>'''
+
+
+def _crumbs_light(items):
+    return crumbs(items).replace('class="breadcrumb"', 'class="breadcrumb breadcrumb--light"')
+
+
+def hero_light(crumb_items, title, lead, eyebrow=None, extra="", visual="", amb="red", shape="galet"):
+    """En-tête clair et compact (pages de service) ; visuel facultatif à droite."""
+    eb = f'<p class="eyebrow">{eyebrow}</p>' if eyebrow else ""
+    vis = f'<div class="hero-light__visual hero-light__visual--{shape}">{visual}</div>' if visual else ""
+    cols = " hero-light--split" if visual else ""
+    return f'''<section class="hero-light{cols} amb-{amb}" aria-labelledby="page-title">
+  {ring4("ring4 hero-light__ring", "hl")}
+  <div class="container hero-light__inner">
+    <div class="hero-light__text">
+      {_crumbs_light(crumb_items)}
+      {eb}<h1 id="page-title">{title}</h1>
+      <p class="lead">{lead}</p>
+      {extra}
+    </div>
+    {vis}
+  </div>
+</section>'''
+
+
+def photo_img(key, alt, pos="center"):
+    return f'<img src="{PHOTOS[key]}" alt="{alt}" loading="eager" style="object-position:{pos}">'
+
+
+def hero_editorial(crumb_items, title, lead, eyebrow, photo, extra="", amb="gold"):
+    """Grande photo pleine largeur, texte ancré en bas : page vitrine."""
+    return f'''<section class="hero-editorial on-dark amb-{amb}" aria-labelledby="page-title"{photo_style(photo)}>
+  <div class="container hero-editorial__inner">
+    {crumbs(crumb_items)}
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 id="page-title">{title}</h1>
+    <p class="lead">{lead}</p>
+    {extra}
+  </div>
+  {ring4("ring4 hero-editorial__ring", "he")}
+</section>'''
+
+
+def hero_visual(crumb_items, title, lead, eyebrow, visual, extra="", amb="blue"):
+    """En-tête sombre en deux colonnes avec une illustration (international, IA)."""
+    return f'''<section class="hero-visual-page on-dark amb-{amb}" aria-labelledby="page-title">
+  <div class="grid-texture" aria-hidden="true"></div>
+  <div class="container hero-visual-page__inner">
+    <div>
+      {crumbs(crumb_items)}
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 id="page-title">{title}</h1>
+      <p class="lead">{lead}</p>
+      {extra}
+    </div>
+    <figure class="hero-visual-page__figure" aria-hidden="true">{visual}</figure>
+  </div>
+</section>'''
+
+
+def hero_minimal(crumb_items, title, lead):
+    """Pages de texte (légal, plan du site) : pas de bannière, un simple titre."""
+    return f'''<header class="hero-minimal" aria-labelledby="page-title">
+  <div class="container">
+    {_crumbs_light(crumb_items)}
+    <h1 id="page-title">{title}</h1>
+    <p class="lead">{lead}</p>
+    <span class="rule4" aria-hidden="true"></span>
+  </div>
+</header>'''
+
+
+def facts_strip(rows, label="L'essentiel"):
+    """Bandeau de faits en verre, qui chevauche le bas de l'en-tête des fiches programme."""
+    dl = "".join(f"<div><dt>{k}</dt><dd>{v}</dd></div>" for k, v in rows)
+    return f'''<section class="facts-strip" aria-label="{label}">
+  <div class="container"><dl>{dl}</dl></div>
+</section>'''
+
+
+GLOBE_SVG = '''<svg viewBox="0 0 520 520" fill="none">
+<defs><radialGradient id="glb" cx="40%" cy="35%" r="65%"><stop offset="0" stop-color="#2f86ab" stop-opacity=".55"/><stop offset="1" stop-color="#172033" stop-opacity="0"/></radialGradient></defs>
+<circle cx="260" cy="260" r="200" fill="url(#glb)"/>
+<g stroke="#7cc3e0" stroke-opacity=".45" stroke-width="1.2">
+<circle cx="260" cy="260" r="200"/><ellipse cx="260" cy="260" rx="200" ry="66"/><ellipse cx="260" cy="260" rx="200" ry="134"/>
+<ellipse cx="260" cy="260" rx="66" ry="200"/><ellipse cx="260" cy="260" rx="134" ry="200"/><path d="M60 260h400M260 60v400"/></g>
+<g stroke="#fccd01" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"><path d="M150 200 Q 240 110 350 170"/><path d="M180 330 Q 280 400 380 300"/><path d="M350 170 Q 420 230 380 300"/></g>
+<g><circle cx="150" cy="200" r="9" fill="#da0612"/><circle cx="350" cy="170" r="9" fill="#fccd01"/><circle cx="380" cy="300" r="9" fill="#a7dd63"/><circle cx="180" cy="330" r="9" fill="#2f86ab"/>
+<circle cx="150" cy="200" r="20" stroke="#da0612" stroke-opacity=".4"/><circle cx="350" cy="170" r="20" stroke="#fccd01" stroke-opacity=".4"/><circle cx="380" cy="300" r="20" stroke="#a7dd63" stroke-opacity=".4"/><circle cx="180" cy="330" r="20" stroke="#2f86ab" stroke-opacity=".4"/></g>
+<path d="M260 30 A230 230 0 0 1 490 260" stroke="#da0612" stroke-width="5" stroke-linecap="round"/>
+<path d="M490 260 A230 230 0 0 1 260 490" stroke="#fccd01" stroke-width="5" stroke-linecap="round" stroke-dasharray="200 600"/>
+<path d="M260 490 A230 230 0 0 1 30 260" stroke="#a7dd63" stroke-width="5" stroke-linecap="round" stroke-dasharray="160 600"/>
+<path d="M30 260 A230 230 0 0 1 260 30" stroke="#2f86ab" stroke-width="5" stroke-linecap="round" stroke-dasharray="120 600"/>
+</svg>'''
+
+NETWORK_SVG = '''<svg viewBox="0 0 520 520" fill="none">
+<g stroke="#7cc3e0" stroke-opacity=".35" stroke-width="1.3">
+<path d="M260 260L110 140M260 260L410 120M260 260L440 300M260 260L330 440M260 260L120 380M260 260L70 260"/>
+<path d="M110 140L410 120M410 120L440 300M440 300L330 440M330 440L120 380M120 380L70 260M70 260L110 140" stroke-dasharray="4 8"/></g>
+<g fill="#172033" stroke-width="2.5">
+<circle cx="110" cy="140" r="22" stroke="#2f86ab"/><circle cx="410" cy="120" r="18" stroke="#a7dd63"/><circle cx="440" cy="300" r="24" stroke="#fccd01"/>
+<circle cx="330" cy="440" r="18" stroke="#da0612"/><circle cx="120" cy="380" r="20" stroke="#a7dd63"/><circle cx="70" cy="260" r="14" stroke="#2f86ab"/></g>
+<g stroke="#fff" stroke-opacity=".85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M101 140h18M110 131v18"/><path d="M402 120l6 6 10-12"/><path d="M430 300h20M440 290l10 10-10 10"/><path d="M322 440h16"/><path d="M112 380a8 8 0 1 0 16 0a8 8 0 1 0-16 0"/></g>
+<circle cx="260" cy="260" r="92" fill="#fff"/><circle cx="260" cy="260" r="108" stroke="#fccd01" stroke-width="3" stroke-dasharray="6 10"/>
+<g stroke="#172033" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="260" cy="236" r="26"/><path d="M212 318c8-28 28-42 48-42s40 14 48 42"/></g>
+<circle cx="260" cy="260" r="150" stroke="#2f86ab" stroke-opacity=".25"/>
+</svg>'''

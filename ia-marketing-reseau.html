@@ -48,31 +48,36 @@
 </header>
 <main id="contenu" tabindex="-1">
 
-<section class="page-hero on-dark" aria-labelledby="page-title">
-  <div class="grid-texture" aria-hidden="true"></div>
-  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><defs>
-<linearGradient id="pha" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a7dd63"/><stop offset="1" stop-color="#a7dd63" stop-opacity=".2"/></linearGradient>
-<linearGradient id="phb" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ab"/><stop offset="1" stop-color="#2f86ab" stop-opacity=".15"/></linearGradient></defs>
-<path d="M150 30 A86 86 0 1 0 170 150" fill="none" stroke="url(#pha)" stroke-width="14" stroke-linecap="round"/>
-<path d="M60 45 A64 64 0 0 1 160 120" fill="none" stroke="url(#phb)" stroke-width="10" stroke-linecap="round"/></svg>
-  <div class="container">
-    <div>
+<section class="hero-program on-dark amb-blue" aria-labelledby="page-title">
+  <div class="hero-program__visual" aria-hidden="true"><svg viewBox="0 0 520 520" fill="none">
+<g stroke="#7cc3e0" stroke-opacity=".35" stroke-width="1.3">
+<path d="M260 260L110 140M260 260L410 120M260 260L440 300M260 260L330 440M260 260L120 380M260 260L70 260"/>
+<path d="M110 140L410 120M410 120L440 300M440 300L330 440M330 440L120 380M120 380L70 260M70 260L110 140" stroke-dasharray="4 8"/></g>
+<g fill="#172033" stroke-width="2.5">
+<circle cx="110" cy="140" r="22" stroke="#2f86ab"/><circle cx="410" cy="120" r="18" stroke="#a7dd63"/><circle cx="440" cy="300" r="24" stroke="#fccd01"/>
+<circle cx="330" cy="440" r="18" stroke="#da0612"/><circle cx="120" cy="380" r="20" stroke="#a7dd63"/><circle cx="70" cy="260" r="14" stroke="#2f86ab"/></g>
+<g stroke="#fff" stroke-opacity=".85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M101 140h18M110 131v18"/><path d="M402 120l6 6 10-12"/><path d="M430 300h20M440 290l10 10-10 10"/><path d="M322 440h16"/><path d="M112 380a8 8 0 1 0 16 0a8 8 0 1 0-16 0"/></g>
+<circle cx="260" cy="260" r="92" fill="#fff"/><circle cx="260" cy="260" r="108" stroke="#fccd01" stroke-width="3" stroke-dasharray="6 10"/>
+<g stroke="#172033" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="260" cy="236" r="26"/><path d="M212 318c8-28 28-42 48-42s40 14 48 42"/></g>
+<circle cx="260" cy="260" r="150" stroke="#2f86ab" stroke-opacity=".25"/>
+</svg></div>
+  <div class="container hero-program__inner">
+    <div class="hero-program__text">
       <nav class="breadcrumb" aria-label="Fil d'Ariane"><ol><li><a href="index.html">Accueil</a></li><li><a href="formations.html">Formations</a></li><li><span aria-current="page">Formation courte</span></li></ol></nav>
-      <span class="kicker">Formation courte · IA appliquée</span>
-      <h1 id="page-title">Intelligence artificielle appliquée au marketing de réseau</h1>
+      <ul class="hero-badges"><li class="level-tag">Formation courte</li><li class="glass-chip">IA appliquée</li></ul>
+      <h1 id="page-title">Intelligence artificielle appliquée au <span class='serif'>marketing de réseau</span></h1>
       <p class="subtitle">Transformer la prospection, la communication et le développement du réseau par l'IA.</p>
       
-      <ul class="hero-badges"><li class="glass-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>100 % à distance</li><li class="glass-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>20 h · 5 séances</li><li class="glass-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.2c2.8.2 5 2.6 5 5.8"/></svg>8 à 15 participants</li></ul>
+      <div class="btn-row">
+        <a class="btn btn--accent" href="candidature.html?programme=ia-marketing-reseau">Candidater <svg class="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn--glass" href="assets/docs/fiche-ia-marketing-reseau-a21.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg> Brochure <span class="visually-hidden">(PDF, 136 Ko)</span></a>
+      </div>
     </div>
-    <section class="facts" aria-labelledby="facts-title">
-  <h2 id="facts-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg> L'essentiel</h2>
-  <dl><div><dt>Format</dt><dd>Distanciel synchrone</dd></div><div><dt>Durée</dt><dd>20 heures</dd></div><div><dt>Rythme</dt><dd>5 séances de 4 h</dd></div><div><dt>Effectif conseillé</dt><dd>8 à 15 participants</dd></div><div><dt>Prérequis</dt><dd>Aucun prérequis technique en IA</dd></div><div><dt>Validation</dt><dd>Attestation de formation</dd></div></dl>
-  <div class="btn-row">
-    <a class="btn btn--primary btn--sm" href="candidature.html?programme=ia-marketing-reseau">Candidater <svg class="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    <a class="btn btn--ghost btn--sm" href="assets/docs/fiche-ia-marketing-reseau-a21.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg> Brochure <span class="visually-hidden">(PDF, 136 Ko)</span></a>
   </div>
 </section>
-  </div>
+<section class="facts-strip" aria-label="L'essentiel">
+  <div class="container"><dl><div><dt>Format</dt><dd>Distanciel synchrone</dd></div><div><dt>Durée</dt><dd>20 h · 5 séances</dd></div><div><dt>Groupe</dt><dd>8 à 15 participants</dd></div><div><dt>Prérequis</dt><dd>Aucun en IA</dd></div><div><dt>Validation</dt><dd>Attestation</dd></div></dl></div>
 </section>
 <nav class="subnav" aria-label="Sommaire de la page"><div class="container"><ul><li><a href="#finalite">Finalité</a></li><li><a href="#public">Public &amp; prérequis</a></li><li><a href="#objectifs">Objectifs</a></li><li><a href="#programme">Programme</a></li><li><a href="#approche">Approche</a></li><li><a href="#evaluation">Évaluation</a></li><li><a href="#livrables">Livrables</a></li></ul><a class="btn btn--primary btn--sm subnav__cta" href="candidature.html?programme=ia-marketing-reseau">Candidater</a></div></nav>
 <div class="section">
@@ -108,8 +113,8 @@
       </section>
       <section class="content-block" id="programme" aria-labelledby="t-prog">
         <p class="eyebrow">Architecture pédagogique</p>
-        <h2 id="t-prog">5 modules · 20 heures</h2>
-        <div class="table-wrap" role="region" aria-label="Modules de la formation IA & Marketing de réseau" tabindex="0"><table class="data-table"><caption>Modules de la formation IA &amp; Marketing de réseau</caption><thead><tr><th scope="col">Module</th><th scope="col" class="vol">Durée</th><th scope="col">Contenus clés</th><th scope="col">Atelier / livrable</th></tr></thead><tbody><tr><th scope="row">01 · Fondamentaux de l'IA &amp; marketing de réseau</th><td class="vol">3 h</td><td>IA générative, cas d'usage, prompting, fiabilité, limites, confidentialité et bonnes pratiques.</td><td>Créer une bibliothèque de prompts adaptée à son activité.</td></tr><tr><th scope="row">02 · Prospection augmentée par l'IA</th><td class="vol">5 h</td><td>Personas, segmentation, ciblage, messages d'approche, qualification, personnalisation et scénarios de relance.</td><td>Construire une mini-campagne de prospection multicanale.</td></tr><tr><th scope="row">03 · Communication &amp; Personal Branding</th><td class="vol">4 h</td><td>Positionnement, storytelling, ligne éditoriale, posts, scripts vidéo, calendrier de contenus et cohérence de marque.</td><td>Produire un calendrier éditorial et des contenus prêts à publier.</td></tr><tr><th scope="row">04 · Conversion, recrutement &amp; développement du réseau</th><td class="vol">4 h</td><td>Argumentaires, découverte des besoins, objections, relances, recrutement, onboarding et duplication.</td><td>Élaborer un kit de conversation et d'intégration.</td></tr><tr><th scope="row">05 · Automatisation &amp; pilotage de la performance</th><td class="vol">4 h</td><td>Workflows, organisation, tableaux de suivi, KPI, analyse des résultats et amélioration continue.</td><td>Concevoir son système personnel de prospection et de suivi assisté par IA.</td></tr></tbody><tfoot><tr><th scope="row">Total</th><td class="vol">20 h</td><td></td><td></td></tr></tfoot></table></div>
+        <h2 id="t-prog">5 séances · <span class="serif">20 heures</span></h2>
+        <ol class="timeline reveal-stagger"><li><span class="timeline__dot" aria-hidden="true">1</span><div class="timeline__card"><span class="tag">3 h</span><h3>Fondamentaux de l'IA &amp; marketing de réseau</h3><p>IA générative, cas d'usage, prompting, fiabilité, limites, confidentialité et bonnes pratiques.</p><span class="timeline__out">Livrable : Créer une bibliothèque de prompts adaptée à son activité.</span></div></li><li><span class="timeline__dot" aria-hidden="true">2</span><div class="timeline__card"><span class="tag">5 h</span><h3>Prospection augmentée par l'IA</h3><p>Personas, segmentation, ciblage, messages d'approche, qualification, personnalisation et scénarios de relance.</p><span class="timeline__out">Livrable : Construire une mini-campagne de prospection multicanale.</span></div></li><li><span class="timeline__dot" aria-hidden="true">3</span><div class="timeline__card"><span class="tag">4 h</span><h3>Communication &amp; Personal Branding</h3><p>Positionnement, storytelling, ligne éditoriale, posts, scripts vidéo, calendrier de contenus et cohérence de marque.</p><span class="timeline__out">Livrable : Produire un calendrier éditorial et des contenus prêts à publier.</span></div></li><li><span class="timeline__dot" aria-hidden="true">4</span><div class="timeline__card"><span class="tag">4 h</span><h3>Conversion, recrutement &amp; développement du réseau</h3><p>Argumentaires, découverte des besoins, objections, relances, recrutement, onboarding et duplication.</p><span class="timeline__out">Livrable : Élaborer un kit de conversation et d'intégration.</span></div></li><li><span class="timeline__dot" aria-hidden="true">5</span><div class="timeline__card"><span class="tag">4 h</span><h3>Automatisation &amp; pilotage de la performance</h3><p>Workflows, organisation, tableaux de suivi, KPI, analyse des résultats et amélioration continue.</p><span class="timeline__out">Livrable : Concevoir son système personnel de prospection et de suivi assisté par IA.</span></div></li></ol>
       </section>
       <section class="content-block" id="approche" aria-labelledby="t-app">
         <p class="eyebrow">Approche</p>
@@ -228,16 +233,6 @@
 </main>
 <footer class="site-footer on-dark">
   <div class="container">
-    <div class="footer-cta">
-      <div>
-        <h2>Prêt·e à franchir un cap ?</h2>
-        <p>Déposez votre candidature en ligne en 10 minutes, ou téléchargez la brochure de votre programme.</p>
-      </div>
-      <div class="btn-row">
-        <a class="btn btn--accent" href="candidature.html">Candidater <svg class="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn--glass" href="brochures.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg> Brochures</a>
-      </div>
-    </div>
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="assets/img/logo-a21-university-light.png" width="320" height="326" alt="Academy 21 University">

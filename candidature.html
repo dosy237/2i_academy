@@ -48,19 +48,24 @@
 </header>
 <main id="contenu" tabindex="-1">
 
-<section class="page-hero page-hero--simple on-dark" aria-labelledby="page-title">
-  <div class="grid-texture" aria-hidden="true"></div>
-  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><defs>
-<linearGradient id="pha" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#da0612"/><stop offset="1" stop-color="#da0612" stop-opacity=".2"/></linearGradient>
-<linearGradient id="phb" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fccd01"/><stop offset="1" stop-color="#fccd01" stop-opacity=".15"/></linearGradient></defs>
-<path d="M150 30 A86 86 0 1 0 170 150" fill="none" stroke="url(#pha)" stroke-width="14" stroke-linecap="round"/>
-<path d="M60 45 A64 64 0 0 1 160 120" fill="none" stroke="url(#phb)" stroke-width="10" stroke-linecap="round"/></svg>
-  <div class="container"><div>
-    <nav class="breadcrumb" aria-label="Fil d'Ariane"><ol><li><a href="index.html">Accueil</a></li><li><a href="admissions.html">Admissions</a></li><li><span aria-current="page">Candidature</span></li></ol></nav>
-    <p class="eyebrow">Admissions</p><h1 id="page-title">Candidater en ligne</h1>
-    <p class="lead">Cinq étapes, une dizaine de minutes. Votre brouillon est enregistré sur votre appareil : vous pouvez reprendre plus tard.</p>
+<section class="hero-light amb-green" aria-labelledby="page-title">
+  <svg class="ring4 hero-light__ring" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+<circle cx="120" cy="120" r="104" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>
+<path d="M120 16 A104 104 0 0 1 224 120" fill="none" stroke="#da0612" stroke-width="7" stroke-linecap="round"/>
+<path d="M224 120 A104 104 0 0 1 120 224" fill="none" stroke="#fccd01" stroke-width="7" stroke-linecap="round" stroke-dasharray="150 400"/>
+<path d="M120 224 A104 104 0 0 1 16 120" fill="none" stroke="#a7dd63" stroke-width="7" stroke-linecap="round" stroke-dasharray="120 400"/>
+<path d="M16 120 A104 104 0 0 1 120 16" fill="none" stroke="#2f86ab" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 400"/>
+<circle cx="120" cy="120" r="80" fill="none" stroke="currentColor" stroke-opacity=".08" stroke-width="1" stroke-dasharray="2 6"/>
+</svg>
+  <div class="container hero-light__inner">
+    <div class="hero-light__text">
+      <nav class="breadcrumb breadcrumb--light" aria-label="Fil d'Ariane"><ol><li><a href="index.html">Accueil</a></li><li><a href="admissions.html">Admissions</a></li><li><span aria-current="page">Candidature</span></li></ol></nav>
+      <p class="eyebrow">Admissions</p><h1 id="page-title">Candidater <span class='serif'>en ligne</span></h1>
+      <p class="lead">Cinq étapes, environ dix minutes. Votre brouillon est enregistré automatiquement.</p>
+      
+    </div>
     
-  </div></div>
+  </div>
 </section>
 <section class="section section--flush-top" aria-label="Formulaire de candidature">
   <div class="container" style="margin-top:-3.5rem;position:relative;z-index:2">
@@ -161,16 +166,6 @@
 </main>
 <footer class="site-footer on-dark">
   <div class="container">
-    <div class="footer-cta">
-      <div>
-        <h2>Prêt·e à franchir un cap ?</h2>
-        <p>Déposez votre candidature en ligne en 10 minutes, ou téléchargez la brochure de votre programme.</p>
-      </div>
-      <div class="btn-row">
-        <a class="btn btn--accent" href="candidature.html">Candidater <svg class="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn--glass" href="brochures.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg> Brochures</a>
-      </div>
-    </div>
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="assets/img/logo-a21-university-light.png" width="320" height="326" alt="Academy 21 University">

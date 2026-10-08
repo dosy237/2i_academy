@@ -1,25 +1,45 @@
 # Fiches programme : Bachelor, Mastère, Executive MBA, formation IA (contenus issus des brochures).
-from components import photo_style, I, ring, page, cta_band, facts, subnav, crumbs, notice, table, aside_program, related
+from components import BROCHURES, pdf_size, facts_strip, NETWORK_SVG, photo_style, I, ring, page, cta_band, facts, subnav, crumbs, notice, table, aside_program, related
 
 
-def hero(key, kicker, title, subtitle, chips, facts_rows, deco=("#da0612", "#fccd01"), extra="", photo=None):
+AMB = {"bachelor": "green", "mastere": "red", "executive-mba": "gold", "ia-marketing-reseau": "blue"}
+
+# Bandeau de faits : l'essentiel, en valeurs courtes (le détail est dans la page)
+STRIP = {
+    "bachelor": [("Niveau", "Bac+3 · Niveau 6"), ("Volume", "420 h"), ("Certification", "RNCP38666"), ("Modalités", "Présentiel · Distanciel · Hybride"), ("Admission", "Bac+2 ou 5 ans d'expérience")],
+    "mastere": [("Niveau", "Bac+5 · Niveau 7"), ("Durée", "2 ans · 900 h"), ("Référentiel", "RNCP39994*"), ("Rythme", "Initial, continu ou alternance"), ("Admission", "Bac+3, ou Bac+2 + 3 ans")],
+    "executive-mba": [("Public", "Dirigeants &amp; CODIR"), ("Durée", "12 mois"), ("Volume", "360 h + Impact Project"), ("Rythme", "Blocs, week-ends, séminaires"), ("Expérience", "7 ans minimum")],
+    "ia-marketing-reseau": [("Format", "Distanciel synchrone"), ("Durée", "20 h · 5 séances"), ("Groupe", "8 à 15 participants"), ("Prérequis", "Aucun en IA"), ("Validation", "Attestation")],
+}
+
+
+def hero(key, kicker, title, subtitle, chips, facts_rows, deco=None, extra="", photo=None):
+    """En-tête des fiches : photo fondue à droite (ou illustration), puis bandeau de faits."""
+    pdf = BROCHURES[key][0]
+    level = kicker.split(" · ")[0]
+    rest = " · ".join(kicker.split(" · ")[1:])
     ch = "".join(f'<li class="glass-chip">{I[i]}{t}</li>' for i, t in chips)
-    cls = " page-hero--photo" if photo else ""
-    return f'''<section class="page-hero{cls} on-dark" aria-labelledby="page-title"{photo_style(photo)}>
-  <div class="grid-texture" aria-hidden="true"></div>
-  {ring("deco", deco[0], deco[1], "ph")}
-  <div class="container">
-    <div>
-      {crumbs([("formations.html", "Formations"), ("", kicker.split(" · ")[0])])}
-      <span class="kicker">{kicker}</span>
+    if photo:
+        media = f'<div class="hero-program__photo" aria-hidden="true"{photo_style(photo)}></div>'
+    else:
+        media = f'<div class="hero-program__visual" aria-hidden="true">{NETWORK_SVG}</div>'
+    return f'''<section class="hero-program on-dark amb-{AMB[key]}" aria-labelledby="page-title">
+  {media}
+  <div class="container hero-program__inner">
+    <div class="hero-program__text">
+      {crumbs([("formations.html", "Formations"), ("", level)])}
+      <ul class="hero-badges"><li class="level-tag">{level}</li>{f'<li class="glass-chip">{rest}</li>' if rest else ""}</ul>
       <h1 id="page-title">{title}</h1>
       <p class="subtitle">{subtitle}</p>
       {extra}
-      <ul class="hero-badges">{ch}</ul>
+      <div class="btn-row">
+        <a class="btn btn--accent" href="candidature.html?programme={key}">Candidater {I["arrow"]}</a>
+        <a class="btn btn--glass" href="{pdf}" download>{I["download"]} Brochure <span class="visually-hidden">({pdf_size(key)})</span></a>
+      </div>
     </div>
-    {facts(facts_rows, key)}
   </div>
-</section>'''
+</section>
+{facts_strip(STRIP.get(key, facts_rows))}'''
 
 
 def dims_cards(items, navy=False):
@@ -51,7 +71,7 @@ def build_bachelor():
             ("Commerce &amp; Expérience client", "Piloter l'offre, les approvisionnements et l'activité commerciale, améliorer le parcours client, développer l'omnicanalité.", "target", "icon-badge--yellow"),
             ("Leadership &amp; Management", "Recruter, intégrer, organiser, développer les compétences, animer les équipes et conduire les projets.", "users", "icon-badge--green")]
     body = f'''
-{hero("bachelor", "Bachelor · Bac+3", "Management Stratégique &amp; Opérationnel", "Piloter la performance • Développer l'activité • Manager les équipes",
+{hero("bachelor", "Bachelor · Bac+3", "Management Stratégique &amp; <span class='serif'>Opérationnel</span>", "Piloter la performance • Développer l'activité • Manager les équipes",
   [("award", "Titre RNCP38666"), ("clock", "420 h"), ("layers", "Présentiel · Distanciel · Hybride")],
   [("Niveau de sortie", "Bac+3 — Niveau 6"), ("Durée", "420 h de formation"), ("Certification", "Titre professionnel — RNCP38666"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Admission", "Bac+2, ou 5 ans d'expérience significative")], photo="groupe")}
 {subnav([("apercu", "Aperçu"), ("admission", "Admission"), ("dimensions", "Les 4 dimensions"), ("programme", "Programme"), ("competences", "Compétences"), ("certification", "Certification"), ("debouches", "Débouchés")], "bachelor")}
@@ -149,11 +169,11 @@ def build_mastere():
             ("Capital humain", "Compétences, organisation du travail, talents, inclusion, QVCT et culture.", "users", "icon-badge--blue"),
             ("Impact", "Responsabilité, transition écologique, parties prenantes, éthique et pérennité.", "globe", "icon-badge--green")]
     body = f'''
-{hero("mastere", "Mastère · Bac+5 · Niveau 7", "Stratégie, Leadership &amp; Transformation des Organisations",
+{hero("mastere", "Mastère · Bac+5 · Niveau 7", "Stratégie, Leadership &amp; <span class='serif'>Transformation</span> des Organisations",
   "Former les décideurs capables de penser la stratégie, conduire le changement et transformer durablement les organisations.",
   [("award", "RNCP39994*"), ("clock", "2 ans · 900 h"), ("graduation", "Alternance possible")],
   [("Niveau de sortie", "Bac+5 • Niveau 7"), ("Durée", "2 ans • M1 + M2"), ("Volume indicatif", "900 h"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Rythme", "Initial • Formation continue • Alternance selon convention"), ("Référentiel", "RNCP39994 • Manager des transformations des organisations*")],
-  ("#2f86ab", "#a7dd63"), '<p class="motto">Apprendre. Diriger. Transformer.</p>', photo="leadership")}
+  ("#2f86ab", "#a7dd63"), '<p class="motto">Apprendre. Diriger. Transformer.</p>', photo="amphi")}
 {subnav([("apercu", "Aperçu"), ("dimensions", "Les 6 dimensions"), ("admission", "Admission"), ("programme", "Programme"), ("rncp", "Référentiel RNCP"), ("pedagogie", "Pédagogie"), ("debouches", "Débouchés")], "mastere")}
 <div class="section">
   <div class="container layout-aside">
@@ -263,7 +283,7 @@ def build_emba():
            ("Executive Coaching", "Travail individuel sur la posture, les priorités, les angles morts et la trajectoire de leadership."), ("International &amp; Strategic Immersion", "Séminaire ou étude comparative d'écosystèmes économiques et managériaux.")]
     expc = "".join(f'<div class="card card--hover"><span class="num">0{i + 1}</span><h3>{t}</h3><p>{d}</p></div>' for i, (t, d) in enumerate(exp))
     body = f'''
-{hero("executive-mba", "Executive MBA · Executive Education", "Gouvernance, Leadership &amp; Transformation", "Le programme de haute direction d'Academy Twenty One University.",
+{hero("executive-mba", "Executive MBA · Executive Education", "Gouvernance, Leadership &amp; <span class='serif'>Transformation</span>", "Le programme de haute direction d'Academy Twenty One University.",
   [("clock", "12 mois"), ("leader", "7 ans d'expérience minimum"), ("presentation", "Board Presentation")],
   [("Positionnement", "Programme Executive de haute direction"), ("Public", "Dirigeants • Entrepreneurs • Cadres supérieurs • Membres de CODIR"), ("Durée", "12 mois"), ("Volume indicatif", "360 h + Executive Impact Project"), ("Organisation", "Blocs intensifs • Week-ends Executive • Séminaires"), ("Modalités", "Présentiel • Distanciel synchrone • Hybride"), ("Expérience", "7 ans minimum, dont responsabilités managériales significatives")],
   ("#fccd01", "#da0612"), '<p class="motto">Think. Decide. Lead. Transform.</p>', photo="leadership")}
@@ -358,7 +378,7 @@ def build_ia():
             ["04 · Conversion, recrutement &amp; développement du réseau", "4 h", "Argumentaires, découverte des besoins, objections, relances, recrutement, onboarding et duplication.", "Élaborer un kit de conversation et d'intégration."],
             ["05 · Automatisation &amp; pilotage de la performance", "4 h", "Workflows, organisation, tableaux de suivi, KPI, analyse des résultats et amélioration continue.", "Concevoir son système personnel de prospection et de suivi assisté par IA."]]
     body = f'''
-{hero("ia-marketing-reseau", "Formation courte · IA appliquée", "Intelligence artificielle appliquée au marketing de réseau", "Transformer la prospection, la communication et le développement du réseau par l'IA.",
+{hero("ia-marketing-reseau", "Formation courte · IA appliquée", "Intelligence artificielle appliquée au <span class='serif'>marketing de réseau</span>", "Transformer la prospection, la communication et le développement du réseau par l'IA.",
   [("monitor", "100 % à distance"), ("clock", "20 h · 5 séances"), ("users", "8 à 15 participants")],
   [("Format", "Distanciel synchrone"), ("Durée", "20 heures"), ("Rythme", "5 séances de 4 h"), ("Effectif conseillé", "8 à 15 participants"), ("Prérequis", "Aucun prérequis technique en IA"), ("Validation", "Attestation de formation")],
   ("#a7dd63", "#2f86ab"))}
@@ -396,8 +416,8 @@ def build_ia():
       </section>
       <section class="content-block" id="programme" aria-labelledby="t-prog">
         <p class="eyebrow">Architecture pédagogique</p>
-        <h2 id="t-prog">5 modules · 20 heures</h2>
-        {table("Modules de la formation IA &amp; Marketing de réseau", ["Module", "Durée", "Contenus clés", "Atelier / livrable"], rows, ["Total", "20 h", "", ""])}
+        <h2 id="t-prog">5 séances · <span class="serif">20 heures</span></h2>
+        <ol class="timeline reveal-stagger">{"".join(f'<li><span class="timeline__dot" aria-hidden="true">{n + 1}</span><div class="timeline__card"><span class="tag">{r[1]}</span><h3>{r[0].split(" · ", 1)[1]}</h3><p>{r[2]}</p><span class="timeline__out">Livrable : {r[3]}</span></div></li>' for n, r in enumerate(rows))}</ol>
       </section>
       <section class="content-block" id="approche" aria-labelledby="t-app">
         <p class="eyebrow">Approche</p>
