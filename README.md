@@ -83,9 +83,9 @@ justificatifs de l'école (statuts, identité du représentant, coordonnées ban
 | `SITE_URL` *(facultatif)* | adresse publique du site, ex. `https://www.academy21.com` (sinon déduite automatiquement) |
 
 Webhook Stripe (recommandé, garantit l'e-mail même si le candidat ferme la page) : Stripe → Développeurs → Webhooks →
-ajouter l'URL `https://VOTRE-SITE/api/stripe-webhook` avec les événements `checkout.session.completed` et
-`checkout.session.async_payment_succeeded`. Webhook Flutterwave : `https://VOTRE-SITE/api/flutterwave` (avec le même
-« Secret hash » que `FLW_WEBHOOK_HASH`). CinetPay utilise automatiquement `https://VOTRE-SITE/api/cinetpay`.
+ajouter l'URL `https://a21businessschool.com/api/stripe-webhook` avec les événements `checkout.session.completed` et
+`checkout.session.async_payment_succeeded`. Webhook Flutterwave : `https://a21businessschool.com/api/flutterwave` (avec le même
+« Secret hash » que `FLW_WEBHOOK_HASH`). CinetPay utilise automatiquement `https://a21businessschool.com/api/cinetpay`.
 Tant qu'un moyen de paiement n'est pas configuré, la page l'affiche comme « pas encore activé ».
 
 ## Héberger chez Hostinger (au lieu de Vercel)
@@ -98,7 +98,7 @@ Le site fonctionne à l'identique avec `server.js` (Node.js 20 ou plus, aucune a
 2. hPanel → **Sites web → Ajouter → Application web Node.js** : importer le dépôt GitHub (ou l'archive du site),
    commande d'installation `npm install`, commande de démarrage `npm start`, version de Node 20 ou 22.
 3. Dans **Variables d'environnement** de l'application : les mêmes variables que ci-dessus (e-mails, paiement), plus
-   `SITE_URL=https://www.votre-domaine.com`.
+   `SITE_URL=https://www.a21businessschool.com`.
 4. Rattacher le nom de domaine à l'application, puis activer le certificat SSL (gratuit).
 5. Mettre à jour les adresses de webhook chez Stripe et Flutterwave avec le nouveau domaine.
 
@@ -108,7 +108,7 @@ Le site fonctionne à l'identique avec `server.js` (Node.js 20 ou plus, aucune a
 |---|---|
 | `SMTP_HOST` | `smtp.hostinger.com` |
 | `SMTP_PORT` | `465` |
-| `SMTP_USER` | l'adresse qui envoie, ex. `noreply@votre-domaine.com` |
+| `SMTP_USER` | l'adresse qui envoie, ex. `noreply@a21businessschool.com` |
 | `SMTP_PASS` | le mot de passe de cette boîte |
 | `ADMISSIONS_EMAIL` | la ou les boîtes de l'école qui reçoivent (séparées par des virgules) |
 | `COPY_EMAIL` | qui reçoit une copie |

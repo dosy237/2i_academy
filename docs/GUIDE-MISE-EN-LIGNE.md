@@ -25,9 +25,9 @@ formulaires, les e-mails et le paiement. L'offre « Premium » / « Single » ne
 1. <https://www.hostinger.fr/hebergement-web> → offre **Business** → **Ajouter au panier**.
 2. Durée : la plus longue que vous acceptez (12, 24 ou 48 mois). Le prix mensuel affiché est un prix de lancement :
    **regardez le prix de renouvellement** indiqué en petit.
-3. Le **nom de domaine est généralement offert la première année** avec cette offre : choisissez-le pendant la commande
-   (sinon : hPanel → **Domaines → Obtenir un nouveau domaine**). Vérifiez sa disponibilité, par exemple
-   `academy21university.com` ou `theacademy21.com`. Prenez de préférence un **.com**.
+3. **Nom de domaine retenu : `a21businessschool.com`** (offert la première année avec le pack de 48 mois).
+   Saisissez-le dans « Sécurisez votre nom de domaine » pendant la commande. Facultatif : réservez aussi
+   `a21businessschool.fr` pour protéger le nom (il redirigera vers le .com).
 4. Cochez la **protection WHOIS** (gratuite : votre nom et votre adresse ne sont pas publiés).
 5. Payez, puis suivez l'assistant : quand il propose de créer un site WordPress ou avec un constructeur, **passez cette étape**.
 
@@ -38,16 +38,16 @@ formulaires, les e-mails et le paiement. L'offre « Premium » / « Single » ne
 
 | Adresse | Rôle |
 |---|---|
-| `noreply@votredomaine.com` | **envoie** les e-mails du site (accusés de réception, liens de paiement, reçus) |
-| `admissions@votredomaine.com` | **reçoit** les candidatures et les confirmations de paiement |
-| `contact@votredomaine.com` | adresse affichée sur le site |
+| `noreply@a21businessschool.com` | **envoie** les e-mails du site (accusés de réception, liens de paiement, reçus) |
+| `admissions@a21businessschool.com` | **reçoit** les candidatures et les confirmations de paiement |
+| `contact@a21businessschool.com` | adresse affichée sur le site |
 | `direction@`, `pedagogie@`, `comptabilite@`… | selon vos besoins |
 
 3. Notez chaque mot de passe dans un gestionnaire de mots de passe.
 4. Lisez vos e-mails sur <https://mail.hostinger.com> (ou ajoutez-les sur votre téléphone : Hostinger affiche les réglages).
 5. **Anti-spam** : hPanel → **Domaines → DNS / Serveurs de noms**. Vérifiez qu'il existe des lignes **SPF** et **DKIM**
    (Hostinger les ajoute en principe automatiquement). Ajoutez une ligne **DMARC** si elle manque :
-   type `TXT`, nom `_dmarc`, valeur `v=DMARC1; p=none; rua=mailto:admissions@votredomaine.com`.
+   type `TXT`, nom `_dmarc`, valeur `v=DMARC1; p=none; rua=mailto:admissions@a21businessschool.com`.
    Sans elles, les e-mails du site risquent d'arriver en spam.
 
 **Envoyez-moi l'adresse à afficher sur le site** (par exemple `contact@…`) : je la remplace dans toutes les pages.
@@ -56,12 +56,12 @@ formulaires, les e-mails et le paiement. L'offre « Premium » / « Single » ne
 
 ### 4a. Stripe — carte bancaire (entité France)
 
-1. <https://dashboard.stripe.com/register> avec `admissions@votredomaine.com` (ou `comptabilite@`).
+1. <https://dashboard.stripe.com/register> avec `admissions@a21businessschool.com` (ou `comptabilite@`).
 2. Restez d'abord en **mode test** (interrupteur « Mode test » en haut du tableau de bord).
 3. **Clé secrète** : **Développeurs → Clés API → Clé secrète → Révéler** → elle commence par `sk_test_…`.
    Ne la partagez jamais (ni par e-mail, ni dans un message) : elle se colle uniquement dans Hostinger (étape 6).
 4. **Webhook** (après l'étape 7, quand le domaine fonctionne) : **Développeurs → Webhooks → Ajouter une destination** →
-   URL `https://votredomaine.com/api/stripe-webhook` → événements `checkout.session.completed` et
+   URL `https://a21businessschool.com/api/stripe-webhook` → événements `checkout.session.completed` et
    `checkout.session.async_payment_succeeded`.
 5. **Activer le compte** pour encaisser réellement : **Paramètres → Activer les paiements** (informations de la société,
    représentant légal, IBAN de l'académie). Stripe vérifie aussi le site : les mentions légales doivent être complètes.
@@ -71,7 +71,7 @@ formulaires, les e-mails et le paiement. L'offre « Premium » / « Single » ne
 1. <https://dashboard.flutterwave.com/signup> avec une adresse de l'école, **pays : Cameroun**, au nom de la structure camerounaise.
 2. Fournissez les documents demandés (KYC : registre de commerce, pièce du dirigeant, compte bancaire ou Mobile Money de versement).
 3. **Clé secrète** : **Settings → API Keys** (en mode test) → **Secret key** `FLWSECK_TEST-…`.
-4. **Webhook** (après l'étape 7) : **Settings → Webhooks** → URL `https://votredomaine.com/api/flutterwave` →
+4. **Webhook** (après l'étape 7) : **Settings → Webhooks** → URL `https://a21businessschool.com/api/flutterwave` →
    **Secret hash** : inventez une phrase secrète (la même que `FLW_WEBHOOK_HASH` à l'étape 6) → **Save**.
 5. Demandez par écrit la **commission** appliquée à Orange Money et MTN MoMo au Cameroun.
 
@@ -101,13 +101,13 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 
 | Variable | Valeur | |
 |---|---|---|
-| `SITE_URL` | `https://votredomaine.com` | |
+| `SITE_URL` | `https://a21businessschool.com` | |
 | `SMTP_HOST` | `smtp.hostinger.com` | e-mails |
 | `SMTP_PORT` | `465` | e-mails |
-| `SMTP_USER` | `noreply@votredomaine.com` | e-mails |
+| `SMTP_USER` | `noreply@a21businessschool.com` | e-mails |
 | `SMTP_PASS` | mot de passe de cette boîte | e-mails |
 | `MAIL_FROM_NAME` | `Academy 21 University` | e-mails |
-| `ADMISSIONS_EMAIL` | `admissions@votredomaine.com` (plusieurs : séparées par des virgules) | e-mails |
+| `ADMISSIONS_EMAIL` | `admissions@a21businessschool.com` (plusieurs : séparées par des virgules) | e-mails |
 | `COPY_EMAIL` | votre adresse (copie de chaque envoi) | e-mails |
 | `PAYMENT_SECRET` | 40 caractères aléatoires (générateur de mots de passe), **ne plus jamais la changer** sinon les liens déjà envoyés deviennent invalides | paiement |
 | `ADMIN_KEY` | la clé de l'espace école, 16 caractères ou plus, à ne donner qu'à l'équipe d'admission | paiement |
@@ -120,8 +120,8 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 
 1. Tableau de bord de l'application → **Domaines** (ou **Connecter un domaine**) → choisissez votre domaine.
    Comme il est acheté chez Hostinger, les réglages DNS se font automatiquement. Prévoyez de quelques minutes à quelques heures.
-2. **SSL** : hPanel → **Sécurité → SSL** → installez le certificat gratuit pour `votredomaine.com` et `www.votredomaine.com`.
-3. Vérifiez : `https://votredomaine.com` affiche le site avec le cadenas.
+2. **SSL** : hPanel → **Sécurité → SSL** → installez le certificat gratuit pour `a21businessschool.com` et `www.a21businessschool.com`.
+3. Vérifiez : `https://a21businessschool.com` affiche le site avec le cadenas.
 4. Retournez à l'étape 4 pour créer les **webhooks** Stripe et Flutterwave avec ce domaine.
 
 ## 8. Tester (en mode test : aucun argent réel)
@@ -133,7 +133,7 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 3. Regardez aussi le dossier **spam**. S'il y en a, revoyez SPF/DKIM/DMARC (étape 3).
 
 **Paiements**
-1. `https://votredomaine.com/espace-ecole.html` → clé `ADMIN_KEY` → votre propre adresse → **Créer et envoyer le lien**.
+1. `https://a21businessschool.com/espace-ecole.html` → clé `ADMIN_KEY` → votre propre adresse → **Créer et envoyer le lien**.
 2. Ouvrez l'e-mail reçu → **Accéder à mon espace de paiement**.
 3. **Carte** : numéro `4242 4242 4242 4242`, date future, CVC `123` → page « paiement confirmé » + e-mails à l'école et au candidat.
 4. **Mobile Money** : suivez les instructions de test affichées par Flutterwave → même vérification.
