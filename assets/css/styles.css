@@ -1008,3 +1008,11 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .hero-minimal .container > * { max-width: 820px; }
 .bento .card--feature { overflow: hidden; }
 @media (max-width: 560px) { .facts-strip dl { grid-template-columns: 1fr 1fr; } .facts-strip dl > div { border-right: 0; border-bottom: 1px solid var(--line); padding: .9rem 1.1rem; } }
+/* Chevauchement du bloc sous l'en-tête : grands écrans uniquement */
+.overlap-up { position: relative; z-index: 2; margin-top: -3.5rem; }
+@media (max-width: 960px) {
+  .overlap-up { margin-top: 1.5rem; }
+  .filters { margin-top: -1.5rem; }
+  .hero-light__inner { padding-bottom: 2.5rem; }
+}
+@media (max-width: 640px) { .hero-light__ring { opacity: .18; width: 300px; right: -150px; top: -120px; } }

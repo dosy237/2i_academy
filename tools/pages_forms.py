@@ -263,7 +263,7 @@ def build_candidature():
 {hero_light([("admissions.html", "Admissions"), ("candidature.html", "Candidature")], "Candidater <span class='serif'>en ligne</span>",
   "Cinq étapes, environ dix minutes. Votre brouillon est enregistré automatiquement.", "Admissions", amb="green")}
 <section class="section section--flush-top" aria-label="Formulaire de candidature">
-  <div class="container" style="margin-top:-3.5rem;position:relative;z-index:2">
+  <div class="container overlap-up">
     <form class="wizard" id="candidature-form" data-wizard data-submit-form action="/api/submit" method="post" novalidate>
       <input type="hidden" name="type" value="candidature">
       {HONEYPOT}
@@ -293,7 +293,7 @@ def build_contact():
   "Programmes, partenariats, aménagements : une réponse personnalisée.", "Contact",
   f'<div class="btn-row"><a class="btn btn--accent" href="candidature.html">Vous souhaitez candidater ? {I["arrow"]}</a></div>', amb="blue")}
 <section class="section section--flush-top" aria-labelledby="form-title">
-  <div class="container layout-aside" style="margin-top:-3.5rem;position:relative;z-index:2">
+  <div class="container layout-aside overlap-up">
     <div class="wizard__panel">
       <h2 id="form-title">Votre message</h2>
       <p class="text-muted">Les champs marqués d'un astérisque (<span class="req">*</span>) sont obligatoires.</p>
