@@ -782,7 +782,7 @@
       api("/api/payment?action=status&m=" + m + "&id=" + encodeURIComponent(pid)).then(function (r) {
         if (r.ok && r.status === "paid") {
           d.title = "Paiement confirmé — Academy 21 University";
-          fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim() || r.email, amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "CinetPay") + ")", transaction: r.transaction });
+          fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim() || r.email, amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "") + ")", transaction: r.transaction });
           $("[data-paid-details]").hidden = false;
           return end("paid", "Merci, votre paiement est confirmé", "Vos frais d'étude de dossier sont réglés. Un reçu vous a été envoyé par e-mail ; notre équipe vous recontacte pour la suite de votre admission.");
         }

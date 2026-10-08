@@ -23,7 +23,7 @@ def build_mentions():
   <h2>Certifications</h2>
   <p>Les informations relatives aux certifications professionnelles (RNCP38666, RNCP39994) sont présentées conformément aux habilitations effectivement détenues et précisent le certificateur et le cadre applicable. Le détail figure sur la page <a href="admissions.html#certifications">Admissions</a>.</p>
   <h2>Crédits</h2>
-  <p>Polices de caractères : Montserrat, Inter et Source Serif 4, distribuées sous licence SIL Open Font License et hébergées sur ce site.</p>
+  <p>Polices de caractères : Montserrat et Inter, distribuées sous licence SIL Open Font License et hébergées sur ce site.</p>
   <h2>Données personnelles</h2>
   <p>Le traitement des données collectées via les formulaires est décrit dans la <a href="confidentialite.html">politique de confidentialité</a>.</p>
 </div></section>'''

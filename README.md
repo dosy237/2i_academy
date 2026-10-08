@@ -61,7 +61,8 @@ Aucune base de données : la référence du dossier voyage dans le lien, protég
 | Service | Rôle | Coût |
 |---|---|---|
 | [Stripe](https://dashboard.stripe.com/register) | Carte bancaire (Visa, Mastercard, CB) | Pas d'abonnement ; commission par paiement (environ 1,5 % + 0,25 € pour une carte européenne, davantage pour une carte hors Europe) |
-| [CinetPay](https://cinetpay.com) | Orange Money, MTN MoMo (XAF, XOF) | Pas d'abonnement ; commission par paiement (de l'ordre de 3 à 3,5 %) |
+| [Flutterwave](https://flutterwave.com) *(recommandé pour le Cameroun)* | Orange Money, MTN MoMo (XAF Cameroun, XOF Afrique de l'Ouest) | Pas d'abonnement ; commission par paiement (à confirmer à l'inscription) |
+| [CinetPay](https://cinetpay.com) *(alternative)* | Orange Money, MTN MoMo (XAF, XOF) | Pas d'abonnement ; commission par paiement (de l'ordre de 3 %) |
 
 Tarifs indicatifs : à vérifier sur le site de chaque prestataire au moment de l'inscription. Les deux services demandent des
 justificatifs de l'école (statuts, identité du représentant, coordonnées bancaires) avant de verser les fonds.
@@ -73,15 +74,44 @@ justificatifs de l'école (statuts, identité du représentant, coordonnées ban
 | `PAYMENT_SECRET` | une longue phrase secrète aléatoire (32 caractères ou plus) ; sert à signer les liens |
 | `ADMIN_KEY` | la clé d'accès de l'espace école (12 caractères minimum), à ne partager qu'avec l'équipe d'admission |
 | `STRIPE_SECRET_KEY` | Stripe → Développeurs → Clés API → clé secrète (`sk_test_…` pour tester, `sk_live_…` en production) |
-| `CINETPAY_APIKEY`, `CINETPAY_SITE_ID` | CinetPay → Intégrations |
-| `CINETPAY_CURRENCIES` *(facultatif)* | `XAF,XOF` par défaut ; `XAF` seul si le compte CinetPay n'accepte que l'Afrique centrale |
+| `FLW_SECRET_KEY` | Flutterwave → Settings → API Keys → clé secrète (`FLWSECK_TEST-…` pour tester) |
+| `FLW_WEBHOOK_HASH` | une phrase secrète de votre choix, recopiée dans Flutterwave → Settings → Webhooks (« Secret hash ») |
+| `CINETPAY_APIKEY`, `CINETPAY_SITE_ID` | seulement si vous choisissez CinetPay (CinetPay → Intégrations) |
+| `MOBILE_PROVIDER` *(facultatif)* | `flutterwave` ou `cinetpay` si les deux sont configurés (Flutterwave par défaut) |
+| `MOBILE_CURRENCIES` *(facultatif)* | `XAF,XOF` par défaut ; `XAF` seul pour ne proposer que l'Afrique centrale |
 | `FEE_EUR` *(facultatif)* | montant en euros, `50` par défaut |
 | `SITE_URL` *(facultatif)* | adresse publique du site, ex. `https://www.academy21.com` (sinon déduite automatiquement) |
 
 Webhook Stripe (recommandé, garantit l'e-mail même si le candidat ferme la page) : Stripe → Développeurs → Webhooks →
 ajouter l'URL `https://VOTRE-SITE/api/stripe-webhook` avec les événements `checkout.session.completed` et
-`checkout.session.async_payment_succeeded`. CinetPay utilise automatiquement `https://VOTRE-SITE/api/cinetpay`.
+`checkout.session.async_payment_succeeded`. Webhook Flutterwave : `https://VOTRE-SITE/api/flutterwave` (avec le même
+« Secret hash » que `FLW_WEBHOOK_HASH`). CinetPay utilise automatiquement `https://VOTRE-SITE/api/cinetpay`.
 Tant qu'un moyen de paiement n'est pas configuré, la page l'affiche comme « pas encore activé ».
+
+## Héberger chez Hostinger (au lieu de Vercel)
+
+Le site fonctionne à l'identique avec `server.js` (Node.js 20 ou plus, aucune autre dépendance que nodemailer).
+
+1. Offre Hostinger compatible **Node.js** : *Business* ou *Cloud* (l'hébergement de base ne fait pas tourner Node.js).
+2. hPanel → **Sites web → Ajouter → Application web Node.js** : importer le dépôt GitHub (ou l'archive du site),
+   commande d'installation `npm install`, commande de démarrage `npm start`, version de Node 20 ou 22.
+3. Dans **Variables d'environnement** de l'application : les mêmes variables que ci-dessus (e-mails, paiement), plus
+   `SITE_URL=https://www.votre-domaine.com`.
+4. Rattacher le nom de domaine à l'application, puis activer le certificat SSL (gratuit).
+5. Mettre à jour les adresses de webhook chez Stripe et Flutterwave avec le nouveau domaine.
+
+**E-mails avec une boîte Hostinger** (à la place de Gmail) :
+
+| Variable | Valeur |
+|---|---|
+| `SMTP_HOST` | `smtp.hostinger.com` |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | l'adresse qui envoie, ex. `noreply@votre-domaine.com` |
+| `SMTP_PASS` | le mot de passe de cette boîte |
+| `ADMISSIONS_EMAIL` | la ou les boîtes de l'école qui reçoivent (séparées par des virgules) |
+| `COPY_EMAIL` | qui reçoit une copie |
+
+Pensez à changer l'adresse affichée sur le site (`CONTACT_EMAIL` dans `tools/components.py`) puis à régénérer les pages.
 
 ## Modifier le site
 
@@ -94,7 +124,7 @@ python3 -m http.server           # aperçu sur http://localhost:8000 (sans l'API
 
 - Coordonnées : `CONTACT_EMAIL` dans `tools/components.py`.
 - Photos : `assets/img/photos/` (dictionnaire `PHOTOS` dans `tools/components.py`) ; photos du fondateur : `dr-raoul-njionou-1/2/3.jpg`.
-- Polices : Montserrat (titres, harmonisée avec le site Academy21), Inter (texte), Source Serif 4 (citations).
+- Polices : Montserrat (titres, harmonisée avec le site Academy21), Inter (texte). Mots mis en valeur : classe `.serif` (encadré, sans italique).
 - Styles : `assets/css/styles.css` · Interactions : `assets/js/main.js`.
 - En-têtes : un gabarit par type de page (`hero_light`, `hero_editorial`, `hero_visual`, `hero_minimal`, en-tête des fiches) et une ambiance de couleur par page (`amb-red|gold|green|blue`) dans `tools/components.py`.
 

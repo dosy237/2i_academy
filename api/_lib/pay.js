@@ -28,8 +28,19 @@ const ZONES = { XAF: "Afrique centrale (XAF)", XOF: "Afrique de l'Ouest (XOF)" }
 
 const stripeReady = () => Boolean(process.env.STRIPE_SECRET_KEY);
 const cinetpayReady = () => Boolean(process.env.CINETPAY_APIKEY && process.env.CINETPAY_SITE_ID);
+const flutterwaveReady = () => Boolean(process.env.FLW_SECRET_KEY);
+/* Prestataire Mobile Money : MOBILE_PROVIDER = flutterwave | cinetpay ; à défaut, celui qui est configuré (Flutterwave en priorité). */
+function mobileProvider() {
+  const want = String(process.env.MOBILE_PROVIDER || "").toLowerCase();
+  if (want === "cinetpay" && cinetpayReady()) return "cinetpay";
+  if (want === "flutterwave" && flutterwaveReady()) return "flutterwave";
+  if (flutterwaveReady()) return "flutterwave";
+  if (cinetpayReady()) return "cinetpay";
+  return null;
+}
+const mobileReady = () => Boolean(mobileProvider());
 const zonesAvailable = () => {
-  const z = String(process.env.CINETPAY_CURRENCIES || "XAF,XOF").split(",").map((x) => x.trim().toUpperCase()).filter((x) => ZONES[x]);
+  const z = String(process.env.MOBILE_CURRENCIES || process.env.CINETPAY_CURRENCIES || "XAF,XOF").split(",").map((x) => x.trim().toUpperCase()).filter((x) => ZONES[x]);
   return z.length ? z : ["XAF"];
 };
 
@@ -71,7 +82,7 @@ function summary(c) {
     amountEur: c.amount, amountFcfa: toFcfa(c.amount),
     labelEur: fmtEur(c.amount), labelFcfa: fmtFcfa(toFcfa(c.amount)),
     rate: EUR_TO_FCFA, expires: new Date(c.expires * 1000).toISOString(),
-    methods: { card: stripeReady(), mobile: cinetpayReady() }, zones: zonesAvailable().map((code) => ({ code, label: ZONES[code] })),
+    methods: { card: stripeReady(), mobile: mobileReady() }, zones: zonesAvailable().map((code) => ({ code, label: ZONES[code] })),
   };
 }
 
@@ -184,6 +195,60 @@ async function cinetpayStatus(id) {
   };
 }
 
+
+/* ---------------------------------------------------------------- Flutterwave (Orange Money, MTN MoMo — Cameroun et Afrique de l'Ouest) */
+const FLW = "https://api.flutterwave.com/v3";
+
+async function flutterwave(path, payload) {
+  const r = await fetch(`${FLW}/${path}`, {
+    method: payload ? "POST" : "GET",
+    headers: { Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`, "Content-Type": "application/json" },
+    body: payload ? JSON.stringify(payload) : undefined,
+  });
+  return r.json().catch(() => ({}));
+}
+
+async function flutterwaveCheckout(c, currency, base) {
+  const zones = zonesAvailable();
+  const cur = zones.includes(currency) ? currency : zones[0];
+  const tx_ref = `${String(c.ref).replace(/[^A-Za-z0-9-]/g, "")}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+  const j = await flutterwave("payments", {
+    tx_ref,
+    amount: toFcfa(c.amount),
+    currency: cur,
+    payment_options: "mobilemoneyfranco",
+    redirect_url: `${base}/api/flutterwave`,
+    customer: { email: c.email, name: `${c.prenom || ""} ${c.nom || ""}`.trim() || c.email },
+    customizations: { title: "Academy 21 University", description: `Frais d'étude de dossier ${c.ref}` },
+    meta: { ref: c.ref, prenom: c.prenom || "", nom: c.nom || "", programme: c.programme || "" },
+  });
+  if (j.status !== "success" || !j.data || !j.data.link) throw new Error(`Flutterwave: ${j.message || "erreur"}`);
+  return j.data.link;
+}
+
+async function flutterwaveStatus(id) {
+  if (!/^[A-Za-z0-9-]{6,64}$/.test(id)) throw Object.assign(new Error("identifiant"), { code: "invalid" });
+  const j = await flutterwave(`transactions/verify_by_reference?tx_ref=${encodeURIComponent(id)}`);
+  const d = j.data || {};
+  const m = d.meta || {};
+  const cust = d.customer || {};
+  const s = String(d.status || "").toLowerCase();
+  // Contrôle du montant et de la devise : un paiement partiel n'est jamais considéré comme réglé.
+  const fcfaOk = (d.currency === "XAF" || d.currency === "XOF") && Number(d.amount) >= toFcfa(feeEur()) - 5;
+  const status = s === "successful" && fcfaOk ? "paid" : s === "failed" || s === "cancelled" ? "failed" : "pending";
+  const [prenom, ...rest] = String(cust.name || "").split(" ");
+  return {
+    status, method: "mobile", provider: "Flutterwave",
+    ref: m.ref || String(id).replace(/-[A-F0-9]{6}$/, ""), prenom: m.prenom || prenom, nom: m.nom || rest.join(" "),
+    email: cust.email, programme: m.programme,
+    amount: d.amount ? `${new Intl.NumberFormat("fr-FR").format(Number(d.amount))} FCFA` : "",
+    transaction: id,
+  };
+}
+
+const mobileCheckout = (c, currency, base) => (mobileProvider() === "flutterwave" ? flutterwaveCheckout : cinetpayCheckout)(c, currency, base);
+const mobileStatus = (id) => (mobileProvider() === "flutterwave" ? flutterwaveStatus : cinetpayStatus)(id);
+
 /* ---------------------------------------------------------------- E-mails de paiement */
 function paidRows(st) {
   const rows = [["Référence du dossier", st.ref], ["Candidat·e", `${st.prenom || ""} ${st.nom || ""}`.trim() || st.email], ["E-mail", st.email],
@@ -216,6 +281,7 @@ async function notifyPaid(st) {
 
 module.exports = {
   PROGRAMMES, EUR_TO_FCFA, feeEur, toFcfa, fmtEur, fmtFcfa, ZONES,
-  stripeReady, cinetpayReady, createToken, readToken, summary,
-  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, notifyPaid,
+  stripeReady, cinetpayReady, flutterwaveReady, mobileProvider, mobileReady, createToken, readToken, summary,
+  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus,
+  mobileCheckout, mobileStatus, notifyPaid,
 };

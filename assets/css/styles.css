@@ -17,8 +17,6 @@
 @font-face { font-family: "Montserrat"; font-style: normal; font-display: swap; font-weight: 100 900;
   src: url("../fonts/montserrat-latin-ext-wght-normal.woff2") format("woff2-variations");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: "Source Serif 4"; font-style: italic; font-display: swap; font-weight: 400;
-  src: url("../fonts/source-serif-4-latin-400-italic.woff2") format("woff2"); }
 
 :root {
   /* Marque — institutionnel (brochures) */
@@ -60,7 +58,6 @@
   /* Typographie */
   --font-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
   --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 
   --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
   --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
@@ -165,7 +162,7 @@ main:focus { outline: none; }
 .on-dark .lead { color: #c3cad6; }
 .motto { font-family: var(--font-display); font-weight: 800; letter-spacing: .18em; text-transform: uppercase; font-size: var(--step--1); color: var(--red); margin: 0 0 .8rem; }
 .on-dark .motto { color: var(--logo-yellow); }
-.quote { font-family: var(--font-serif); font-style: italic; font-size: var(--step-1); color: var(--ink); line-height: 1.5; border-left: 3px solid var(--logo-yellow); padding: .2rem 0 .2rem 1.2rem; margin: 1.5rem 0; }
+.quote { font-family: var(--font-body); font-weight: 500; font-size: var(--step-1); color: var(--ink); line-height: 1.5; border-left: 3px solid var(--logo-yellow); padding: .2rem 0 .2rem 1.2rem; margin: 1.5rem 0; }
 .text-gradient { background: linear-gradient(90deg, var(--logo-yellow), #ffe066 60%, #fff3b0); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
 /* ---------- Boutons ---------- */
@@ -482,7 +479,7 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
   background: radial-gradient(900px 500px at 100% 0%, rgba(47,134,171,.26), transparent 60%), radial-gradient(700px 420px at 0% 120%, rgba(183,28,28,.22), transparent 60%), linear-gradient(160deg, var(--navy) 0%, var(--navy-950) 100%); }
 .page-hero .container { position: relative; padding-block: clamp(2.6rem, 6vw, 4.6rem) clamp(5.5rem, 9vw, 7.5rem); display: grid; grid-template-columns: 1.25fr .95fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .page-hero h1 { color: var(--white); font-size: clamp(2.1rem, 1.5rem + 2.4vw, 3.4rem); }
-.page-hero .subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--step-1); color: #e6e9ef; margin-bottom: 1.4rem; }
+.page-hero .subtitle { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); color: #e6e9ef; margin-bottom: 1.4rem; }
 .page-hero .kicker { font-family: var(--font-display); font-weight: 800; letter-spacing: .18em; text-transform: uppercase; font-size: .86rem; color: var(--logo-yellow); margin-bottom: .9rem; display: block; }
 .page-hero .deco { position: absolute; right: -140px; top: -140px; width: 540px; opacity: .3; pointer-events: none; z-index: -1; }
 .page-hero--simple .container { grid-template-columns: 1fr; }
@@ -865,8 +862,12 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .amb-blue   { --amb: #1e6a8a; --amb-on-dark: #8fd0ea; --amb-soft: #e3f1f7; --amb-halo: rgba(47, 134, 171, .40); }
 
 /* Un mot en italique par titre, pour la chaleur */
-.serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--amb, var(--red)); }
-.on-dark .serif, .hero .serif { color: var(--amb-on-dark, var(--logo-yellow)); }
+/* Mot mis en valeur dans les titres : même typographie que l'école, posé dans un encadré légèrement incliné. */
+.serif { display: inline-block; font: inherit; font-style: normal; letter-spacing: inherit; line-height: 1.12; color: #fff;
+  background: var(--amb, var(--red)); padding: .02em .3em .08em; margin: .06em .04em; border-radius: .14em; transform: rotate(-1.5deg);
+  box-shadow: 0 .18em .5em -.18em rgba(17, 26, 43, .35); }
+.on-dark .serif, .hero .serif, .page-hero .serif, .hero-program .serif { color: var(--amb, var(--navy)); background: #fff; box-shadow: 0 .2em .6em -.2em rgba(0, 0, 0, .45); }
+@media (prefers-reduced-motion: reduce) { .serif { transform: none; } }
 
 .ring4 { color: var(--ink); }
 .on-dark .ring4 { color: #fff; }
@@ -926,7 +927,7 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .hero-program__inner { padding-block: clamp(2.6rem, 6vw, 4.4rem) clamp(6.5rem, 10vw, 8rem); max-width: var(--container); }
 .hero-program__text { max-width: 640px; }
 .hero-program h1 { color: #fff; font-size: clamp(2.1rem, 1.5rem + 2.4vw, 3.5rem); }
-.hero-program .subtitle { font-family: var(--font-serif); font-style: italic; font-size: var(--step-1); color: #e6e9ef; margin-bottom: 1.4rem; }
+.hero-program .subtitle { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); color: #e6e9ef; margin-bottom: 1.4rem; }
 .hero-program .btn-row { margin-top: 1.6rem; }
 .level-tag { display: inline-flex; align-items: center; padding: .38rem .9rem; border-radius: 999px; font: 800 .82rem var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--navy); background: var(--amb-on-dark, var(--logo-yellow)); }
 @media (max-width: 900px) { .hero-program__photo { width: 100%; opacity: .25; -webkit-mask-image: none; mask-image: none; } .hero-program__visual { display: none; } }
@@ -1053,7 +1054,7 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .lightbox__figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; max-width: 100%; max-height: 100%; }
 .lightbox__img { display: block; max-width: 100%; max-height: calc(100vh - clamp(10rem, 22vh, 14rem)); width: auto; height: auto; object-fit: contain; border-radius: 14px;
   box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 0 0 8px rgba(255,255,255,.04), 0 40px 90px -20px rgba(0,0,0,.7); pointer-events: auto; will-change: transform; }
-.lightbox__caption { max-width: 46rem; text-align: center; font-family: var(--font-serif); font-style: italic; font-size: clamp(1rem, .95rem + .3vw, 1.2rem); line-height: 1.5; color: #e6e9ef; pointer-events: auto; }
+.lightbox__caption { max-width: 46rem; text-align: center; font-family: var(--font-body); font-weight: 500; font-size: clamp(.98rem, .95rem + .2vw, 1.1rem); line-height: 1.5; color: #e6e9ef; pointer-events: auto; }
 .lightbox__caption small { display: block; margin-top: .35rem; font: 700 .72rem var(--font-display); font-style: normal; letter-spacing: .18em; text-transform: uppercase; color: var(--logo-yellow); }
 .lightbox__rule { display: block; width: 56px; height: 3px; border-radius: 3px; margin: 0 auto .7rem;
   background: linear-gradient(90deg, var(--logo-red) 0 25%, var(--logo-yellow) 25% 50%, var(--logo-green) 50% 75%, var(--logo-blue) 75%); }

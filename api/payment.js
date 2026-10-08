@@ -7,8 +7,9 @@
  *  GET  action=status&m=card|mobile&id=…   : statut relu chez le prestataire (page de confirmation).
  *
  * Variables (Vercel > Settings > Environment Variables) — voir README :
- *  PAYMENT_SECRET, ADMIN_KEY, FEE_EUR (défaut 50), STRIPE_SECRET_KEY, CINETPAY_APIKEY, CINETPAY_SITE_ID,
- *  CINETPAY_CURRENCIES (défaut "XAF,XOF"), SITE_URL (facultatif), + variables d'e-mail de api/submit.js.
+ *  PAYMENT_SECRET, ADMIN_KEY, FEE_EUR (défaut 50), STRIPE_SECRET_KEY,
+ *  Mobile Money : FLW_SECRET_KEY + FLW_WEBHOOK_HASH (Flutterwave) ou CINETPAY_APIKEY + CINETPAY_SITE_ID,
+ *  MOBILE_PROVIDER (facultatif), MOBILE_CURRENCIES (défaut "XAF,XOF"), SITE_URL (facultatif), + variables d'e-mail.
  */
 const crypto = require("crypto");
 const { esc, sendMail, layout, button, siteUrl, schoolInboxes, copyInboxes, mailConfigured } = require("./_lib/mail");
@@ -159,8 +160,13 @@ module.exports = async function handler(req, res) {
         delete st._pi;
         return json(res, 200, { ok: true, ...st });
       }
-      if (!pay.cinetpayReady()) return json(res, 503, { ok: false, error: "not_configured" });
-      return json(res, 200, { ok: true, ...(await pay.cinetpayStatus(id)) });
+      if (!pay.mobileReady()) return json(res, 503, { ok: false, error: "not_configured" });
+      const st = await pay.mobileStatus(id);
+      // Flutterwave sans webhook configuré : la confirmation part depuis la page de retour.
+      if (st.status === "paid" && pay.mobileProvider() === "flutterwave" && !process.env.FLW_WEBHOOK_HASH) {
+        await pay.notifyPaid(st).catch((e) => console.error("[paiement] notification", e && e.message));
+      }
+      return json(res, 200, { ok: true, ...st });
     }
 
     if (req.method === "POST" && action === "link") return await createLink(req, res, body);
@@ -173,8 +179,8 @@ module.exports = async function handler(req, res) {
         if (!pay.stripeReady()) return json(res, 503, { ok: false, error: "not_configured" });
         url = await pay.stripeCheckout(c, body.t, base);
       } else {
-        if (!pay.cinetpayReady()) return json(res, 503, { ok: false, error: "not_configured" });
-        url = await pay.cinetpayCheckout(c, clean(body.currency, 3).toUpperCase(), base);
+        if (!pay.mobileReady()) return json(res, 503, { ok: false, error: "not_configured" });
+        url = await pay.mobileCheckout(c, clean(body.currency, 3).toUpperCase(), base);
       }
       return isFormPost(req) ? redirect(res, url) : json(res, 200, { ok: true, url });
     }

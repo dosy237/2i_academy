@@ -72,7 +72,7 @@ def build_paiement():
                 <div><h3>Mobile Money</h3><p class="pay-method__brands">Orange Money · MTN MoMo</p></div>
                 <strong class="pay-method__amount" data-f="fcfa">{FEE_FCFA}</strong>
               </div>
-              <p class="small text-muted">Montant converti en francs CFA au taux fixe. Vous validez le paiement sur votre téléphone, via CinetPay.</p>
+              <p class="small text-muted">Montant converti en francs CFA au taux fixe. Vous validez le paiement sur votre téléphone, sur la page sécurisée de notre prestataire.</p>
               <fieldset class="pay-zones" data-zones hidden><legend>Votre zone</legend><div class="pay-zones__list" data-zones-list></div></fieldset>
               <button type="button" class="btn btn--navy btn--block" data-pay-go="mobile">{I["phone"]} <span>Payer <span data-f="fcfa">{FEE_FCFA}</span></span></button>
               <p class="pay-method__off" data-off hidden>Ce moyen de paiement n'est pas encore activé. <a href="mailto:{CONTACT_EMAIL}">Contactez-nous</a>.</p>

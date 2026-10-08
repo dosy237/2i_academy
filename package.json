@@ -1,8 +1,13 @@
 {
   "name": "academy21-university-site",
   "private": true,
-  "description": "Site Academy 21 University — pages statiques et fonction d'envoi des candidatures (api/submit.js).",
-  "engines": { "node": ">=20" },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "nodemailer": "^10.0.16"
   }
