@@ -47,6 +47,8 @@ Le candidat ne paie rien en déposant sa candidature. Après l'étude d'un dossi
 
 1. L'école ouvre **/espace-ecole.html** (lien direct et pré-rempli dans chaque e-mail de candidature),
    saisit sa clé d'accès et clique sur « Créer et envoyer le lien ».
+   Plusieurs candidats d'un même programme : coller leurs adresses séparées par des virgules ; chacun reçoit son propre
+   e-mail et son propre lien (référence attribuée automatiquement), et l'école reçoit un récapitulatif (50 adresses maximum par envoi).
 2. Le candidat reçoit un e-mail avec son **lien personnel** (signé, valable 30 jours par défaut) vers
    **/paiement.html** : récapitulatif du dossier, 50 € par carte bancaire, ou 32 800 FCFA par Orange Money / MTN MoMo
    (taux fixe 1 € = 655,957 FCFA, arrondi au multiple de 5 exigé par CinetPay).

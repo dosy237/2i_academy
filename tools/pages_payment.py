@@ -1,6 +1,6 @@
 # Paiement des frais d'étude de dossier : espace de paiement, confirmation, espace école.
 from components import hero_minimal, I, PROGRAMS, CONTACT_EMAIL, ring, page, notice
-from pages_forms import field, select, EMAIL_ATTRS
+from pages_forms import field, select
 
 FEE_EUR = "50,00&nbsp;€"
 FEE_FCFA = "32&nbsp;800&nbsp;FCFA"
@@ -140,15 +140,19 @@ def build_espace_ecole():
         <input type="hidden" name="action" value="link">
         <div class="error-summary" tabindex="-1" role="alert" data-error-summary hidden><h3>Erreurs</h3><ul></ul></div>
         {field("key", "Clé d'accès de l'école", "password", True, "La clé définie dans Vercel (variable ADMIN_KEY).", ' data-required="Veuillez saisir la clé d&#39;accès." autocomplete="current-password"')}
+        <div class="field"><label for="email">E-mail du ou des candidats <span class="req" aria-hidden="true">*</span></label>
+          <p class="hint" id="email-hint">Plusieurs candidats : collez leurs adresses séparées par des virgules. Chacun reçoit son propre e-mail et son propre lien.</p>
+          <textarea id="email" name="email" rows="2" required data-emails inputmode="email" autocomplete="off" spellcheck="false" aria-describedby="email-hint email-error" data-required="Veuillez indiquer au moins une adresse e-mail."></textarea>
+          <p class="field__error" id="email-error"></p></div>
+        <div class="notice notice--info" data-batch-note role="status" hidden>{I["info"]}<div><p data-batch-text></p></div></div>
         <div class="form__row">
-          {field("ref", "Référence du dossier", required=True, hint="Exemple : A21-261008-K4P2", attrs=' data-required="Veuillez indiquer la référence du dossier." maxlength="40" autocapitalize="characters"')}
           {select("programme", "Programme", prog_opts, required=True, attrs=' data-required="Veuillez sélectionner le programme."')}
+          <div data-single>{field("ref", "Référence du dossier", required=True, hint="Exemple : A21-261008-K4P2", attrs=' data-required="Veuillez indiquer la référence du dossier." maxlength="40" autocapitalize="characters"')}</div>
         </div>
-        <div class="form__row">
+        <div class="form__row" data-single>
           {field("prenom", "Prénom du candidat", required=True, attrs=' data-required="Veuillez indiquer le prénom." maxlength="80"')}
           {field("nom", "Nom du candidat", required=True, attrs=' data-required="Veuillez indiquer le nom." maxlength="80"')}
         </div>
-        {field("email", "E-mail du candidat", "email", True, "Le lien de paiement est envoyé à cette adresse.", EMAIL_ATTRS)}
         <div class="form__row">
           {field("amount", "Montant (€)", "text", True, "Converti automatiquement en FCFA pour le Mobile Money.", ' value="50" inputmode="decimal" pattern="[0-9]{1,4}([.,][0-9]{1,2})?" data-required="Veuillez indiquer le montant." data-format="Montant attendu : un nombre, par exemple 50."')}
           {field("days", "Validité du lien (jours)", "text", True, "Entre 1 et 90 jours.", ' value="30" inputmode="numeric" pattern="[1-9][0-9]?" data-required="Veuillez indiquer la durée de validité." data-format="Un nombre de jours entre 1 et 90."')}
@@ -167,13 +171,18 @@ def build_espace_ecole():
         <div class="pay-link__row"><input id="pay-link-out" type="text" readonly>
           <button type="button" class="btn btn--ghost btn--sm" data-copy>{I["copy"]} Copier</button></div>
       </div>
+      <div class="pay-link" data-batch-box hidden>
+        <h3 class="pay-link__title">Liens créés</h3>
+        <table class="pay-batch"><caption class="visually-hidden">Liens de paiement par candidat</caption>
+          <thead><tr><th scope="col">E-mail</th><th scope="col">Référence</th><th scope="col">Statut</th><th scope="col">Lien</th></tr></thead><tbody data-batch-rows></tbody></table>
+      </div>
     </div>
     <aside aria-label="Fonctionnement">
       <div class="aside-card">
         <h2>Comment ça marche</h2>
         <ol class="mini-steps">
           <li>Le candidat dépose sa candidature : <strong>rien n'est payé</strong> à ce stade.</li>
-          <li>Dossier recevable : vous envoyez ici le lien (ou depuis le bouton présent dans l'e-mail de candidature, qui pré-remplit ce formulaire).</li>
+          <li>Dossier recevable : vous envoyez ici le lien (ou depuis le bouton présent dans l'e-mail de candidature, qui pré-remplit ce formulaire). Plusieurs candidats d'un même programme : séparez leurs adresses par des virgules.</li>
           <li>Le candidat paie par carte ou Mobile Money. L'école et le candidat reçoivent la confirmation par e-mail.</li>
         </ol>
       </div>

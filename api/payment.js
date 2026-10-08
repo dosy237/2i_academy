@@ -47,36 +47,17 @@ function adminOk(key) {
   return crypto.timingSafeEqual(a, b);
 }
 
-async function createLink(req, res, body) {
-  const ok = adminOk(body.key);
-  if (ok === null || !process.env.PAYMENT_SECRET) return json(res, 503, { ok: false, error: "not_configured" });
-  if (!ok) { await new Promise((r) => setTimeout(r, 600)); return json(res, 401, { ok: false, error: "key" }); }
+const refGen = () => {
+  const ymd = new Date().toISOString().slice(2, 10).replace(/-/g, "");
+  return `A21-${ymd}-${crypto.randomBytes(3).toString("hex").toUpperCase().slice(0, 4)}`;
+};
+/* Plusieurs adresses possibles : séparées par des virgules, points-virgules ou retours à la ligne. */
+const splitEmails = (v) => [...new Set(String(v || "").split(/[\s,;]+/).map((x) => x.trim().toLowerCase()).filter(Boolean))];
+const MAX_BATCH = 50;
 
-  const c = {
-    ref: clean(body.ref, 40).toUpperCase().replace(/[^A-Z0-9-]/g, ""),
-    prenom: clean(body.prenom, 80), nom: clean(body.nom, 80), email: clean(body.email, 160),
-    programme: clean(body.programme, 40), amount: Number(String(body.amount || pay.feeEur()).replace(",", ".")),
-  };
-  const days = Math.min(90, Math.max(1, parseInt(body.days, 10) || 30));
-  const fields = [];
-  if (!c.ref) fields.push("Référence");
-  if (!c.prenom) fields.push("Prénom");
-  if (!c.nom) fields.push("Nom");
-  if (!EMAIL_RE.test(c.email)) fields.push("E-mail");
-  if (!pay.PROGRAMMES[c.programme]) fields.push("Programme");
-  if (!(c.amount >= 1 && c.amount <= 5000)) fields.push("Montant");
-  if (fields.length) return json(res, 400, { ok: false, error: "validation", fields });
-  c.amount = Math.round(c.amount * 100) / 100;
-
-  const token = pay.createToken(c, days);
-  const link = `${siteUrl(req)}/paiement.html?t=${encodeURIComponent(token)}`;
-  const s = pay.summary(pay.readToken(token));
-  const until = new Date(s.expires).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
-
-  let sent = false;
-  if ((body.send === "1" || body.send === true) && mailConfigured()) {
-    const note = clean(body.message, 1200);
-    const html = layout("Votre dossier a été étudié", `<p>Bonjour ${esc(c.prenom)},</p>
+function linkEmail(c, s, link, until, note) {
+  const hello = c.prenom ? `Bonjour ${esc(c.prenom)},` : "Bonjour,";
+  const html = layout("Votre dossier a été étudié", `<p>${hello}</p>
 <p>Votre dossier de candidature <strong>${esc(c.ref)}</strong> (${esc(s.programme)}) a été étudié par notre équipe.
 Pour poursuivre votre admission, nous vous invitons à régler les frais d'étude de dossier.</p>
 ${note ? `<p style="padding:12px 16px;background:#f5f7fa;border-radius:8px;white-space:pre-wrap">${esc(note)}</p>` : ""}
@@ -84,17 +65,77 @@ ${note ? `<p style="padding:12px 16px;background:#f5f7fa;border-radius:8px;white
 ${button(link, "Accéder à mon espace de paiement")}
 <p style="font-size:13px;color:#535c6e">Carte bancaire, Orange Money ou MTN Mobile Money. Paiement sécurisé par nos prestataires : l'école n'a jamais accès à vos données bancaires.
 Lien personnel, valable jusqu'au ${esc(until)}. Si le bouton ne fonctionne pas, copiez cette adresse : ${esc(link)}</p>`);
-    const text = `Bonjour ${c.prenom},\n\nVotre dossier ${c.ref} (${s.programme}) a été étudié. Pour poursuivre votre admission, merci de régler les frais d'étude de dossier : ${s.labelEur} (soit ${s.labelFcfa} en Mobile Money).\n\n${note ? note + "\n\n" : ""}Votre espace de paiement : ${link}\nLien valable jusqu'au ${until}.\n\nAcademy Twenty One University`;
-    try {
-      await sendMail({ to: [c.email], cc: [...schoolInboxes(), ...copyInboxes()], replyTo: schoolInboxes()[0],
-        subject: `Academy 21 University — frais d'étude de dossier (${c.ref})`, html, text });
-      sent = true;
-    } catch (e) {
-      console.error("[paiement] envoi du lien", e && e.message);
-      return json(res, 502, { ok: false, error: "delivery", link });
+  const text = `${c.prenom ? `Bonjour ${c.prenom},` : "Bonjour,"}\n\nVotre dossier ${c.ref} (${s.programme}) a été étudié. Pour poursuivre votre admission, merci de régler les frais d'étude de dossier : ${s.labelEur} (soit ${s.labelFcfa} en Mobile Money).\n\n${note ? note + "\n\n" : ""}Votre espace de paiement : ${link}\nLien valable jusqu'au ${until}.\n\nAcademy Twenty One University`;
+  return { subject: `Academy 21 University — frais d'étude de dossier (${c.ref})`, html, text };
+}
+
+async function createLink(req, res, body) {
+  const ok = adminOk(body.key);
+  if (ok === null || !process.env.PAYMENT_SECRET) return json(res, 503, { ok: false, error: "not_configured" });
+  if (!ok) { await new Promise((r) => setTimeout(r, 600)); return json(res, 401, { ok: false, error: "key" }); }
+
+  const emails = splitEmails(body.email);
+  const batch = emails.length > 1;
+  const base = {
+    ref: clean(body.ref, 40).toUpperCase().replace(/[^A-Z0-9-]/g, ""),
+    prenom: batch ? "" : clean(body.prenom, 80), nom: batch ? "" : clean(body.nom, 80),
+    programme: clean(body.programme, 40), amount: Number(String(body.amount || pay.feeEur()).replace(",", ".")),
+  };
+  const days = Math.min(90, Math.max(1, parseInt(body.days, 10) || 30));
+  const fields = [];
+  if (!batch && !base.ref) fields.push("Référence");
+  if (!batch && !base.prenom) fields.push("Prénom");
+  if (!batch && !base.nom) fields.push("Nom");
+  const bad = emails.filter((e) => !EMAIL_RE.test(e));
+  if (!emails.length || bad.length) fields.push(bad.length ? `E-mail (${bad.slice(0, 3).join(", ")})` : "E-mail");
+  if (emails.length > MAX_BATCH) fields.push(`E-mail (${MAX_BATCH} adresses maximum par envoi)`);
+  if (!pay.PROGRAMMES[base.programme]) fields.push("Programme");
+  if (!(base.amount >= 1 && base.amount <= 5000)) fields.push("Montant");
+  if (fields.length) return json(res, 400, { ok: false, error: "validation", fields });
+  base.amount = Math.round(base.amount * 100) / 100;
+
+  const wantSend = (body.send === "1" || body.send === true) && mailConfigured();
+  const note = clean(body.message, 1200);
+  const school = schoolInboxes();
+  const results = [];
+  let s0 = null;
+  // Envois un par un : chaque candidat reçoit son propre e-mail et son propre lien (jamais les adresses des autres).
+  for (const email of emails) {
+    const c = { ...base, email, ref: batch ? refGen() : base.ref };
+    const token = pay.createToken(c, days);
+    const link = `${siteUrl(req)}/paiement.html?t=${encodeURIComponent(token)}`;
+    const s = pay.summary(pay.readToken(token));
+    s0 = s0 || s;
+    const until = new Date(s.expires).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
+    const r = { email, ref: c.ref, link, sent: false };
+    if (wantSend) {
+      const m = linkEmail(c, s, link, until, note);
+      try {
+        await sendMail({ to: [email], cc: batch ? [] : [...school, ...copyInboxes()], replyTo: school[0], subject: m.subject, html: m.html, text: m.text });
+        r.sent = true;
+      } catch (e) {
+        console.error("[paiement] envoi du lien", email, e && e.message);
+        r.error = "delivery";
+      }
     }
+    results.push(r);
   }
-  return json(res, 200, { ok: true, sent, link, expires: s.expires, labelEur: s.labelEur, labelFcfa: s.labelFcfa });
+
+  // Envoi groupé : un seul récapitulatif à l'école plutôt qu'une copie par candidat.
+  if (batch && wantSend && results.some((r) => r.sent)) {
+    const rows = results.map((r) => `<tr><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${esc(r.email)}</td><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${esc(r.ref)}</td><td style="padding:6px 10px;border-bottom:1px solid #e1e5ec">${r.sent ? "envoyé" : "échec"}</td></tr>`).join("");
+    await sendMail({
+      to: school, cc: copyInboxes(), subject: `Frais d'étude — ${results.filter((r) => r.sent).length} lien(s) de paiement envoyé(s)`,
+      html: layout("Liens de paiement envoyés", `<p>${esc(s0.programme)} · ${esc(s0.labelEur)} (${esc(s0.labelFcfa)})</p><table style="width:100%;border-collapse:collapse;font-size:14px"><tr><th align="left" style="padding:6px 10px">E-mail</th><th align="left" style="padding:6px 10px">Référence</th><th align="left" style="padding:6px 10px">Statut</th></tr>${rows}</table>`),
+      text: results.map((r) => `${r.email} — ${r.ref} — ${r.sent ? "envoyé" : "échec"}`).join("\n"),
+    }).catch((e) => console.error("[paiement] récapitulatif école", e && e.message));
+  }
+
+  const failed = results.filter((r) => r.error).length;
+  const out = { ok: failed === 0, sent: results.filter((r) => r.sent).length, results, link: results[0].link,
+    expires: s0.expires, labelEur: s0.labelEur, labelFcfa: s0.labelFcfa };
+  if (failed) { out.error = "delivery"; out.failed = failed; }
+  return json(res, failed === results.length && wantSend ? 502 : 200, out);
 }
 
 module.exports = async function handler(req, res) {

@@ -188,6 +188,12 @@
     return d.getElementById((el.type === "radio" ? el.name : el.id) + "-error");
   }
 
+  function splitEmails(v) {
+    var seen = {};
+    return String(v || "").split(/[\s,;]+/).map(function (x) { return x.trim().toLowerCase(); })
+      .filter(function (x) { if (!x || seen[x]) return false; seen[x] = true; return true; });
+  }
+
   function messageFor(form, el) {
     if (el.disabled || el.closest("[hidden]")) return "";
     if (el.type === "radio") {
@@ -206,6 +212,12 @@
     }
     var v = (el.value || "").trim();
     if (el.required && !v) return el.dataset.required || "Ce champ est obligatoire.";
+    if (el.hasAttribute("data-emails") && v) {
+      var bad = splitEmails(v).filter(function (x) { return !EMAIL_RE.test(x); });
+      if (bad.length) return "Adresse" + (bad.length > 1 ? "s" : "") + " non valide" + (bad.length > 1 ? "s" : "") + " : " + bad.slice(0, 3).join(", ") + ".";
+      if (splitEmails(v).length > 50) return "50 adresses maximum par envoi.";
+      return "";
+    }
     if (!v) return "";
     if (el.type === "email" && !EMAIL_RE.test(v)) return el.dataset.format || "Le format n'est pas valide.";
     if (el.pattern && !new RegExp("^(?:" + el.pattern + ")$").test(v)) return el.dataset.format || "Le format n'est pas valide.";
@@ -691,7 +703,7 @@
           return payError();
         }
         fill(payBox, "data-f", {
-          ref: s.ref, name: ((s.prenom || "") + " " + (s.nom || "")).trim(), programme: s.programme,
+          ref: s.ref, name: ((s.prenom || "") + " " + (s.nom || "")).trim() || s.email, programme: s.programme,
           eur: s.labelEur, fcfa: s.labelFcfa, expires: frDate(s.expires)
         });
         // Zones Mobile Money (XAF / XOF)
@@ -770,7 +782,7 @@
       api("/api/payment?action=status&m=" + m + "&id=" + encodeURIComponent(pid)).then(function (r) {
         if (r.ok && r.status === "paid") {
           d.title = "Paiement confirmé — Academy 21 University";
-          fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim(), amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "CinetPay") + ")", transaction: r.transaction });
+          fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim() || r.email, amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "CinetPay") + ")", transaction: r.transaction });
           $("[data-paid-details]").hidden = false;
           return end("paid", "Merci, votre paiement est confirmé", "Vos frais d'étude de dossier sont réglés. Un reçu vous a été envoyé par e-mail ; notre équipe vous recontacte pour la suite de votre admission.");
         }
@@ -799,33 +811,56 @@
     wireLiveValidation(feeForm);
     var linkBox = $("[data-link-box]");
     var linkOut = $("#pay-link-out");
+    var batchBox = $("[data-batch-box]");
+    var emailEl = feeForm.elements.email;
+    var batchMode = function () {
+      var n = splitEmails(emailEl.value).length;
+      var multi = n > 1;
+      $$("[data-single]", feeForm).forEach(function (b) { b.hidden = multi; });
+      $("[data-batch-note]", feeForm).hidden = !multi;
+      if (multi) $("[data-batch-text]", feeForm).textContent = "Envoi groupé : " + n + " adresses. Chaque candidat reçoit son propre e-mail et son lien personnel ; une référence est attribuée à chacun et l'école reçoit un récapitulatif.";
+      $("[data-submit]", feeForm).lastChild.textContent = multi ? " Créer et envoyer les " + n + " liens" : " Créer et envoyer le lien";
+      return n;
+    };
+    emailEl.addEventListener("input", batchMode);
+    batchMode();
+    var esc = function (t) { var x = d.createElement("span"); x.textContent = t; return x.innerHTML; };
     feeForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!validate(feeForm, feeForm)) return;
       var payload = collect(feeForm);
       payload.send = feeForm.elements.send.checked ? "1" : "0";
+      var multi = batchMode() > 1;
       var btn = $("[data-submit]", feeForm);
       busy(btn, true);
       setStatus(feeForm, "", "");
-      linkBox.hidden = true;
+      linkBox.hidden = true; batchBox.hidden = true;
       api("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(payload)
       }).then(function (r) {
         busy(btn, false);
-        if (r.link) { linkOut.value = r.link; linkBox.hidden = false; }
+        var res = r.results || [];
+        if (res.length > 1) {
+          $("[data-batch-rows]").innerHTML = res.map(function (x) {
+            return '<tr><td data-label="E-mail">' + esc(x.email) + '</td><td data-label="Référence">' + esc(x.ref) + '</td><td data-label="Statut">' + (x.sent ? "Envoyé" : x.error ? "Échec de l'envoi" : "Créé") +
+              '</td><td data-label="Lien"><a href="' + esc(x.link) + '" target="_blank" rel="noopener">Ouvrir<span class="visually-hidden"> le lien de ' + esc(x.email) + "</span></a></td></tr>";
+          }).join("");
+          batchBox.hidden = false;
+        } else if (r.link) { linkOut.value = r.link; linkBox.hidden = false; }
         if (r.ok) {
-          setStatus(feeForm, "success", r.sent
-            ? "Lien envoyé à " + feeForm.elements.email.value + " (copie à l'école). Montant : " + r.labelEur + " · " + r.labelFcfa + ", valable jusqu'au " + frDate(r.expires) + "."
-            : "Lien créé (aucun e-mail envoyé). Copiez-le ci-dessous pour le transmettre au candidat.");
+          var when = r.labelEur + " · " + r.labelFcfa + ", valable jusqu'au " + frDate(r.expires) + ".";
+          setStatus(feeForm, "success", multi
+            ? (r.sent ? r.sent + " liens envoyés, chacun à son destinataire. Montant : " + when : res.length + " liens créés (aucun e-mail envoyé).")
+            : (r.sent ? "Lien envoyé à " + emailEl.value.trim() + " (copie à l'école). Montant : " + when : "Lien créé (aucun e-mail envoyé). Copiez-le ci-dessous pour le transmettre au candidat."));
           return;
         }
         var msg = {
           key: "Clé d'accès incorrecte.",
           not_configured: "Le paiement n'est pas encore configuré : renseignez ADMIN_KEY (12 caractères minimum) et PAYMENT_SECRET dans Vercel.",
           validation: "Champs à vérifier : " + (r.fields || []).join(", ") + ".",
-          delivery: "Le lien a été créé mais l'e-mail n'a pas pu partir : copiez le lien ci-dessous et vérifiez la configuration des e-mails."
+          delivery: (r.failed && res.length > 1 ? r.failed + " e-mail(s) n'ont pas pu partir (voir le tableau)." : "Le lien a été créé mais l'e-mail n'a pas pu partir : copiez le lien ci-dessous.") + " Vérifiez la configuration des e-mails."
         }[r.error] || "Une erreur est survenue. Réessayez dans quelques instants.";
         setStatus(feeForm, "error", msg);
       }).catch(function () {

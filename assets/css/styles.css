@@ -1143,3 +1143,15 @@ body.lightbox-open { overflow: hidden; }
 [data-paid-title]:focus, [data-pay-error-title]:focus, #methods-title:focus { outline: none; box-shadow: none; }
 .aside-card h2:has(svg) { display: flex; align-items: center; gap: .4rem; }
 .pay-link__row input { min-height: 44px; padding: .55rem .8rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--white); color: var(--ink); font-family: inherit; }
+.pay-link__title { font-size: 1rem; color: #24400c; margin-bottom: .6rem; }
+.pay-batch { width: 100%; border-collapse: collapse; font-size: .86rem; background: var(--white); border-radius: var(--radius-sm); overflow: hidden; }
+.pay-batch th, .pay-batch td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.pay-batch th { background: #f5f7fa; font-weight: 700; color: var(--ink); }
+.pay-batch a { font-weight: 700; color: var(--red); }
+#email[data-emails] { min-height: 4.5rem; resize: vertical; }
+@media (max-width: 640px) {
+  .pay-batch thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .pay-batch tr { display: block; padding: .5rem 0; border-bottom: 1px solid var(--line); }
+  .pay-batch td { display: grid; grid-template-columns: 6.5rem 1fr; gap: .5rem; border: 0; padding: .2rem .7rem; }
+  .pay-batch td::before { content: attr(data-label); font-weight: 700; color: var(--muted); }
+}

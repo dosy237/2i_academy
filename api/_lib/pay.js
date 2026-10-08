@@ -159,7 +159,7 @@ async function cinetpayCheckout(c, currency, base) {
     channels: "MOBILE_MONEY",
     lang: "fr",
     description: `Frais etude de dossier ${c.ref}`.replace(/[^A-Za-z0-9 -]/g, ""),
-    customer_name: c.nom, customer_surname: c.prenom, customer_email: c.email,
+    customer_name: c.nom || "Candidat", customer_surname: c.prenom || "A21", customer_email: c.email,
     notify_url: `${base}/api/cinetpay`,
     return_url: `${base}/api/cinetpay?retour=1`,
     metadata: JSON.stringify({ ref: c.ref, prenom: c.prenom, nom: c.nom, email: c.email, programme: c.programme }),
@@ -186,7 +186,7 @@ async function cinetpayStatus(id) {
 
 /* ---------------------------------------------------------------- E-mails de paiement */
 function paidRows(st) {
-  const rows = [["Référence du dossier", st.ref], ["Candidat·e", `${st.prenom || ""} ${st.nom || ""}`.trim()], ["E-mail", st.email],
+  const rows = [["Référence du dossier", st.ref], ["Candidat·e", `${st.prenom || ""} ${st.nom || ""}`.trim() || st.email], ["E-mail", st.email],
     ["Programme", PROGRAMMES[st.programme] || st.programme], ["Montant", st.amount], ["Moyen de paiement", st.method === "card" ? "Carte bancaire (Stripe)" : `Mobile Money (${st.provider})`],
     ["N° de transaction", st.transaction], ["Date", new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })]];
   return `<table style="width:100%;border-collapse:collapse;margin:12px 0">${rows.filter((r) => r[1]).map((r) =>
@@ -199,7 +199,7 @@ async function notifyPaid(st) {
   const rows = paidRows(st);
   const jobs = [sendMail({
     to: school, cc: copyInboxes(), replyTo: st.email,
-    subject: `Frais d'étude réglés — ${st.prenom || ""} ${st.nom || ""} (${st.ref})`,
+    subject: `Frais d'étude réglés — ${`${st.prenom || ""} ${st.nom || ""}`.trim() || st.email} (${st.ref})`,
     html: layout("Frais d'étude de dossier réglés", `<p>Le paiement suivant vient d'être confirmé par ${esc(st.provider)}.</p>${rows}`),
     text: `Frais d'étude réglés — ${st.ref} — ${st.amount} — ${st.transaction}`,
   })];
@@ -207,8 +207,8 @@ async function notifyPaid(st) {
     jobs.push(sendMail({
       to: [st.email], replyTo: school[0],
       subject: `Academy 21 University — paiement reçu (${st.ref})`,
-      html: layout("Votre paiement a bien été reçu", `<p>Bonjour ${esc(st.prenom || "")},</p><p>Nous confirmons la réception de vos frais d'étude de dossier. Conservez cet e-mail comme justificatif.</p>${rows}<p>Notre équipe vous recontacte pour la suite de votre admission.</p>`),
-      text: `Bonjour ${st.prenom || ""},\n\nNous confirmons la réception de vos frais d'étude de dossier (${st.amount}).\nRéférence : ${st.ref}\nTransaction : ${st.transaction}\n\nAcademy Twenty One University`,
+      html: layout("Votre paiement a bien été reçu", `<p>Bonjour${st.prenom ? " " + esc(st.prenom) : ""},</p><p>Nous confirmons la réception de vos frais d'étude de dossier. Conservez cet e-mail comme justificatif.</p>${rows}<p>Notre équipe vous recontacte pour la suite de votre admission.</p>`),
+      text: `Bonjour${st.prenom ? " " + st.prenom : ""},\n\nNous confirmons la réception de vos frais d'étude de dossier (${st.amount}).\nRéférence : ${st.ref}\nTransaction : ${st.transaction}\n\nAcademy Twenty One University`,
     }).catch((e) => console.error("[paiement] reçu candidat", e && e.message)));
   }
   await Promise.all(jobs);

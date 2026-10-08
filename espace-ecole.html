@@ -66,15 +66,19 @@
         <input type="hidden" name="action" value="link">
         <div class="error-summary" tabindex="-1" role="alert" data-error-summary hidden><h3>Erreurs</h3><ul></ul></div>
         <div class="field"><label for="key">Clé d'accès de l'école <span class="req" aria-hidden="true">*</span></label><p class="hint" id="key-hint">La clé définie dans Vercel (variable ADMIN_KEY).</p><input id="key" name="key" type="password" required aria-describedby="key-hint key-error" data-required="Veuillez saisir la clé d&#39;accès." autocomplete="current-password"><p class="field__error" id="key-error"></p></div>
+        <div class="field"><label for="email">E-mail du ou des candidats <span class="req" aria-hidden="true">*</span></label>
+          <p class="hint" id="email-hint">Plusieurs candidats : collez leurs adresses séparées par des virgules. Chacun reçoit son propre e-mail et son propre lien.</p>
+          <textarea id="email" name="email" rows="2" required data-emails inputmode="email" autocomplete="off" spellcheck="false" aria-describedby="email-hint email-error" data-required="Veuillez indiquer au moins une adresse e-mail."></textarea>
+          <p class="field__error" id="email-error"></p></div>
+        <div class="notice notice--info" data-batch-note role="status" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg><div><p data-batch-text></p></div></div>
         <div class="form__row">
-          <div class="field"><label for="ref">Référence du dossier <span class="req" aria-hidden="true">*</span></label><p class="hint" id="ref-hint">Exemple : A21-261008-K4P2</p><input id="ref" name="ref" type="text" required aria-describedby="ref-hint ref-error" data-required="Veuillez indiquer la référence du dossier." maxlength="40" autocapitalize="characters"><p class="field__error" id="ref-error"></p></div>
           <div class="field"><label for="programme">Programme <span class="req" aria-hidden="true">*</span></label><select id="programme" name="programme" required aria-describedby="programme-error" data-required="Veuillez sélectionner le programme."><option value="">— Sélectionner —</option><option value="bachelor">Bachelor — Management Stratégique &amp; Opérationnel</option><option value="mastere">Mastère — Stratégie, Leadership &amp; Transformation des Organisations</option><option value="executive-mba">Executive MBA — Executive MBA Gouvernance, Leadership &amp; Transformation</option><option value="ia-marketing-reseau">Formation IA — IA appliquée au Marketing de Réseau</option><option value="indecis">Programme à confirmer</option></select><p class="field__error" id="programme-error"></p></div>
+          <div data-single><div class="field"><label for="ref">Référence du dossier <span class="req" aria-hidden="true">*</span></label><p class="hint" id="ref-hint">Exemple : A21-261008-K4P2</p><input id="ref" name="ref" type="text" required aria-describedby="ref-hint ref-error" data-required="Veuillez indiquer la référence du dossier." maxlength="40" autocapitalize="characters"><p class="field__error" id="ref-error"></p></div></div>
         </div>
-        <div class="form__row">
+        <div class="form__row" data-single>
           <div class="field"><label for="prenom">Prénom du candidat <span class="req" aria-hidden="true">*</span></label><input id="prenom" name="prenom" type="text" required aria-describedby="prenom-error" data-required="Veuillez indiquer le prénom." maxlength="80"><p class="field__error" id="prenom-error"></p></div>
           <div class="field"><label for="nom">Nom du candidat <span class="req" aria-hidden="true">*</span></label><input id="nom" name="nom" type="text" required aria-describedby="nom-error" data-required="Veuillez indiquer le nom." maxlength="80"><p class="field__error" id="nom-error"></p></div>
         </div>
-        <div class="field"><label for="email">E-mail du candidat <span class="req" aria-hidden="true">*</span></label><p class="hint" id="email-hint">Le lien de paiement est envoyé à cette adresse.</p><input id="email" name="email" type="email" required aria-describedby="email-hint email-error" data-required="Veuillez indiquer votre adresse e-mail." data-format="Le format de l&#39;adresse e-mail n&#39;est pas valide (exemple : nom@domaine.fr)." maxlength="160"><p class="field__error" id="email-error"></p></div>
         <div class="form__row">
           <div class="field"><label for="amount">Montant (€) <span class="req" aria-hidden="true">*</span></label><p class="hint" id="amount-hint">Converti automatiquement en FCFA pour le Mobile Money.</p><input id="amount" name="amount" type="text" required aria-describedby="amount-hint amount-error" value="50" inputmode="decimal" pattern="[0-9]{1,4}([.,][0-9]{1,2})?" data-required="Veuillez indiquer le montant." data-format="Montant attendu : un nombre, par exemple 50."><p class="field__error" id="amount-error"></p></div>
           <div class="field"><label for="days">Validité du lien (jours) <span class="req" aria-hidden="true">*</span></label><p class="hint" id="days-hint">Entre 1 et 90 jours.</p><input id="days" name="days" type="text" required aria-describedby="days-hint days-error" value="30" inputmode="numeric" pattern="[1-9][0-9]?" data-required="Veuillez indiquer la durée de validité." data-format="Un nombre de jours entre 1 et 90."><p class="field__error" id="days-error"></p></div>
@@ -93,13 +97,18 @@
         <div class="pay-link__row"><input id="pay-link-out" type="text" readonly>
           <button type="button" class="btn btn--ghost btn--sm" data-copy><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5.5a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg> Copier</button></div>
       </div>
+      <div class="pay-link" data-batch-box hidden>
+        <h3 class="pay-link__title">Liens créés</h3>
+        <table class="pay-batch"><caption class="visually-hidden">Liens de paiement par candidat</caption>
+          <thead><tr><th scope="col">E-mail</th><th scope="col">Référence</th><th scope="col">Statut</th><th scope="col">Lien</th></tr></thead><tbody data-batch-rows></tbody></table>
+      </div>
     </div>
     <aside aria-label="Fonctionnement">
       <div class="aside-card">
         <h2>Comment ça marche</h2>
         <ol class="mini-steps">
           <li>Le candidat dépose sa candidature : <strong>rien n'est payé</strong> à ce stade.</li>
-          <li>Dossier recevable : vous envoyez ici le lien (ou depuis le bouton présent dans l'e-mail de candidature, qui pré-remplit ce formulaire).</li>
+          <li>Dossier recevable : vous envoyez ici le lien (ou depuis le bouton présent dans l'e-mail de candidature, qui pré-remplit ce formulaire). Plusieurs candidats d'un même programme : séparez leurs adresses par des virgules.</li>
           <li>Le candidat paie par carte ou Mobile Money. L'école et le candidat reçoivent la confirmation par e-mail.</li>
         </ol>
       </div>
