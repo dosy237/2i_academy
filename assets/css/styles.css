@@ -1007,3 +1007,4 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .layout-aside .timeline__dot { margin-bottom: 0; }
 .hero-minimal .container > * { max-width: 820px; }
 .bento .card--feature { overflow: hidden; }
+@media (max-width: 560px) { .facts-strip dl { grid-template-columns: 1fr 1fr; } .facts-strip dl > div { border-right: 0; border-bottom: 1px solid var(--line); padding: .9rem 1.1rem; } }
