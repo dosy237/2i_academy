@@ -147,6 +147,27 @@ module.exports = async function handler(req, res) {
   const action = clean(body.action || q.get("action"), 20);
 
   try {
+    // Diagnostic de configuration : indique seulement si chaque variable est présente (jamais sa valeur).
+    if (req.method === "GET" && action === "config") {
+      const has = (k) => Boolean(process.env[k] && String(process.env[k]).trim());
+      const names = ["SITE_URL", "SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "MAIL_FROM_NAME", "ADMISSIONS_EMAIL", "COPY_EMAIL",
+        "PAYMENT_SECRET", "ADMIN_KEY", "STRIPE_SECRET_KEY", "NOTCHPAY_PUBLIC_KEY", "NOTCHPAY_WEBHOOK_HASH"];
+      const vars = {};
+      names.forEach((k) => { vars[k] = has(k); });
+      // Variables au nom proche des nôtres (faute de frappe, minuscules, espace) : aide à repérer une erreur de saisie.
+      const roots = ["PAYMENT", "NOTCH", "SMTP", "ADMISSION", "STRIPE", "ADMINKEY", "SITEURL", "MAILFROM", "COPYEMAIL"];
+      const near = Object.keys(process.env).filter((k) => !names.includes(k) && roots.some((r) => k.toUpperCase().replace(/[^A-Z]/g, "").includes(r)));
+      return json(res, 200, {
+        ok: true, vars,
+        checks: {
+          payment_secret_length_ok: (process.env.PAYMENT_SECRET || "").length >= 16,
+          admin_key_length_ok: (process.env.ADMIN_KEY || "").length >= 12,
+          emails: mailConfigured(), card: pay.stripeReady(), mobile: pay.mobileProvider() || false,
+        },
+        other_names_seen: near,
+      });
+    }
+
     if (req.method === "GET" && action === "session") {
       if (!process.env.PAYMENT_SECRET) return json(res, 503, { ok: false, error: "not_configured" });
       return json(res, 200, { ok: true, ...pay.summary(pay.readToken(q.get("t"))) });
