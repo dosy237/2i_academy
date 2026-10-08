@@ -1016,3 +1016,10 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
   .hero-light__inner { padding-bottom: 2.5rem; }
 }
 @media (max-width: 640px) { .hero-light__ring { opacity: .18; width: 300px; right: -150px; top: -120px; } }
+/* L'école : l'anneau reste derrière le texte */
+.hero-editorial__inner { z-index: 1; }
+.hero-editorial__ring { z-index: 0; pointer-events: none; }
+@media (max-width: 640px) {
+  .hero-editorial__ring { opacity: .35; width: 240px; right: -110px; top: 4%; }
+  .hero-editorial { background: linear-gradient(180deg, rgba(11,17,30,.45) 0%, rgba(11,17,30,.7) 40%, rgba(11,17,30,.96) 100%), var(--photo, none) center 30% / cover no-repeat, var(--navy); }
+}
