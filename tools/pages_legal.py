@@ -12,9 +12,9 @@ def build_mentions():
   <p><strong>{LEGAL_NAME}</strong> (Academy Twenty One University — Academy 21 University)<br>
   Nom commercial : A21<br>
   Siège social : 7 boulevard Suchet, 75016 Paris, France<br>
-  SIREN : {SIREN} — SIRET du siège : 927 784 314 00019<br>
+  Société par actions simplifiée (SAS) au capital de 2 000 €<br>
+  SIREN : {SIREN} — SIRET du siège : 927 784 314 00019 — TVA intracommunautaire : FR34927784314<br>
   Inscrite au Registre national des entreprises · Code APE 8559A (formation continue d'adultes)<br>
-  Capital social : 2 000 €<br>
   E-mail : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a><br>
   Téléphone : <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></p>
   <p>Directeur de la publication : Dr Raoul Ruben NJIONOU, fondateur.</p>
