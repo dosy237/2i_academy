@@ -361,7 +361,9 @@ async function fapshiStatus(id) {
   if (!/^[A-Za-z0-9_-]{4,80}$/.test(id)) throw Object.assign(new Error("identifiant"), { code: "invalid" });
   const t = await fapshi(`payment-status/${encodeURIComponent(id)}`);
   const s = String(t.status || "").toUpperCase();
-  const amountOk = Number(t.amount) >= toFcfa(feeEur()) - 5;
+  // Le montant est fixé par le site à la création du paiement (le payeur ne peut pas le modifier sur la page Fapshi) :
+  // on vérifie seulement qu'il est réel, ce qui permet aussi un test à petit montant depuis l'Espace école.
+  const amountOk = Number(t.amount) >= 100;
   const status = s === "SUCCESSFUL" && amountOk ? "paid" : ["FAILED", "EXPIRED"].includes(s) ? "failed" : "pending";
   const ext = String(t.externalId || "");
   const [prenom, ...rest] = String(t.payerName || "").split(" ");
