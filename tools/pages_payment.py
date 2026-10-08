@@ -116,7 +116,7 @@ def build_paiement_confirmation():
       </dl>
     </div>
     <div class="btn-row mt-3" style="justify-content:center">
-      <a class="btn btn--navy" href="index.html">Retour à l'accueil</a>
+      <a class="btn btn--navy" href="/">Retour à l'accueil</a>
       <a class="btn btn--ghost" href="mailto:{CONTACT_EMAIL}">{I["mail"]} Une question ? Écrivez-nous</a>
     </div>
   </div>

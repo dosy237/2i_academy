@@ -1,6 +1,9 @@
 # Composants partagés du site Academy 21 University (en-tête, pied, icônes, blocs).
 import os
 import re
+from html import escape as html_escape
+
+import seo
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
@@ -158,7 +161,7 @@ def header(active):
 </div>
 <header class="site-header">
   <div class="container">
-    <a class="brand" href="index.html">
+    <a class="brand" href="/">
       <img class="brand__mark" src="assets/img/emblem-21-header.png" width="154" height="128" alt="">
       <span class="brand__name">Academy Twenty One<span>University</span><span class="visually-hidden"> — retour à l'accueil</span></span>
     </a>
@@ -229,6 +232,12 @@ _DECO_ICON = re.compile(r'<span class="(?:icon-badge|float-card__icon)[^"]*"[^>]
 
 def page(fname, title, desc, body, active=None, noindex=False):
     body = _DECO_ICON.sub("", body)
+    # Référencement : titre et description optimisés (tools/seo.py), images différées, données structurées.
+    if fname in seo.META:
+        title, desc = (html_escape(x, quote=True) for x in seo.META[fname])
+    body = seo.lazy_images(body)
+    social = seo.head_tags(fname, title, desc, noindex)
+    ld = "" if noindex else "\n" + seo.structured_data(fname, body, title, desc)
     robots = '\n<meta name="robots" content="noindex">' if noindex else ""
     html = f'''<!doctype html>
 <html lang="fr" class="no-js">
@@ -239,17 +248,13 @@ def page(fname, title, desc, body, active=None, noindex=False):
 <meta name="description" content="{desc}">{robots}
 <meta name="theme-color" content="#172033">
 <meta name="a21-contact" content="{CONTACT_EMAIL}">
-<meta property="og:type" content="website">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{desc}">
-<meta property="og:image" content="assets/img/logo-a21-university.png">
-<meta property="og:locale" content="fr_FR">
+{social}
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/styles.css">
-<script>document.documentElement.className=document.documentElement.className.replace("no-js","js");</script>
+<script>document.documentElement.className=document.documentElement.className.replace("no-js","js");</script>{ld}
 </head>
 <body>
 {header(active or fname)}
@@ -312,7 +317,7 @@ def subnav(items, key):
             f'<a class="btn btn--primary btn--sm subnav__cta" href="candidature.html?programme={key}">Candidater</a></div></nav>')
 
 def crumbs(items):
-    out = '<li><a href="index.html">Accueil</a></li>'
+    out = '<li><a href="/">Accueil</a></li>'
     for href, label in items[:-1]:
         out += f'<li><a href="{href}">{label}</a></li>'
     out += f'<li><span aria-current="page">{items[-1][1]}</span></li>'

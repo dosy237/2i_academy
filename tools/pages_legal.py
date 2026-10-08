@@ -105,7 +105,7 @@ def build_plan():
     body = f'''
 {hero_minimal([("plan-du-site.html", "Plan du site")], "Plan du site", "Toutes les pages du site.")}
 <section class="section"><div class="container sitemap">
-  <div class="card"><h2 style="font-size:1.1rem">L'école</h2><ul><li><a href="index.html">Accueil</a></li><li><a href="ecole.html">L'école</a></li><li><a href="ecole.html#fondateur">Le fondateur</a></li><li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li><li><a href="international.html">International</a></li><li><a href="entreprises.html">Entreprises</a></li><li><a href="brochures.html">Brochures</a></li></ul></div>
+  <div class="card"><h2 style="font-size:1.1rem">L'école</h2><ul><li><a href="/">Accueil</a></li><li><a href="ecole.html">L'école</a></li><li><a href="ecole.html#fondateur">Le fondateur</a></li><li><a href="pedagogie.html">Pédagogie &amp; modalités</a></li><li><a href="international.html">International</a></li><li><a href="entreprises.html">Entreprises</a></li><li><a href="brochures.html">Brochures</a></li></ul></div>
   <div class="card"><h2 style="font-size:1.1rem">Formations</h2><ul><li><a href="formations.html">Toutes les formations</a></li>{progs}</ul></div>
   <div class="card"><h2 style="font-size:1.1rem">Candidats &amp; informations</h2><ul><li><a href="admissions.html">Admissions</a></li><li><a href="candidature.html">Candidater en ligne</a></li><li><a href="contact.html">Contact</a></li><li><a href="mentions-legales.html">Mentions légales</a></li><li><a href="confidentialite.html">Confidentialité</a></li><li><a href="accessibilite.html">Accessibilité</a></li></ul></div>
 </div></section>'''
@@ -120,7 +120,7 @@ def build_404():
     <p class="eyebrow">Erreur 404</p>
     <h1 id="page-title">Cette page est introuvable</h1>
     <p class="lead">Elle a peut-être été déplacée ou n'existe plus. Voici quelques pistes pour reprendre votre navigation.</p>
-    <div class="btn-row mt-2"><a class="btn btn--accent" href="/index.html">Retour à l'accueil {I["arrow"]}</a><a class="btn btn--glass" href="/formations.html">Nos formations</a><a class="btn btn--glass" href="/plan-du-site.html">Plan du site</a></div>
+    <div class="btn-row mt-2"><a class="btn btn--accent" href="/">Retour à l'accueil {I["arrow"]}</a><a class="btn btn--glass" href="/formations.html">Nos formations</a><a class="btn btn--glass" href="/plan-du-site.html">Plan du site</a></div>
   </div></div>
 </section>'''
     page("404.html", "Page introuvable — Academy 21 University", "La page demandée est introuvable.", body, noindex=True)

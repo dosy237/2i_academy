@@ -10,6 +10,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const zlib = require("zlib");
 
 const ROOT = __dirname;
 loadDotEnv(path.join(ROOT, ".env"));
@@ -55,19 +56,53 @@ function publicFile(urlPath) {
   return ok ? file : null;
 }
 
+const COMPRESSIBLE = new Set([".html", ".css", ".js", ".json", ".svg", ".txt", ".xml", ".webmanifest"]);
+
+/* Balises de vérification des moteurs de recherche, réglables sans toucher au code (variables d'environnement). */
+function verificationTags() {
+  const tags = [];
+  const g = String(process.env.GOOGLE_SITE_VERIFICATION || "").trim().replace(/[^A-Za-z0-9_-]/g, "");
+  const b = String(process.env.BING_SITE_VERIFICATION || "").trim().replace(/[^A-Za-z0-9_-]/g, "");
+  if (g) tags.push(`<meta name="google-site-verification" content="${g}">`);
+  if (b) tags.push(`<meta name="msvalidate.01" content="${b}">`);
+  return tags.join("\n");
+}
+
 function sendFile(req, res, file, status) {
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) return notFound(req, res);
     const ext = path.extname(file).toLowerCase();
     res.statusCode = status || 200;
     res.setHeader("Content-Type", TYPES[ext] || "application/octet-stream");
-    res.setHeader("Content-Length", st.size);
     res.setHeader("Last-Modified", st.mtime.toUTCString());
     if (file.includes(`${path.sep}assets${path.sep}fonts${path.sep}`)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     else if (ext === ".html") res.setHeader("Cache-Control", "no-cache");
+    else if (file.includes(`${path.sep}assets${path.sep}`)) res.setHeader("Cache-Control", "public, max-age=604800");
     else res.setHeader("Cache-Control", "public, max-age=86400");
-    if (req.method === "HEAD") return res.end();
-    fs.createReadStream(file).pipe(res);
+
+    // Fichiers volumineux non textuels (images, PDF, polices) : envoi direct.
+    if (!COMPRESSIBLE.has(ext)) {
+      res.setHeader("Content-Length", st.size);
+      if (req.method === "HEAD") return res.end();
+      return fs.createReadStream(file).pipe(res);
+    }
+    // Textes : vérification moteurs (pages HTML) et compression gzip/brotli (pages plus rapides).
+    fs.readFile(file, (e, buf) => {
+      if (e) return notFound(req, res);
+      let body = buf;
+      if (ext === ".html") {
+        const tags = verificationTags();
+        if (tags) body = Buffer.from(buf.toString("utf8").replace("<head>", `<head>\n${tags}`), "utf8");
+      }
+      const accept = String(req.headers["accept-encoding"] || "");
+      res.setHeader("Vary", "Accept-Encoding");
+      let out = body;
+      if (/\bbr\b/.test(accept)) { out = zlib.brotliCompressSync(body); res.setHeader("Content-Encoding", "br"); }
+      else if (/\bgzip\b/.test(accept)) { out = zlib.gzipSync(body); res.setHeader("Content-Encoding", "gzip"); }
+      res.setHeader("Content-Length", out.length);
+      if (req.method === "HEAD") return res.end();
+      res.end(out);
+    });
   });
 }
 
@@ -125,6 +160,12 @@ const server = http.createServer(async (req, res) => {
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.statusCode = 405;
     res.setHeader("Allow", "GET, HEAD");
+    return res.end();
+  }
+  // Une seule adresse par page (référencement) : /index.html → /
+  if (url.pathname === "/index.html") {
+    res.statusCode = 301;
+    res.setHeader("Location", "/" + (url.search || ""));
     return res.end();
   }
   const file = publicFile(url.pathname);

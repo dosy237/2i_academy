@@ -376,7 +376,7 @@ def build_merci():
       <li><h3>Décision</h3><p>La commission d'admission vous communique sa décision.</p></li>
     </ol>
     <div class="btn-row mt-3" style="justify-content:center">
-      <a class="btn btn--navy" href="index.html">Retour à l'accueil</a>
+      <a class="btn btn--navy" href="/">Retour à l'accueil</a>
       <a class="btn btn--ghost" href="brochures.html">{I["download"]} Télécharger une brochure</a>
       <a class="btn btn--ghost" href="pedagogie.html">Découvrir notre pédagogie</a>
     </div>

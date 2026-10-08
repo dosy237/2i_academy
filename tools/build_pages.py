@@ -17,6 +17,10 @@ BUILDERS = [
 ]
 
 if __name__ == "__main__":
+    import datetime
+    import seo
+    from components import ROOT
     for build in BUILDERS:
         build()
+    seo.write_robots_and_sitemap(ROOT, datetime.date.today().isoformat())
     print(f"{len(BUILDERS)} pages générées.")
