@@ -488,8 +488,19 @@ def zoom_btn(src, alt, group=""):
             f'<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2M11 8.5v5M8.5 11h5"/></svg></span></button>')
 
 
+def _img_size(src):
+    """Dimensions réelles (évite les décalages de mise en page, critère Core Web Vitals)."""
+    try:
+        from PIL import Image
+        with Image.open(os.path.join(ROOT, src.lstrip("/"))) as im:
+            return f' width="{im.width}" height="{im.height}"'
+    except Exception:
+        return ""
+
+
 def photo_img(key, alt, pos="center"):
-    return f'<img src="{PHOTOS[key]}" alt="{alt}" loading="eager" style="object-position:{pos}">{zoom_btn(PHOTOS[key], alt)}'
+    return (f'<img src="{PHOTOS[key]}" alt="{alt}"{_img_size(PHOTOS[key])} loading="eager" fetchpriority="high" decoding="async" '
+            f'style="object-position:{pos}">{zoom_btn(PHOTOS[key], alt)}')
 
 
 def hero_editorial(crumb_items, title, lead, eyebrow, photo, extra="", amb="gold"):

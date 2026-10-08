@@ -140,6 +140,14 @@ const server = http.createServer(async (req, res) => {
   Object.entries(SECURITY).forEach(([k, v]) => res.setHeader(k, v));
   const url = new URL(req.url, "http://localhost");
 
+  // Une seule adresse pour tout le site (référencement) : www.a21businessschool.com → a21businessschool.com
+  const host = String(req.headers.host || "");
+  if (/^www\./i.test(host) && (req.method === "GET" || req.method === "HEAD")) {
+    res.statusCode = 301;
+    res.setHeader("Location", `https://${host.slice(4)}${req.url}`);
+    return res.end();
+  }
+
   const api = url.pathname.match(/^\/api\/([a-z-]+)\/?$/);
   if (api) {
     if (!API.has(api[1])) return notFound(req, res);
