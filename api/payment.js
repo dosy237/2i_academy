@@ -8,7 +8,7 @@
  *
  * Variables (Vercel > Settings > Environment Variables) — voir README :
  *  PAYMENT_SECRET, ADMIN_KEY, FEE_EUR (défaut 50), STRIPE_SECRET_KEY,
- *  Mobile Money : NOTCHPAY_PUBLIC_KEY + NOTCHPAY_WEBHOOK_HASH (Notch Pay), ou Flutterwave / CinetPay,
+ *  Mobile Money : FAPSHI_API_USER + FAPSHI_API_KEY (Fapshi), ou Notch Pay / Flutterwave / CinetPay,
  *  MOBILE_PROVIDER (facultatif), MOBILE_CURRENCIES (défaut "XAF,XOF"), SITE_URL (facultatif), + variables d'e-mail.
  */
 const crypto = require("crypto");
@@ -151,11 +151,11 @@ module.exports = async function handler(req, res) {
     if (req.method === "GET" && action === "config") {
       const has = (k) => Boolean(process.env[k] && String(process.env[k]).trim());
       const names = ["SITE_URL", "SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "MAIL_FROM_NAME", "ADMISSIONS_EMAIL", "COPY_EMAIL",
-        "PAYMENT_SECRET", "ADMIN_KEY", "STRIPE_SECRET_KEY", "NOTCHPAY_PUBLIC_KEY", "NOTCHPAY_WEBHOOK_HASH"];
+        "PAYMENT_SECRET", "ADMIN_KEY", "STRIPE_SECRET_KEY", "FAPSHI_API_USER", "FAPSHI_API_KEY", "FAPSHI_WEBHOOK", "NOTCHPAY_PUBLIC_KEY", "NOTCHPAY_WEBHOOK_HASH"];
       const vars = {};
       names.forEach((k) => { vars[k] = has(k); });
       // Variables au nom proche des nôtres (faute de frappe, minuscules, espace) : aide à repérer une erreur de saisie.
-      const roots = ["PAYMENT", "NOTCH", "SMTP", "ADMISSION", "STRIPE", "ADMINKEY", "SITEURL", "MAILFROM", "COPYEMAIL"];
+      const roots = ["PAYMENT", "NOTCH", "FAPSHI", "SMTP", "ADMISSION", "STRIPE", "ADMINKEY", "SITEURL", "MAILFROM", "COPYEMAIL"];
       const near = Object.keys(process.env).filter((k) => !names.includes(k) && roots.some((r) => k.toUpperCase().replace(/[^A-Z]/g, "").includes(r)));
       return json(res, 200, {
         ok: true, vars,
@@ -187,7 +187,8 @@ module.exports = async function handler(req, res) {
       const st = await pay.mobileStatus(id);
       // Flutterwave sans webhook configuré : la confirmation part depuis la page de retour.
       const prov = pay.mobileProvider();
-      const noHook = (prov === "flutterwave" && !process.env.FLW_WEBHOOK_HASH) || (prov === "notchpay" && !process.env.NOTCHPAY_WEBHOOK_HASH);
+      const noHook = (prov === "flutterwave" && !process.env.FLW_WEBHOOK_HASH) || (prov === "notchpay" && !process.env.NOTCHPAY_WEBHOOK_HASH)
+        || (prov === "fapshi" && process.env.FAPSHI_WEBHOOK !== "1");
       if (st.status === "paid" && noHook) {
         await pay.notifyPaid(st).catch((e) => console.error("[paiement] notification", e && e.message));
       }

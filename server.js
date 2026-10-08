@@ -16,7 +16,7 @@ loadDotEnv(path.join(ROOT, ".env"));
 
 const PORT = Number(process.env.PORT || 3000);
 const MAX_BODY = 6 * 1024 * 1024; // CV jusqu'à 3 Mo, encodé en base64
-const API = new Set(["submit", "payment", "notchpay", "cinetpay", "flutterwave", "stripe-webhook"]);
+const API = new Set(["submit", "payment", "fapshi", "notchpay", "cinetpay", "flutterwave", "stripe-webhook"]);
 
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",

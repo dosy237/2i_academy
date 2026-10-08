@@ -2,10 +2,10 @@
 
 Ordre conseillé (chaque étape dépend de la précédente) :
 
-1. Compte Hostinger → 2. Abonnement + nom de domaine → 3. Adresses e-mail → 4. Comptes Stripe et Notch Pay →
+1. Compte Hostinger → 2. Abonnement + nom de domaine → 3. Adresses e-mail → 4. Comptes Stripe et Fapshi →
 5. Déploiement du site → 6. Variables d'environnement → 7. Domaine + SSL → 8. Tests → 9. Passage en réel.
 
-Comptez une demi-journée, plus les délais de validation de Stripe et Notch Pay (quelques jours).
+Comptez une demi-journée, plus les délais de validation de Stripe et Fapshi (quelques jours).
 
 ---
 
@@ -66,16 +66,16 @@ formulaires, les e-mails et le paiement. L'offre « Premium » / « Single » ne
 5. **Activer le compte** pour encaisser réellement : **Paramètres → Activer les paiements** (informations de la société,
    représentant légal, IBAN de l'académie). Stripe vérifie aussi le site : les mentions légales doivent être complètes.
 
-### 4b. Notch Pay — Orange Money et MTN MoMo (Cameroun)
+### 4b. Fapshi — MTN MoMo et Orange Money (Cameroun)
 
-1. <https://business.notchpay.co> → **Créer un compte**, avec `support@a21businessschool.com`, pays **Cameroun**.
-2. Complétez la vérification de l'entreprise (KYC) : documents de la structure camerounaise, pièce du dirigeant, compte de versement.
-3. **Paramètres → Clés API** : copiez la **clé publique de test** (elle commence par `pk_test.` ou `b.`) → variable `NOTCHPAY_PUBLIC_KEY`.
-4. **Paramètres → Webhooks** (après l'étape 7) : URL `https://a21businessschool.com/api/notchpay`, événement `payment.complete`,
-   **hash secret** : une phrase secrète de votre choix, recopiée dans la variable `NOTCHPAY_WEBHOOK_HASH`.
-5. Demandez la commission appliquée à Orange Money et MTN MoMo.
+1. <https://fapshi.com> → **Créer un compte** avec `support@a21businessschool.com`.
+2. Dans le tableau de bord, créez un **service** (ou « application ») pour le site : Fapshi fournit un **API User** et une **API Key**.
+   En environnement de test (sandbox), la clé commence par `FAK_TEST_` : aucun argent réel n'est débité.
+3. Dans Hostinger : variables `FAPSHI_API_USER` et `FAPSHI_API_KEY` → Redéployer.
+4. Pour encaisser réellement : faites valider le compte (KYC) puis remplacez la clé de test par la clé réelle (`FAK_…`).
+5. Facultatif : webhook vers `https://a21businessschool.com/api/fapshi`, puis variable `FAPSHI_WEBHOOK` = `1`.
 
-(Flutterwave et CinetPay restent possibles dans le code si besoin : variables `FLW_*` ou `CINETPAY_*`, et `MOBILE_PROVIDER`.)
+(Notch Pay, Flutterwave et CinetPay restent possibles dans le code : variables correspondantes et `MOBILE_PROVIDER`.)
 
 ## 5. Déployer le site sur Hostinger
 
@@ -114,8 +114,8 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 | `PAYMENT_SECRET` | 40 caractères aléatoires (générateur de mots de passe), **ne plus jamais la changer** sinon les liens déjà envoyés deviennent invalides | paiement |
 | `ADMIN_KEY` | la clé de l'espace école, 16 caractères ou plus, à ne donner qu'à l'équipe d'admission | paiement |
 | `STRIPE_SECRET_KEY` | `sk_test_…` (puis `sk_live_…`) | carte |
-| `NOTCHPAY_PUBLIC_KEY` | clé publique Notch Pay (test, puis réelle) | Mobile Money |
-| `NOTCHPAY_WEBHOOK_HASH` | la phrase secrète saisie dans le webhook Notch Pay | Mobile Money |
+| `FAPSHI_API_USER` | API User du service Fapshi | Mobile Money |
+| `FAPSHI_API_KEY` | API Key Fapshi (`FAK_TEST_…` en test, puis la clé réelle) | Mobile Money |
 
 ## 7. Brancher le nom de domaine et le HTTPS
 
@@ -123,7 +123,7 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
    Comme il est acheté chez Hostinger, les réglages DNS se font automatiquement. Prévoyez de quelques minutes à quelques heures.
 2. **SSL** : hPanel → **Sécurité → SSL** → installez le certificat gratuit pour `a21businessschool.com` et `www.a21businessschool.com`.
 3. Vérifiez : `https://a21businessschool.com` affiche le site avec le cadenas.
-4. Retournez à l'étape 4 pour créer les **webhooks** Stripe et Notch Pay avec ce domaine.
+4. Retournez à l'étape 4 pour créer les **webhooks** Stripe et Fapshi avec ce domaine.
 
 ## 8. Tester (en mode test : aucun argent réel)
 
@@ -137,16 +137,16 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 1. `https://a21businessschool.com/espace-ecole.html` → clé `ADMIN_KEY` → votre propre adresse → **Créer et envoyer le lien**.
 2. Ouvrez l'e-mail reçu → **Accéder à mon espace de paiement**.
 3. **Carte** : numéro `4242 4242 4242 4242`, date future, CVC `123` → page « paiement confirmé » + e-mails à l'école et au candidat.
-4. **Mobile Money** : suivez les instructions de test affichées par Notch Pay → même vérification.
-5. Contrôlez les paiements dans les tableaux de bord Stripe et Notch Pay (mode test).
+4. **Mobile Money** : suivez les instructions de test affichées par Fapshi → même vérification.
+5. Contrôlez les paiements dans les tableaux de bord Stripe et Fapshi (mode test).
 
 ## 9. Passer en réel
 
-1. Comptes Stripe et Notch Pay **activés** (documents validés).
+1. Comptes Stripe et Fapshi **activés** (documents validés).
 2. Remplacez `STRIPE_SECRET_KEY` et `NOTCHPAY_PUBLIC_KEY` par les **clés réelles** → **Redéployer**.
 3. Recréez les deux **webhooks en mode réel** (ils sont séparés de ceux du mode test).
 4. Faites un vrai paiement de contrôle, puis remboursez-le depuis le tableau de bord.
-5. Virements vers la banque : Stripe → **Paramètres → Virements** (automatiques, quotidiens) ; Notch Pay → **Settlements**
+5. Virements vers la banque : Stripe → **Paramètres → Virements** (automatiques, quotidiens) ; Fapshi → **Retraits / Withdrawals**
    (règlement automatique vers le compte de l'académie).
 
 ## Avant l'ouverture au public

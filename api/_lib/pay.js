@@ -30,17 +30,18 @@ const stripeReady = () => Boolean(process.env.STRIPE_SECRET_KEY);
 const cinetpayReady = () => Boolean(process.env.CINETPAY_APIKEY && process.env.CINETPAY_SITE_ID);
 const flutterwaveReady = () => Boolean(process.env.FLW_SECRET_KEY);
 const notchpayReady = () => Boolean(process.env.NOTCHPAY_PUBLIC_KEY);
-/* Prestataire Mobile Money : MOBILE_PROVIDER = notchpay | flutterwave | cinetpay ;
-   à défaut, celui qui est configuré (Notch Pay, puis Flutterwave, puis CinetPay). */
+const fapshiReady = () => Boolean(process.env.FAPSHI_API_USER && process.env.FAPSHI_API_KEY);
+/* Prestataire Mobile Money : MOBILE_PROVIDER = fapshi | notchpay | flutterwave | cinetpay ;
+   à défaut, le premier configuré dans cet ordre. */
 function mobileProvider() {
   const want = String(process.env.MOBILE_PROVIDER || "").toLowerCase();
-  const ready = { notchpay: notchpayReady(), flutterwave: flutterwaveReady(), cinetpay: cinetpayReady() };
+  const ready = { fapshi: fapshiReady(), notchpay: notchpayReady(), flutterwave: flutterwaveReady(), cinetpay: cinetpayReady() };
   if (ready[want]) return want;
-  return ["notchpay", "flutterwave", "cinetpay"].find((p) => ready[p]) || null;
+  return ["fapshi", "notchpay", "flutterwave", "cinetpay"].find((p) => ready[p]) || null;
 }
 const mobileReady = () => Boolean(mobileProvider());
 const zonesAvailable = () => {
-  if (mobileProvider() === "notchpay") return ["XAF"]; // Notch Pay : Cameroun (XAF)
+  if (["notchpay", "fapshi"].includes(mobileProvider())) return ["XAF"]; // prestataires camerounais (XAF)
   const z = String(process.env.MOBILE_CURRENCIES || process.env.CINETPAY_CURRENCIES || "XAF,XOF").split(",").map((x) => x.trim().toUpperCase()).filter((x) => ZONES[x]);
   return z.length ? z : ["XAF"];
 };
@@ -314,7 +315,67 @@ async function notchpayStatus(id) {
   };
 }
 
-const MOBILE = { notchpay: [notchpayCheckout, notchpayStatus], flutterwave: [flutterwaveCheckout, flutterwaveStatus], cinetpay: [cinetpayCheckout, cinetpayStatus] };
+/* ---------------------------------------------------------------- Fapshi (MTN MoMo, Orange Money — Cameroun) */
+// Clés FAK_TEST_… → environnement de test ; sinon production.
+const fapshiBase = () => (String(process.env.FAPSHI_API_KEY || "").trim().startsWith("FAK_TEST_") ? "https://sandbox.fapshi.com" : "https://live.fapshi.com");
+
+async function fapshi(path, payload) {
+  const r = await fetch(`${fapshiBase()}/${path}`, {
+    method: payload ? "POST" : "GET",
+    headers: { apiuser: String(process.env.FAPSHI_API_USER || "").trim(), apikey: String(process.env.FAPSHI_API_KEY || "").trim(),
+      Accept: "application/json", "Content-Type": "application/json" },
+    body: payload ? JSON.stringify(payload) : undefined,
+  });
+  const raw = await r.text().catch(() => "");
+  let j;
+  try { j = JSON.parse(raw); } catch (e) { j = {}; }
+  if (j && typeof j === "object" && !Array.isArray(j)) { j._status = r.status; j._raw = raw.replace(/\s+/g, " ").slice(0, 300); }
+  return j;
+}
+
+async function fapshiCheckout(c, currency, base) {
+  // Identifiant unique de la tentative : sert d'externalId et de userId (pour retrouver la transaction au retour).
+  const ext = `${String(c.ref).replace(/[^A-Za-z0-9-]/g, "")}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+  const j = await fapshi("initiate-pay", {
+    amount: toFcfa(c.amount),
+    email: c.email,
+    redirectUrl: `${base}/api/fapshi?ext=${encodeURIComponent(ext)}`,
+    userId: ext,
+    externalId: ext,
+    message: `Frais etude de dossier ${c.ref} - Academy 21`,
+  });
+  if (!j.link) throw new Error(`Fapshi ${j._status}: ${j.message || j._raw || "erreur"}`);
+  return j.link;
+}
+
+/* Au retour du candidat : retrouve la transaction créée pour cette tentative. */
+async function fapshiFindTransId(ext) {
+  if (!/^[A-Za-z0-9-]{6,80}$/.test(ext)) return "";
+  const list = await fapshi(`transaction/${encodeURIComponent(ext)}`);
+  const arr = Array.isArray(list) ? list : [];
+  arr.sort((a, b) => String(b.dateInitiated || "").localeCompare(String(a.dateInitiated || "")));
+  return (arr[0] && arr[0].transId) || "";
+}
+
+async function fapshiStatus(id) {
+  if (!/^[A-Za-z0-9_-]{4,80}$/.test(id)) throw Object.assign(new Error("identifiant"), { code: "invalid" });
+  const t = await fapshi(`payment-status/${encodeURIComponent(id)}`);
+  const s = String(t.status || "").toUpperCase();
+  const amountOk = Number(t.amount) >= toFcfa(feeEur()) - 5;
+  const status = s === "SUCCESSFUL" && amountOk ? "paid" : ["FAILED", "EXPIRED"].includes(s) ? "failed" : "pending";
+  const ext = String(t.externalId || "");
+  const [prenom, ...rest] = String(t.payerName || "").split(" ");
+  const op = t.medium ? ` · ${t.medium === "orange money" ? "Orange Money" : t.medium === "mobile money" ? "MTN MoMo" : t.medium}` : "";
+  return {
+    status, method: "mobile", provider: `Fapshi${op}`,
+    ref: ext ? ext.replace(/-[A-F0-9]{6}$/, "") : "", prenom, nom: rest.join(" "),
+    email: t.email || "", programme: "",
+    amount: t.amount ? `${new Intl.NumberFormat("fr-FR").format(Number(t.amount))} FCFA` : "",
+    transaction: t.transId || id,
+  };
+}
+
+const MOBILE = { fapshi: [fapshiCheckout, fapshiStatus], notchpay: [notchpayCheckout, notchpayStatus], flutterwave: [flutterwaveCheckout, flutterwaveStatus], cinetpay: [cinetpayCheckout, cinetpayStatus] };
 const mobileCheckout = (c, currency, base) => MOBILE[mobileProvider()][0](c, currency, base);
 const mobileStatus = (id) => MOBILE[mobileProvider()][1](id);
 
@@ -353,7 +414,7 @@ async function notifyPaid(st) {
 
 module.exports = {
   PROGRAMMES, EUR_TO_FCFA, feeEur, toFcfa, fmtEur, fmtFcfa, ZONES,
-  stripeReady, cinetpayReady, flutterwaveReady, notchpayReady, mobileProvider, mobileReady, createToken, readToken, summary,
-  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus, notchpayStatus,
+  stripeReady, cinetpayReady, flutterwaveReady, notchpayReady, fapshiReady, fapshiFindTransId, mobileProvider, mobileReady, createToken, readToken, summary,
+  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus, notchpayStatus, fapshiStatus,
   mobileCheckout, mobileStatus, notifyPaid,
 };
