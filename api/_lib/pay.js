@@ -253,27 +253,45 @@ const NOTCH = "https://api.notchpay.co";
 async function notchpay(path, payload) {
   const r = await fetch(`${NOTCH}/${path}`, {
     method: payload ? "POST" : "GET",
-    headers: { Authorization: process.env.NOTCHPAY_PUBLIC_KEY, Accept: "application/json", "Content-Type": "application/json" },
+    headers: { Authorization: String(process.env.NOTCHPAY_PUBLIC_KEY || "").trim(), Accept: "application/json", "Content-Type": "application/json" },
     body: payload ? JSON.stringify(payload) : undefined,
   });
-  const j = await r.json().catch(() => ({}));
+  const raw = await r.text().catch(() => "");
+  let j = {};
+  try { j = JSON.parse(raw); } catch (e) { j = {}; }
   j._status = r.status;
+  j._raw = raw.replace(/\s+/g, " ").slice(0, 300);
   return j;
 }
 
+/* Lien de paiement : URL renvoyée par Notch Pay, selon la version de l'API. */
+const notchUrl = (j) => j.authorization_url || (j.data && j.data.authorization_url) || (j.transaction && j.transaction.authorization_url) || "";
+
 async function notchpayCheckout(c, currency, base) {
   const reference = `${String(c.ref).replace(/[^A-Za-z0-9-]/g, "")}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
-  const j = await notchpay("payments", {
+  const name = `${c.prenom || ""} ${c.nom || ""}`.trim() || c.email;
+  const common = {
     amount: toFcfa(c.amount),
     currency: "XAF",
-    email: c.email,
     reference,
-    description: `Frais d'étude de dossier ${c.ref} — Academy 21 University`,
+    description: `Frais d'etude de dossier ${c.ref}`,
     callback: `${base}/api/notchpay`,
-    customer: { name: `${c.prenom || ""} ${c.nom || ""}`.trim() || c.email, email: c.email },
-  });
-  if (!j.authorization_url) throw new Error(`Notch Pay ${j._status}: ${j.message || "erreur"}`);
-  return j.authorization_url;
+  };
+  // 1) API actuelle : client décrit dans « customer » ; 2) ancienne forme : champs à plat (/payments/initialize).
+  const attempts = [
+    ["payments", { ...common, customer: { name, email: c.email } }],
+    ["payments", { ...common, email: c.email, name }],
+    ["payments/initialize", { ...common, email: c.email, name }],
+  ];
+  const errors = [];
+  for (const [path, body] of attempts) {
+    const j = await notchpay(path, body);
+    const url = notchUrl(j);
+    if (url) return url;
+    errors.push(`${path} → ${j._status} ${j.message || j._raw || ""}`.trim());
+    if (j._status === 401 || j._status === 403) break; // clé refusée : inutile d'insister
+  }
+  throw new Error(`Notch Pay : ${errors.join(" | ")}`);
 }
 
 async function notchpayStatus(id) {
