@@ -8,7 +8,7 @@
  *
  * Variables (Vercel > Settings > Environment Variables) — voir README :
  *  PAYMENT_SECRET, ADMIN_KEY, FEE_EUR (défaut 50), STRIPE_SECRET_KEY,
- *  Mobile Money : FLW_SECRET_KEY + FLW_WEBHOOK_HASH (Flutterwave) ou CINETPAY_APIKEY + CINETPAY_SITE_ID,
+ *  Mobile Money : NOTCHPAY_PUBLIC_KEY + NOTCHPAY_WEBHOOK_HASH (Notch Pay), ou Flutterwave / CinetPay,
  *  MOBILE_PROVIDER (facultatif), MOBILE_CURRENCIES (défaut "XAF,XOF"), SITE_URL (facultatif), + variables d'e-mail.
  */
 const crypto = require("crypto");
@@ -165,7 +165,9 @@ module.exports = async function handler(req, res) {
       if (!pay.mobileReady()) return json(res, 503, { ok: false, error: "not_configured" });
       const st = await pay.mobileStatus(id);
       // Flutterwave sans webhook configuré : la confirmation part depuis la page de retour.
-      if (st.status === "paid" && pay.mobileProvider() === "flutterwave" && !process.env.FLW_WEBHOOK_HASH) {
+      const prov = pay.mobileProvider();
+      const noHook = (prov === "flutterwave" && !process.env.FLW_WEBHOOK_HASH) || (prov === "notchpay" && !process.env.NOTCHPAY_WEBHOOK_HASH);
+      if (st.status === "paid" && noHook) {
         await pay.notifyPaid(st).catch((e) => console.error("[paiement] notification", e && e.message));
       }
       return json(res, 200, { ok: true, ...st });

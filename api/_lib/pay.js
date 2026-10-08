@@ -29,17 +29,18 @@ const ZONES = { XAF: "Afrique centrale (XAF)", XOF: "Afrique de l'Ouest (XOF)" }
 const stripeReady = () => Boolean(process.env.STRIPE_SECRET_KEY);
 const cinetpayReady = () => Boolean(process.env.CINETPAY_APIKEY && process.env.CINETPAY_SITE_ID);
 const flutterwaveReady = () => Boolean(process.env.FLW_SECRET_KEY);
-/* Prestataire Mobile Money : MOBILE_PROVIDER = flutterwave | cinetpay ; à défaut, celui qui est configuré (Flutterwave en priorité). */
+const notchpayReady = () => Boolean(process.env.NOTCHPAY_PUBLIC_KEY);
+/* Prestataire Mobile Money : MOBILE_PROVIDER = notchpay | flutterwave | cinetpay ;
+   à défaut, celui qui est configuré (Notch Pay, puis Flutterwave, puis CinetPay). */
 function mobileProvider() {
   const want = String(process.env.MOBILE_PROVIDER || "").toLowerCase();
-  if (want === "cinetpay" && cinetpayReady()) return "cinetpay";
-  if (want === "flutterwave" && flutterwaveReady()) return "flutterwave";
-  if (flutterwaveReady()) return "flutterwave";
-  if (cinetpayReady()) return "cinetpay";
-  return null;
+  const ready = { notchpay: notchpayReady(), flutterwave: flutterwaveReady(), cinetpay: cinetpayReady() };
+  if (ready[want]) return want;
+  return ["notchpay", "flutterwave", "cinetpay"].find((p) => ready[p]) || null;
 }
 const mobileReady = () => Boolean(mobileProvider());
 const zonesAvailable = () => {
+  if (mobileProvider() === "notchpay") return ["XAF"]; // Notch Pay : Cameroun (XAF)
   const z = String(process.env.MOBILE_CURRENCIES || process.env.CINETPAY_CURRENCIES || "XAF,XOF").split(",").map((x) => x.trim().toUpperCase()).filter((x) => ZONES[x]);
   return z.length ? z : ["XAF"];
 };
@@ -246,8 +247,58 @@ async function flutterwaveStatus(id) {
   };
 }
 
-const mobileCheckout = (c, currency, base) => (mobileProvider() === "flutterwave" ? flutterwaveCheckout : cinetpayCheckout)(c, currency, base);
-const mobileStatus = (id) => (mobileProvider() === "flutterwave" ? flutterwaveStatus : cinetpayStatus)(id);
+/* ---------------------------------------------------------------- Notch Pay (Orange Money, MTN MoMo — Cameroun) */
+const NOTCH = "https://api.notchpay.co";
+
+async function notchpay(path, payload) {
+  const r = await fetch(`${NOTCH}/${path}`, {
+    method: payload ? "POST" : "GET",
+    headers: { Authorization: process.env.NOTCHPAY_PUBLIC_KEY, Accept: "application/json", "Content-Type": "application/json" },
+    body: payload ? JSON.stringify(payload) : undefined,
+  });
+  const j = await r.json().catch(() => ({}));
+  j._status = r.status;
+  return j;
+}
+
+async function notchpayCheckout(c, currency, base) {
+  const reference = `${String(c.ref).replace(/[^A-Za-z0-9-]/g, "")}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+  const j = await notchpay("payments", {
+    amount: toFcfa(c.amount),
+    currency: "XAF",
+    email: c.email,
+    reference,
+    description: `Frais d'étude de dossier ${c.ref} — Academy 21 University`,
+    callback: `${base}/api/notchpay`,
+    customer: { name: `${c.prenom || ""} ${c.nom || ""}`.trim() || c.email, email: c.email },
+  });
+  if (!j.authorization_url) throw new Error(`Notch Pay ${j._status}: ${j.message || "erreur"}`);
+  return j.authorization_url;
+}
+
+async function notchpayStatus(id) {
+  if (!/^[A-Za-z0-9._-]{6,80}$/.test(id)) throw Object.assign(new Error("identifiant"), { code: "invalid" });
+  const j = await notchpay(`payments/${encodeURIComponent(id)}`);
+  const t = j.transaction || {};
+  const cust = t.customer && typeof t.customer === "object" ? t.customer : {};
+  const s = String(t.status || "").toLowerCase();
+  // Contrôle du montant et de la devise : un paiement partiel n'est jamais considéré comme réglé.
+  const amountOk = String(t.currency || "XAF").toUpperCase() === "XAF" && Number(t.amount) >= toFcfa(feeEur()) - 5;
+  const status = s === "complete" && amountOk ? "paid" : ["failed", "canceled", "cancelled", "expired", "rejected"].includes(s) ? "failed" : "pending";
+  const merchantRef = String(t.merchant_reference || t.trxref || "");
+  const [prenom, ...rest] = String(cust.name || "").split(" ");
+  return {
+    status, method: "mobile", provider: "Notch Pay",
+    ref: merchantRef ? merchantRef.replace(/-[A-F0-9]{6}$/, "") : "", prenom, nom: rest.join(" "),
+    email: cust.email || t.email || "", programme: "",
+    amount: t.amount ? `${new Intl.NumberFormat("fr-FR").format(Number(t.amount))} FCFA` : "",
+    transaction: t.reference || id,
+  };
+}
+
+const MOBILE = { notchpay: [notchpayCheckout, notchpayStatus], flutterwave: [flutterwaveCheckout, flutterwaveStatus], cinetpay: [cinetpayCheckout, cinetpayStatus] };
+const mobileCheckout = (c, currency, base) => MOBILE[mobileProvider()][0](c, currency, base);
+const mobileStatus = (id) => MOBILE[mobileProvider()][1](id);
 
 /* ---------------------------------------------------------------- E-mails de paiement */
 function paidRows(st) {
@@ -284,7 +335,7 @@ async function notifyPaid(st) {
 
 module.exports = {
   PROGRAMMES, EUR_TO_FCFA, feeEur, toFcfa, fmtEur, fmtFcfa, ZONES,
-  stripeReady, cinetpayReady, flutterwaveReady, mobileProvider, mobileReady, createToken, readToken, summary,
-  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus,
+  stripeReady, cinetpayReady, flutterwaveReady, notchpayReady, mobileProvider, mobileReady, createToken, readToken, summary,
+  stripeCheckout, stripeStatus, stripeNotifyOnce, cinetpayCheckout, cinetpayStatus, flutterwaveStatus, notchpayStatus,
   mobileCheckout, mobileStatus, notifyPaid,
 };

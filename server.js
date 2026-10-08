@@ -16,7 +16,7 @@ loadDotEnv(path.join(ROOT, ".env"));
 
 const PORT = Number(process.env.PORT || 3000);
 const MAX_BODY = 6 * 1024 * 1024; // CV jusqu'à 3 Mo, encodé en base64
-const API = new Set(["submit", "payment", "cinetpay", "flutterwave", "stripe-webhook"]);
+const API = new Set(["submit", "payment", "notchpay", "cinetpay", "flutterwave", "stripe-webhook"]);
 
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
@@ -90,6 +90,7 @@ function readBody(req) {
     req.on("end", () => {
       if (size > MAX_BODY) return reject(Object.assign(new Error("trop volumineux"), { status: 413 }));
       const raw = Buffer.concat(chunks).toString("utf8");
+      req.rawBody = raw; // conservé pour vérifier la signature des webhooks
       const type = String(req.headers["content-type"] || "");
       if (!raw) return resolve(undefined);
       if (type.includes("application/json")) { try { return resolve(JSON.parse(raw)); } catch (e) { return resolve(raw); } }

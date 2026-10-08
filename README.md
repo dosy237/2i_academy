@@ -61,7 +61,8 @@ Aucune base de données : la référence du dossier voyage dans le lien, protég
 | Service | Rôle | Coût |
 |---|---|---|
 | [Stripe](https://dashboard.stripe.com/register) | Carte bancaire (Visa, Mastercard, CB) | Pas d'abonnement ; commission par paiement (environ 1,5 % + 0,25 € pour une carte européenne, davantage pour une carte hors Europe) |
-| [Flutterwave](https://flutterwave.com) *(recommandé pour le Cameroun)* | Orange Money, MTN MoMo (XAF Cameroun, XOF Afrique de l'Ouest) | Pas d'abonnement ; commission par paiement (à confirmer à l'inscription) |
+| [Notch Pay](https://notchpay.co) *(retenu pour le Cameroun)* — variables `NOTCHPAY_PUBLIC_KEY`, `NOTCHPAY_WEBHOOK_HASH` ; webhook `https://VOTRE-SITE/api/notchpay` |  |
+| [Flutterwave](https://flutterwave.com) *(alternative)* | Orange Money, MTN MoMo (XAF Cameroun, XOF Afrique de l'Ouest) | Pas d'abonnement ; commission par paiement (à confirmer à l'inscription) |
 | [CinetPay](https://cinetpay.com) *(alternative)* | Orange Money, MTN MoMo (XAF, XOF) | Pas d'abonnement ; commission par paiement (de l'ordre de 3 %) |
 
 Tarifs indicatifs : à vérifier sur le site de chaque prestataire au moment de l'inscription. Les deux services demandent des
