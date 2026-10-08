@@ -5,7 +5,11 @@ import re
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 # --- Coordonnées : à modifier ici, elles sont reprises sur tout le site ---
-CONTACT_EMAIL = "admissions@academy21france.fr"
+CONTACT_EMAIL = "admin@academy21france.fr"
+CONTACT_PHONE = "07 51 36 09 44"
+CONTACT_TEL = "+33751360944"
+LEGAL_NAME = "ACADEMY TWENTY ONE"
+SIREN = "927 784 314"
 SCHOOL = "Academy Twenty One University"
 
 BROCHURES = {
@@ -147,6 +151,7 @@ def header(active):
     <ul>
       <li><a href="brochures.html">Brochures</a></li>
       <li><a href="entreprises.html">Espace entreprises</a></li>
+      <li><a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></li>
       <li><a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a></li>
     </ul>
   </div>
@@ -200,6 +205,7 @@ def footer():
           <li><a href="admissions.html#faq">Questions fréquentes</a></li>
           <li><a href="contact.html">Nous contacter</a></li>
           <li><a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a></li>
+          <li><a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></li>
         </ul>
       </nav>
     </div>
@@ -346,6 +352,7 @@ def aside_program(key, name):
     <ul class="aside-list">
       <li>{I["message"]}<span><a href="contact.html?objet=information&amp;programme={key}">Écrire à l'équipe admissions</a></span></li>
       <li>{I["mail"]}<span><a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a></span></li>
+      <li>{I["phone"]}<span><a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></span></li>
       <li>{I["info"]}<span><a href="admissions.html#faq">Questions fréquentes</a></span></li>
     </ul>
   </div>

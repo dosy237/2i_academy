@@ -139,4 +139,4 @@ Polices auto-hébergées (aucun service tiers, aucun cookie).
 ## À compléter
 
 Mentions légales (raison sociale, siège, SIRET, n° de déclaration d'activité, directeur de publication),
-adresse postale, confirmation de l'adresse `admissions@academy21france.fr`.
+adresse postale du siège, forme juridique, n° de déclaration d'activité. Contact : `admin@academy21france.fr` · 07 51 36 09 44.

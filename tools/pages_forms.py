@@ -1,5 +1,5 @@
 # Admissions, candidature en ligne, contact et confirmation.
-from components import hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, P, PROGRAMS, CONTACT_EMAIL, ring, page, cta_band, simple_hero, table, notice
+from components import CONTACT_PHONE, CONTACT_TEL, hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, P, PROGRAMS, CONTACT_EMAIL, ring, page, cta_band, simple_hero, table, notice
 
 
 def field(id_, label, kind="text", required=False, hint=None, attrs="", autocomplete=None, span=False):
@@ -329,6 +329,7 @@ def build_contact():
         <h2>Écrivez-nous directement</h2>
         <p class="small">Pour toute question sur les programmes, l'admission ou un partenariat.</p>
         <a class="btn btn--accent" href="mailto:{CONTACT_EMAIL}">{I["mail"]} {CONTACT_EMAIL}</a>
+        <a class="btn btn--glass" href="tel:{CONTACT_TEL}">{I["phone"]} {CONTACT_PHONE}</a>
       </div>
       <div class="aside-card">
         <h2>Accès rapides</h2>

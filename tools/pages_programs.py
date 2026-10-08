@@ -136,31 +136,19 @@ def build_bachelor():
       <section class="content-block" id="programme" aria-labelledby="t-prog">
         <p class="eyebrow">Programme · une année</p>
         <h2 id="t-prog">420 heures d'enseignements</h2>
-        <p>Le Bachelor se suit sur <strong>une année</strong>, après un Bac+2 ou une expérience significative. Les enseignements sont présentés par bloc de compétences du titre préparé : cliquez sur un bloc pour afficher son contenu.</p>
-        {unfold_program([
-          ("Bloc 1", "Activité commerciale, offre &amp; expérience client", "140 h", "Piloter l'offre, les approvisionnements et le parcours client.", [rows[1], rows[2], rows[3], rows[8]]),
-          ("Bloc 2", "Stratégie, prévisionnels &amp; performance économique", "84 h", "Traduire la stratégie en objectifs chiffrés et piloter la rentabilité.", [rows[0], rows[4]]),
-          ("Bloc 3", "Management des équipes &amp; conduite de projets", "140 h", "Recruter, organiser, animer et mobiliser autour du changement.", [rows[5], rows[6], rows[7], rows[9]]),
-          ("Socle", "Management responsable &amp; préparation au titre", "56 h", "Qualité, prévention, dossier professionnel et entraînement au jury.", [rows[10], rows[11]]),
-        ], "Enseignements du Bachelor")}
+        <p>Le Bachelor se suit sur <strong>une année</strong>, après un Bac+2 ou une expérience significative. Cliquez sur la carte pour afficher les enseignements, leur volume et leur contenu.</p>
+        {unfold_program([("Année unique · Bac+3", "Les enseignements du Bachelor", "420 h", "Commerce, finance, management, ressources humaines, expérience client, approvisionnements, digital et conduite de projet.", rows)], "Enseignements du Bachelor")}
         <details class="table-toggle"><summary>Voir le programme complet sous forme de tableau</summary>
         {table("Programme du Bachelor — 420 heures", ["Enseignement", "Volume", "Contenu"], rows, ["Total", "420 h", ""])}</details>
+        <p class="program-sign">Programme conçu par l'équipe pédagogique d'Academy 21 University.</p>
       </section>
       <section class="content-block" id="debouches" aria-labelledby="t-deb">
         <p class="eyebrow">Débouchés</p>
-        <h2 id="t-deb">Les métiers visés et leurs compétences</h2>
-        <p>Cliquez sur une famille de métiers pour voir les compétences que le Bachelor vous permet d'y mobiliser.</p>
-        {unfold_outcomes([
-          ("Direction de point de vente &amp; centre de profit",
-           ["Manager de centre de profit", "Responsable de point de vente", "Responsable de boutique", "Directeur de magasin", "Directeur adjoint", "Responsable de succursale"],
-           ["Piloter l'activité commerciale et sécuriser les approvisionnements.", "Élaborer et présenter budgets, prévisionnels et tableaux de bord.", "Analyser la performance économique et décider des actions correctives.", "Organiser le travail, manager la performance et renforcer la cohésion.", "Piloter le recrutement, l'intégration et le développement des collaborateurs."]),
-          ("Commerce, département &amp; e-commerce",
-           ["Responsable commercial", "Responsable e-commerce", "Responsable de département"],
-           ["Construire et faire évoluer une offre adaptée au marché.", "Concevoir une expérience client performante, inclusive et fidélisante.", "Traduire les orientations stratégiques en actions opérationnelles.", "Analyser la performance économique et décider des actions correctives."]),
-          ("Entrepreneuriat &amp; gestion d'activité",
-           ["Entrepreneur", "Gestionnaire d'activité"],
-           ["Traduire les orientations stratégiques en actions opérationnelles.", "Construire et faire évoluer une offre adaptée au marché.", "Élaborer et présenter budgets, prévisionnels et tableaux de bord.", "Conduire des projets et mobiliser les équipes autour du changement."]),
-        ])}
+        <h2 id="t-deb">Les métiers visés</h2>
+        <p>Cliquez sur la carte pour voir les compétences que le Bachelor vous permet de mobiliser.</p>
+        {unfold_outcomes([("Métiers visés et compétences",
+           ["Manager de centre de profit", "Responsable de point de vente", "Responsable de boutique", "Responsable de département", "Responsable commercial", "Responsable e-commerce", "Directeur adjoint", "Directeur de magasin", "Responsable de succursale", "Entrepreneur / gestionnaire d'activité"],
+           ["Piloter l'activité commerciale et sécuriser les approvisionnements.", "Construire et faire évoluer une offre adaptée au marché.", "Concevoir une expérience client performante, inclusive et fidélisante.", "Traduire les orientations stratégiques en actions opérationnelles.", "Élaborer et présenter budgets, prévisionnels et tableaux de bord.", "Analyser la performance économique et décider des actions correctives.", "Piloter le recrutement, l'intégration et le développement des collaborateurs.", "Organiser le travail, manager la performance et renforcer la cohésion.", "Conduire des projets et mobiliser les équipes autour du changement."])])}
         <div class="card card--surface mt-2"><h3>Et après ?</h3><p>Poursuivez avec le Mastère Stratégie, Leadership &amp; Transformation des Organisations pour passer du pilotage d'une activité à la conduite d'une transformation.</p><a class="link-arrow" href="mastere.html">Découvrir le Mastère {I["arrow"]}</a></div>
       </section>
       <section class="content-block" id="pedagogie" aria-labelledby="t-peda">
@@ -242,6 +230,7 @@ def build_mastere():
           ("Année 1 · M1", "Construire la vision et maîtriser les leviers de pilotage", "420 h", "Fondamentaux du management stratégique et préparation au pilotage des transformations.", m1),
           ("Année 2 · M2", "Diriger la transformation et créer de la valeur durable", "480 h", "Posture de décision, de direction et de conseil ; mémoire ou consulting project et Grand Oral.", m2),
         ], "Enseignements du Mastère")}
+        <p class="program-sign">Programme conçu par l'équipe pédagogique d'Academy 21 University.</p>
       </section>
       <section class="content-block" id="rncp" aria-labelledby="t-rncp">
         <p class="eyebrow">Alignement RNCP niveau 7</p>
@@ -273,18 +262,13 @@ def build_mastere():
       </section>
       <section class="content-block" id="debouches" aria-labelledby="t-deb">
         <p class="eyebrow">Débouchés &amp; trajectoires</p>
-        <h2 id="t-deb">Quatre trajectoires et leurs compétences</h2>
-        <p>Cliquez sur une trajectoire pour voir les compétences du programme qui y préparent.</p>
-        {unfold_outcomes([
-          ("Direction", ["Directeur d'unité", "Directeur de BU", "Directeur adjoint", "Responsable transformation"],
-           ["Orienter la stratégie : diagnostic, scénarios et choix stratégiques.", "Piloter la performance économique et sociale : finance, KPI, création de valeur.", "Exercer le leadership exécutif, la gouvernance et la prise de décision.", "Intégrer la RSE et la transition écologique à la performance globale."]),
-          ("Management", ["Manager d'activité", "Manager de projet", "Responsable performance", "Responsable développement"],
-           ["Conduire le changement : planification, mobilisation des équipes, gestion des tensions.", "Piloter la démarche compétences : métiers, talents, inclusion.", "Conduire des projets complexes avec des méthodes agiles.", "Communiquer, négocier et créer l'adhésion."]),
-          ("Conseil", ["Consultant en management", "Consultant en organisation", "Consultant transformation"],
-           ["Réaliser un diagnostic stratégique et une veille d'intelligence économique.", "Conduire une mission de conseil en organisation et de transformation.", "Mobiliser la data et l'intelligence artificielle au service de la décision.", "Formaliser des recommandations et les défendre à l'oral."]),
-          ("Entrepreneuriat", ["Créateur ou repreneur d'entreprise", "Entrepreneur", "Développeur de nouveaux projets"],
-           ["Concevoir des business models innovants et développer de nouvelles activités.", "Construire le pilotage financier et la création de valeur.", "Développer l'activité à l'international et en contexte interculturel.", "Maîtriser le droit des affaires, les risques et la conformité."]),
-        ])}
+        <h2 id="t-deb">Quatre trajectoires</h2>
+        <div class="grid grid--2 reveal-stagger">
+          <article class="card card--hover"><h3>Direction</h3><p>Directeur d'unité • Directeur de BU • Directeur adjoint • Responsable transformation</p></article>
+          <article class="card card--hover"><h3>Management</h3><p>Manager d'activité • Manager de projet • Responsable performance • Responsable développement</p></article>
+          <article class="card card--hover"><h3>Conseil</h3><p>Consultant en management • Consultant en organisation • Consultant transformation</p></article>
+          <article class="card card--hover"><h3>Entrepreneuriat</h3><p>Créateur / repreneur d'entreprise • Entrepreneur • Développeur de nouveaux projets</p></article>
+        </div>
         <div class="mt-2">{notice("<p><strong>Note réglementaire.</strong> RNCP39994 « Manager des transformations des organisations », niveau 7, certificateur IRUP, échéance d'enregistrement au 18/12/2027. Le référentiel prévoit un accès avec un niveau 6 ou, par dérogation, un niveau 5 assorti d'au moins trois années d'expérience sur des fonctions managériales. L'obtention de la certification suppose la validation des quatre blocs et l'inscription auprès du certificateur.</p><p>* Programme pédagogique conçu en cohérence avec le RNCP39994 ; la présentation effective à la certification suppose le cadre conventionnel et l'inscription auprès du certificateur. Le présent descriptif ne vaut pas, à lui seul, habilitation du certificateur.</p>")}</div>
       </section>
     </div>
@@ -365,18 +349,11 @@ def build_emba():
       <p class="eyebrow">Architecture du programme</p>
       <h2 id="t-prog">360 heures de séminaires de haute intensité</h2>
       <p>Chaque module part d'une problématique de direction et conduit à une décision, un arbitrage ou une feuille de route. Les apports conceptuels sont systématiquement confrontés aux situations réelles des participants.</p>
-      <p>Les douze modules sont regroupés selon les <strong>six responsabilités du dirigeant</strong> : cliquez sur une responsabilité pour afficher ses modules.</p>
-      {unfold_program([
-        ("01 · Donner le cap", "Vision, stratégie &amp; gouvernance", "90 h", "Prospective, stratégie corporate et dynamique du conseil.", [rows[0], rows[1], rows[3]]),
-        ("02 · Arbitrer", "Capital, risques &amp; création de valeur", "60 h", "Allocation du capital, crise, continuité et réputation.", [rows[2], rows[8]]),
-        ("03 · Mobiliser", "Leadership, culture &amp; talents", "60 h", "Pouvoir, influence, équipe dirigeante et succession.", [rows[4], rows[5]]),
-        ("04 · Transformer", "IA, digital &amp; transformation", "35 h", "Gouvernance technologique et transformation des métiers.", [rows[6]]),
-        ("05 · Développer", "Croissance, international &amp; alliances", "50 h", "Internationalisation, partenariats et négociation de haut niveau.", [rows[7], rows[10]]),
-        ("06 · Assumer", "Impact &amp; responsabilité", "20 h", "ESG, transition et création de valeur durable.", [rows[9]]),
-        ("Projet", "Executive Impact Project &amp; Board Presentation", "45 h", "Une problématique réelle, défendue devant un Board.", [rows[11]]),
-      ], "Modules de l'Executive MBA")}
+      <p>Cliquez sur la carte pour afficher les douze modules, leur volume et leur focus.</p>
+      {unfold_program([("12 mois · Executive", "Les modules de l'Executive MBA", "360 h", "Stratégie, finance, gouvernance, leadership, transformation, croissance, risques et impact, jusqu'à la Board Presentation.", rows)], "Modules de l'Executive MBA")}
       <details class="table-toggle"><summary>Voir tous les modules sous forme de tableau</summary>
       {table("Modules de l'Executive MBA", ["Module", "Vol.", "Focus Executive"], rows, ["Total", "360 h", ""])}</details>
+        <p class="program-sign">Programme conçu par l'équipe pédagogique d'Academy 21 University.</p>
     </section>
     <section class="content-block" id="experience" aria-labelledby="t-exp">
       <p class="eyebrow">Pédagogie</p>

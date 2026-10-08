@@ -1,5 +1,5 @@
 # Pages légales, plan du site et page 404.
-from components import hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, PROGRAMS, CONTACT_EMAIL, SCHOOL, page, simple_hero, notice
+from components import CONTACT_PHONE, CONTACT_TEL, LEGAL_NAME, SIREN, hero_light, hero_editorial, hero_visual, hero_minimal, photo_img, GLOBE_SVG, I, PROGRAMS, CONTACT_EMAIL, SCHOOL, page, simple_hero, notice
 
 TODO = '<span class="todo">à compléter</span>'
 
@@ -9,15 +9,16 @@ def build_mentions():
 {hero_minimal([("mentions-legales.html", "Mentions légales")], "Mentions légales", "Éditeur et hébergeur du site, conformément à la loi n° 2004-575 du 21 juin 2004.")}
 <section class="section"><div class="container prose">
   <h2>Éditeur du site</h2>
-  <p><strong>{SCHOOL}</strong> (Academy 21 University)<br>
+  <p><strong>{LEGAL_NAME}</strong> (Academy Twenty One University — Academy 21 University)<br>
+  SIREN : {SIREN}<br>
   Forme juridique et capital : {TODO}<br>
   Siège social : {TODO}<br>
-  Immatriculation (RCS / SIRET) : {TODO}<br>
   Numéro de déclaration d'activité de formation : {TODO}<br>
-  Contact : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a></p>
-  <p>Directeur ou directrice de la publication : {TODO}</p>
+  E-mail : <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a><br>
+  Téléphone : <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a></p>
+  <p>Directeur de la publication : Dr Raoul Ruben NJIONOU, fondateur.</p>
   <h2>Hébergement</h2>
-  <p>Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — <a href="https://vercel.com" rel="noopener">vercel.com</a>.</p>
+  <p>Hostinger International Ltd., 61 Lordou Vironos Street, 6023 Larnaca, Chypre — <a href="https://www.hostinger.fr" rel="noopener">hostinger.fr</a>.</p>
   <h2>Propriété intellectuelle</h2>
   <p>L'ensemble des contenus du site (textes, logo, éléments graphiques, brochures) est la propriété d'{SCHOOL}, sauf mention contraire. Toute reproduction, représentation ou adaptation, totale ou partielle, sans autorisation écrite préalable est interdite.</p>
   <h2>Certifications</h2>
@@ -38,7 +39,7 @@ def build_confidentialite():
 <section class="section"><div class="container layout-aside">
   <div class="prose">
     <h2 id="c0">Responsable du traitement</h2>
-    <p>{SCHOOL}, joignable à l'adresse <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>. Adresse postale : {TODO}.</p>
+    <p>{SCHOOL}, joignable à l'adresse <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> ou au <a href="tel:{CONTACT_TEL}">{CONTACT_PHONE}</a>. Adresse postale : {TODO}.</p>
     <h2 id="c1">Données collectées</h2>
     <p>Nous collectons uniquement les données que vous saisissez dans nos formulaires :</p>
     <ul>
