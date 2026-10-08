@@ -150,7 +150,7 @@ Tableau de bord de l'application Node.js → menu de gauche **Variables d'enviro
 
 ## Avant l'ouverture au public
 
-- [x] Adresse affichée sur le site : admin@academy21france.fr.
+- [ ] Créer la boîte `contact@a21businessschool.com` (adresse affichée sur tout le site) avant l'ouverture.
 - [x] Mentions légales (raison sociale, siège, SIRET, capital, directeur de publication).
 - [ ] Phrase sur les frais d'étude de dossier (remboursables ou non) dans les mentions / conditions.
 - [ ] Désactiver l'ancien déploiement Vercel une fois le domaine actif (éviter deux copies du site en ligne).

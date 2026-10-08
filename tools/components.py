@@ -5,7 +5,7 @@ import re
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 # --- Coordonnées : à modifier ici, elles sont reprises sur tout le site ---
-CONTACT_EMAIL = "admin@academy21france.fr"
+CONTACT_EMAIL = "contact@a21businessschool.com"
 CONTACT_PHONE = "07 51 36 09 44"
 CONTACT_TEL = "+33751360944"
 LEGAL_NAME = "ACADEMY TWENTY ONE"

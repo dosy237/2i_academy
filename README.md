@@ -36,7 +36,7 @@ avec **« Academy 21 University »** comme nom d'expéditeur.
 
 3. **Redeploy**. Limite Gmail : environ 500 e-mails par jour.
 
-Plus tard, avec un nom de domaine vérifié (ex. `admissions@academy21france.fr`), le site peut aussi envoyer via
+Plus tard, avec un nom de domaine vérifié (ex. `admissions@a21businessschool.com`), le site peut aussi envoyer via
 [Resend](https://resend.com) : `RESEND_API_KEY`, `MAIL_FROM`, `ADMISSIONS_EMAIL`, `SEND_CONFIRMATION=1`.
 `WEBHOOK_URL` (facultatif) envoie aussi chaque candidature en JSON (Google Sheets, Make, Zapier…).
 Tant que rien n'est configuré, le site propose au visiteur l'envoi par e-mail et le téléchargement de son récapitulatif.
@@ -139,4 +139,4 @@ Polices auto-hébergées (aucun service tiers, aucun cookie).
 ## Coordonnées et informations légales
 
 ACADEMY TWENTY ONE (A21) — 7 boulevard Suchet, 75016 Paris — SIRET 927 784 314 00019 — capital 2 000 €.
-Contact : `admin@academy21france.fr` · 07 51 36 09 44 (constantes dans `tools/components.py` et `tools/pages_legal.py`).
+Contact : `contact@a21businessschool.com` · 07 51 36 09 44 (constantes dans `tools/components.py` et `tools/pages_legal.py`).
