@@ -1,17 +1,25 @@
 /*
  * Academy 21 University — réception des candidatures et des demandes de contact.
- * Fonction serverless Vercel (Node.js, sans dépendance).
+ * Fonction serverless Vercel (Node.js).
  *
- * Variables d'environnement (Vercel > Settings > Environment Variables) :
- *   RESEND_API_KEY    Clé API Resend (https://resend.com) — envoi des e-mails.
- *   ADMISSIONS_EMAIL  Adresse qui reçoit les candidatures et messages (plusieurs : séparées par des virgules).
- *   MAIL_FROM         Facultatif. Expéditeur vérifié dans Resend, ex. "Academy 21 University <admissions@votre-domaine.fr>".
- *                     Par défaut : "Academy 21 University <onboarding@resend.dev>" (adresse de test Resend).
- *   SEND_CONFIRMATION Facultatif. "1" pour envoyer un accusé de réception au candidat (nécessite MAIL_FROM vérifié).
- *   WEBHOOK_URL       Facultatif. URL qui reçoit chaque envoi en JSON (Google Sheets via Apps Script, Make, Zapier…).
+ * DEUX FAÇONS D'ENVOYER LES E-MAILS (Vercel > Settings > Environment Variables) :
  *
- * Au moins RESEND_API_KEY + ADMISSIONS_EMAIL, ou WEBHOOK_URL, doivent être définis ; sinon la fonction
- * répond 503 et le site propose automatiquement l'envoi par e-mail au visiteur.
+ * A. Depuis votre boîte Gmail (recommandé, aucun nom de domaine requis)
+ *    SMTP_USER         Votre adresse Gmail, ex. prenom.nom@gmail.com : les e-mails partent de cette boîte.
+ *    SMTP_PASS         Le « mot de passe d'application » Google (16 caractères), PAS votre mot de passe Gmail.
+ *    MAIL_FROM_NAME    Facultatif. Nom affiché comme expéditeur. Défaut : « Academy 21 University ».
+ *    ADMISSIONS_EMAIL  Adresse de l'école qui reçoit chaque candidature (plusieurs : séparées par des virgules).
+ *    COPY_EMAIL        Facultatif. Qui reçoit une copie de chaque candidature. Défaut : SMTP_USER (vous).
+ *    SEND_CONFIRMATION Facultatif. "0" pour NE PAS envoyer d'accusé de réception au candidat (envoyé par défaut).
+ *    SMTP_HOST / SMTP_PORT / SMTP_SECURE  Facultatifs. Défaut : smtp.gmail.com / 465 / true (autre messagerie possible).
+ *
+ * B. Via Resend (https://resend.com), si vous disposez d'un nom de domaine vérifié
+ *    RESEND_API_KEY, ADMISSIONS_EMAIL, MAIL_FROM ("Academy 21 University <admissions@votre-domaine.fr>"),
+ *    SEND_CONFIRMATION="1" pour l'accusé de réception.
+ *
+ * WEBHOOK_URL (facultatif, avec A ou B) : reçoit chaque envoi en JSON (Google Sheets via Apps Script, Make, Zapier…).
+ *
+ * Si rien n'est configuré, la fonction répond 503 et le site propose au visiteur l'envoi par e-mail.
  */
 
 const PROGRAMMES = {
@@ -118,6 +126,27 @@ function buildEmail(type, data, ref) {
   return { subject: `${title} — ${data.prenom} ${data.nom} (${ref})`, html, text };
 }
 
+const list = (v) => String(v || "").split(",").map((x) => x.trim()).filter(Boolean);
+
+function smtpConfigured() {
+  return Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
+let transporter = null;
+function smtp() {
+  if (!transporter) {
+    const nodemailer = require("nodemailer");
+    const port = Number(process.env.SMTP_PORT || 465);
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port,
+      secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465,
+      auth: { user: process.env.SMTP_USER, pass: String(process.env.SMTP_PASS).replace(/\s+/g, "") },
+    });
+  }
+  return transporter;
+}
+
 async function sendResend(payload) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -125,6 +154,40 @@ async function sendResend(payload) {
     body: JSON.stringify(payload),
   });
   if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`);
+}
+
+/* Envoi unique, quel que soit le service : { to, cc, replyTo, subject, html, text, attachments } */
+async function sendMail(m) {
+  if (smtpConfigured()) {
+    const name = (process.env.MAIL_FROM_NAME || "Academy 21 University").replace(/["<>]/g, "");
+    await smtp().sendMail({
+      from: { name, address: process.env.SMTP_USER },
+      to: m.to, cc: m.cc && m.cc.length ? m.cc : undefined, replyTo: m.replyTo,
+      subject: m.subject, html: m.html, text: m.text,
+      attachments: (m.attachments || []).map((a) => ({ filename: a.filename, content: a.content, encoding: "base64" })),
+    });
+    return;
+  }
+  await sendResend({
+    from: process.env.MAIL_FROM || "Academy 21 University <onboarding@resend.dev>",
+    to: m.to, cc: m.cc && m.cc.length ? m.cc : undefined, reply_to: m.replyTo,
+    subject: m.subject, html: m.html, text: m.text,
+    attachments: m.attachments && m.attachments.length ? m.attachments : undefined,
+  });
+}
+
+function confirmation(type, data, ref) {
+  const what = type === "candidature" ? "votre candidature" : "votre message";
+  const e = type === "candidature" ? "e" : "";
+  const text = `Bonjour ${data.prenom},\n\nNous avons bien reçu ${what}, enregistré${e} sous la référence ${ref}.\n` +
+    `Notre équipe revient vers vous dans les meilleurs délais.\n\nAcademy Twenty One University\nLearn. Lead. Transform.`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#2c3445">
+<div style="background:#172033;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0"><div style="font-size:12px;letter-spacing:2px;color:#fccd01;text-transform:uppercase">Academy 21 University</div>
+<div style="font-size:20px;font-weight:bold;margin-top:6px">Nous avons bien reçu ${what}</div></div>
+<div style="border:1px solid #e1e5ec;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;font-size:15px;line-height:1.6">
+<p>Bonjour ${esc(data.prenom)},</p><p>Nous avons bien reçu ${what}, enregistré${e} sous la référence <strong>${esc(ref)}</strong>.</p>
+<p>Notre équipe revient vers vous dans les meilleurs délais.</p><p style="color:#535c6e">Academy Twenty One University<br>Learn. Lead. Transform.</p></div></div>`;
+  return { subject: `Academy 21 University — nous avons bien reçu ${what} (${ref})`, text, html };
 }
 
 module.exports = async function handler(req, res) {
@@ -167,7 +230,9 @@ module.exports = async function handler(req, res) {
     attachment = { filename: name, content: String(body.cv.data) };
   }
 
-  const hasMail = process.env.RESEND_API_KEY && process.env.ADMISSIONS_EMAIL;
+  const school = list(process.env.ADMISSIONS_EMAIL);
+  const viaSmtp = smtpConfigured();
+  const hasMail = (viaSmtp || process.env.RESEND_API_KEY) && school.length > 0;
   const hasHook = process.env.WEBHOOK_URL;
   if (!hasMail && !hasHook) {
     return reply(req, res, 503, { ok: false, error: "not_configured", type });
@@ -175,28 +240,24 @@ module.exports = async function handler(req, res) {
 
   const ref = reference();
   const mail = buildEmail(type, data, ref);
-  const from = process.env.MAIL_FROM || "Academy 21 University <onboarding@resend.dev>";
 
   try {
     const jobs = [];
     if (hasMail) {
-      jobs.push(sendResend({
-        from,
-        to: process.env.ADMISSIONS_EMAIL.split(",").map((s) => s.trim()).filter(Boolean),
-        reply_to: data.email,
-        subject: mail.subject,
-        html: mail.html,
-        text: mail.text,
-        attachments: attachment ? [attachment] : undefined,
+      // Copie : par défaut, l'adresse Gmail qui envoie (vous), sauf si elle est déjà destinataire.
+      const copy = list(process.env.COPY_EMAIL || (viaSmtp ? process.env.SMTP_USER : ""))
+        .filter((c) => !school.map((x) => x.toLowerCase()).includes(c.toLowerCase()));
+      jobs.push(sendMail({
+        to: school, cc: copy, replyTo: data.email,
+        subject: mail.subject, html: mail.html, text: mail.text,
+        attachments: attachment ? [attachment] : [],
       }));
-      if (process.env.SEND_CONFIRMATION === "1" && process.env.MAIL_FROM) {
-        const what = type === "candidature" ? "votre candidature" : "votre message";
-        jobs.push(sendResend({
-          from,
-          to: [data.email],
-          subject: `Academy 21 University — nous avons bien reçu ${what} (${ref})`,
-          text: `Bonjour ${data.prenom},\n\nNous avons bien reçu ${what}, enregistré${type === "candidature" ? "e" : ""} sous la référence ${ref}.\nNotre équipe revient vers vous dans les meilleurs délais.\n\nAcademy Twenty One University`,
-        }).catch(() => {}));
+      const wantsConfirmation = viaSmtp ? process.env.SEND_CONFIRMATION !== "0"
+        : process.env.SEND_CONFIRMATION === "1" && Boolean(process.env.MAIL_FROM);
+      if (wantsConfirmation) {
+        const c = confirmation(type, data, ref);
+        jobs.push(sendMail({ to: [data.email], replyTo: school[0], subject: c.subject, html: c.html, text: c.text })
+          .catch((e) => console.error("[submit] accusé de réception", e && e.message)));
       }
     }
     if (hasHook) {

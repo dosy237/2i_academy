@@ -9,20 +9,36 @@ Accueil · L'école (identité, fondateur, valeurs, ambition 2030+) · Internati
 Admissions (+ FAQ, certifications) · **Candidature en ligne** (5 étapes) · Contact · Brochures (PDF) · Merci ·
 Mentions légales · Confidentialité · Accessibilité · Plan du site · 404.
 
-## Activer la réception des candidatures (5 minutes)
+## Activer l'envoi des e-mails (10 minutes)
 
-Les formulaires envoient vers `/api/submit` (`api/submit.js`). Dans Vercel → **Settings → Environment Variables** :
+Les formulaires envoient vers `/api/submit` (`api/submit.js`). Les e-mails partent **de votre boîte Gmail**,
+avec **« Academy 21 University »** comme nom d'expéditeur.
+
+À chaque candidature :
+- l'école reçoit la candidature (avec le CV en pièce jointe) ; « Répondre » écrit directement au candidat ;
+- vous recevez une copie (et l'e-mail reste aussi dans vos « Messages envoyés ») ;
+- le candidat reçoit un accusé de réception avec sa référence (`A21-AAMMJJ-XXXX`).
+
+1. Sur le compte Google qui enverra les e-mails : activer la **validation en deux étapes**
+   (myaccount.google.com → Sécurité), puis créer un **mot de passe d'application**
+   (myaccount.google.com/apppasswords) : 16 caractères.
+2. Dans Vercel → **Settings → Environment Variables** :
 
 | Variable | Valeur |
 |---|---|
-| `RESEND_API_KEY` | clé API gratuite créée sur [resend.com](https://resend.com) |
-| `ADMISSIONS_EMAIL` | adresse qui reçoit les candidatures (pour l'adresse d'expédition de test de Resend : l'e-mail du compte Resend) |
-| `MAIL_FROM` *(facultatif)* | expéditeur sur un domaine vérifié dans Resend |
-| `SEND_CONFIRMATION` *(facultatif)* | `1` pour envoyer un accusé de réception au candidat (nécessite `MAIL_FROM`) |
-| `WEBHOOK_URL` *(facultatif)* | reçoit chaque envoi en JSON (Google Sheets, Make, Zapier…) |
+| `SMTP_USER` | votre adresse Gmail (l'expéditeur) |
+| `SMTP_PASS` | le mot de passe d'application (16 caractères) — jamais votre mot de passe Gmail |
+| `ADMISSIONS_EMAIL` | l'adresse de l'école qui reçoit les candidatures (plusieurs : séparées par des virgules) |
+| `COPY_EMAIL` *(facultatif)* | qui reçoit la copie ; par défaut `SMTP_USER` (vous) |
+| `MAIL_FROM_NAME` *(facultatif)* | nom affiché ; par défaut « Academy 21 University » |
+| `SEND_CONFIRMATION` *(facultatif)* | `0` pour ne pas envoyer l'accusé de réception au candidat |
 
-Puis **Redeploy**. Chaque candidature arrive par e-mail avec une référence (`A21-AAMMJJ-XXXX`) et le CV en pièce jointe.
-Tant que rien n'est configuré, le site propose automatiquement au visiteur l'envoi par e-mail et le téléchargement de son récapitulatif.
+3. **Redeploy**. Limite Gmail : environ 500 e-mails par jour.
+
+Plus tard, avec un nom de domaine vérifié (ex. `admissions@academy21france.fr`), le site peut aussi envoyer via
+[Resend](https://resend.com) : `RESEND_API_KEY`, `MAIL_FROM`, `ADMISSIONS_EMAIL`, `SEND_CONFIRMATION=1`.
+`WEBHOOK_URL` (facultatif) envoie aussi chaque candidature en JSON (Google Sheets, Make, Zapier…).
+Tant que rien n'est configuré, le site propose au visiteur l'envoi par e-mail et le téléchargement de son récapitulatif.
 
 ## Modifier le site
 
