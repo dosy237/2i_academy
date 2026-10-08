@@ -76,6 +76,7 @@ def build_admissions():
         ("Organisation", [
             ("Les formations sont-elles accessibles à distance ?", "Le Bachelor, le Mastère et l'Executive MBA se suivent en présentiel, en distanciel synchrone ou en hybride. La formation IA &amp; Marketing de réseau est entièrement à distance, en classe virtuelle."),
             ("Le Mastère est-il accessible en alternance ?", "Le rythme peut être initial, en formation continue ou en alternance lorsque le cadre conventionnel le permet."),
+            ("Y a-t-il des frais de candidature ?", "Le dépôt de la candidature est gratuit. Si votre dossier est jugé recevable, nous vous adressons par e-mail un lien personnel pour régler les frais d'étude de dossier (50&nbsp;€) par carte bancaire, Orange Money ou MTN Mobile Money (32&nbsp;800&nbsp;FCFA, au taux fixe de 655,957&nbsp;FCFA pour 1&nbsp;€)."),
             ("Comment se déroule l'entretien ?", "Il permet d'évaluer votre projet professionnel, vos acquis et votre capacité à suivre le programme. Pour l'Executive MBA, il s'agit d'un entretien Executive qui apprécie la maturité de votre projet.")]),
         ("Certifications", [
             ("L'Executive MBA est-il un diplôme RNCP ?", "Non. L'Executive MBA est un diplôme d'établissement d'Academy Twenty One University. La dénomination MBA ne constitue pas, à elle seule, un grade universitaire ni une certification RNCP."),
@@ -103,7 +104,7 @@ def build_admissions():
     <div class="section-head reveal"><p class="eyebrow">Processus</p><h2 id="proc-title">4 étapes pour nous rejoindre</h2></div>
     <ol class="steps reveal-stagger">
       <li><h3>Candidature en ligne</h3><p>Formulaire guidé en 5 étapes. Votre brouillon est enregistré sur votre appareil.</p></li>
-      <li><h3>Étude du dossier</h3><p>Analyse de vos acquis académiques et professionnels par l'équipe pédagogique.</p></li>
+      <li><h3>Étude du dossier</h3><p>Analyse de vos acquis par l'équipe pédagogique. Dossier recevable : vous recevez un lien pour régler les frais d'étude (50&nbsp;€).</p></li>
       <li><h3>Entretien</h3><p>Entretien de positionnement (Bachelor, Mastère) ou entretien Executive (EMBA).</p></li>
       <li><h3>Décision &amp; inscription</h3><p>Décision de la commission d'admission, puis finalisation de votre inscription.</p></li>
     </ol>
@@ -250,7 +251,7 @@ def build_candidature():
 </section>'''
     s5 = f'''<section class="wizard-step is-last" data-step="4" aria-labelledby="st4">
   <h2 id="st4" tabindex="-1">Vérifiez et envoyez</h2>
-  <p class="hint">Étape 5 sur 5 — Relisez vos informations avant l'envoi.</p>
+  <p class="hint">Étape 5 sur 5 — Relisez vos informations avant l'envoi. Aucun paiement n'est demandé à ce stade.</p>
   <div class="recap" data-recap></div>
   <div class="form mt-2">
     {consent("exactitude", "Je certifie l'exactitude des informations transmises.")}
@@ -366,7 +367,7 @@ def build_merci():
     <div class="section-head section-head--center"><p class="eyebrow">Et maintenant ?</p><h2 id="next-title">Les prochaines étapes</h2></div>
     <ol class="steps">
       <li><h3>Accusé de réception</h3><p>Conservez votre référence : elle facilite nos échanges.</p></li>
-      <li><h3>Étude du dossier</h3><p>L'équipe pédagogique analyse votre parcours et votre projet.</p></li>
+      <li><h3>Étude du dossier</h3><p>Dossier recevable : vous recevez par e-mail un lien pour régler les frais d'étude (50&nbsp;€).</p></li>
       <li><h3>Entretien</h3><p>Nous vous contactons pour fixer un entretien de positionnement.</p></li>
       <li><h3>Décision</h3><p>La commission d'admission vous communique sa décision.</p></li>
     </ol>

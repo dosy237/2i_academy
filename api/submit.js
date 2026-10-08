@@ -67,7 +67,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CV_MAX = 3 * 1024 * 1024;
 const CV_EXT = /\.(pdf|docx?)$/i;
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const { esc, list, smtpConfigured, sendMail, siteUrl } = require("./_lib/mail");
+
 const clean = (v, max = 3000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const label = (field, value) => (VALUES[field] && VALUES[field][value]) || value;
 
@@ -108,7 +109,7 @@ function reply(req, res, status, json) {
   return res.end(JSON.stringify(json));
 }
 
-function buildEmail(type, data, ref) {
+function buildEmail(type, data, ref, base) {
   const rows = LABELS[type]
     .filter(([k]) => data[k])
     .map(([k, l]) => `<tr><th align="left" style="padding:8px 12px;background:#f5f7fa;border-bottom:1px solid #e1e5ec;width:220px;font:600 14px Arial;color:#172033;vertical-align:top">${esc(l)}</th>`
@@ -117,76 +118,36 @@ function buildEmail(type, data, ref) {
   const title = type === "candidature"
     ? `Nouvelle candidature — ${label("programme", data.programme)}`
     : `Nouvelle demande — ${label("objet", data.objet)}`;
+  // Après l'étude du dossier : lien direct vers l'espace école, pré-rempli, pour demander les frais d'étude.
+  let feeLink = "";
+  if (type === "candidature" && base) {
+    const q = new URLSearchParams({ ref, prenom: data.prenom, nom: data.nom, email: data.email, programme: data.programme });
+    feeLink = `<p style="font:13px Arial;color:#535c6e;margin-top:18px;padding-top:14px;border-top:1px solid #e1e5ec">Dossier étudié et recevable ? `
+      + `<a href="${esc(base)}/espace-ecole.html?${esc(q.toString())}" style="color:#c8102e;font-weight:bold">Envoyer au candidat le lien de paiement des frais d'étude</a>.</p>`;
+  }
   const html = `<div style="font-family:Arial,sans-serif;max-width:720px;margin:auto">
 <div style="background:#172033;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0"><div style="font-size:12px;letter-spacing:2px;color:#fccd01;text-transform:uppercase">Academy 21 University</div>
 <div style="font-size:20px;font-weight:bold;margin-top:6px">${esc(title)}</div><div style="font-size:13px;color:#c3cad6;margin-top:4px">Référence ${esc(ref)} · ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</div></div>
 <table style="width:100%;border-collapse:collapse;border:1px solid #e1e5ec">${rows}</table>
-<p style="font:13px Arial;color:#535c6e">Répondez directement à cet e-mail pour écrire à ${esc(data.prenom)} ${esc(data.nom)}.</p></div>`;
+<p style="font:13px Arial;color:#535c6e">Répondez directement à cet e-mail pour écrire à ${esc(data.prenom)} ${esc(data.nom)}.</p>${feeLink}</div>`;
   const text = `${title}\nRéférence : ${ref}\n\n` + LABELS[type].filter(([k]) => data[k]).map(([k, l]) => `${l} : ${label(k, data[k])}`).join("\n");
   return { subject: `${title} — ${data.prenom} ${data.nom} (${ref})`, html, text };
-}
-
-const list = (v) => String(v || "").split(",").map((x) => x.trim()).filter(Boolean);
-
-function smtpConfigured() {
-  return Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
-}
-
-let transporter = null;
-function smtp() {
-  if (!transporter) {
-    const nodemailer = require("nodemailer");
-    const port = Number(process.env.SMTP_PORT || 465);
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port,
-      secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465,
-      auth: { user: process.env.SMTP_USER, pass: String(process.env.SMTP_PASS).replace(/\s+/g, "") },
-    });
-  }
-  return transporter;
-}
-
-async function sendResend(payload) {
-  const r = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`);
-}
-
-/* Envoi unique, quel que soit le service : { to, cc, replyTo, subject, html, text, attachments } */
-async function sendMail(m) {
-  if (smtpConfigured()) {
-    const name = (process.env.MAIL_FROM_NAME || "Academy 21 University").replace(/["<>]/g, "");
-    await smtp().sendMail({
-      from: { name, address: process.env.SMTP_USER },
-      to: m.to, cc: m.cc && m.cc.length ? m.cc : undefined, replyTo: m.replyTo,
-      subject: m.subject, html: m.html, text: m.text,
-      attachments: (m.attachments || []).map((a) => ({ filename: a.filename, content: a.content, encoding: "base64" })),
-    });
-    return;
-  }
-  await sendResend({
-    from: process.env.MAIL_FROM || "Academy 21 University <onboarding@resend.dev>",
-    to: m.to, cc: m.cc && m.cc.length ? m.cc : undefined, reply_to: m.replyTo,
-    subject: m.subject, html: m.html, text: m.text,
-    attachments: m.attachments && m.attachments.length ? m.attachments : undefined,
-  });
 }
 
 function confirmation(type, data, ref) {
   const what = type === "candidature" ? "votre candidature" : "votre message";
   const e = type === "candidature" ? "e" : "";
+  const feeMsg = "Aucun paiement n'est demandé à ce stade : si votre dossier est recevable, vous recevrez un lien personnel pour régler les frais d'étude de dossier (50 €), par carte bancaire ou Mobile Money.";
+  const fee = type === "candidature" ? `\n${feeMsg}` : "";
+  const feeHtml = type === "candidature" ? `<p>${esc(feeMsg)}</p>` : "";
   const text = `Bonjour ${data.prenom},\n\nNous avons bien reçu ${what}, enregistré${e} sous la référence ${ref}.\n` +
-    `Notre équipe revient vers vous dans les meilleurs délais.\n\nAcademy Twenty One University\nLearn. Lead. Transform.`;
+    `Notre équipe revient vers vous dans les meilleurs délais.${fee}\n\nAcademy Twenty One University\nLearn. Lead. Transform.`;
   const html = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#2c3445">
 <div style="background:#172033;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0"><div style="font-size:12px;letter-spacing:2px;color:#fccd01;text-transform:uppercase">Academy 21 University</div>
 <div style="font-size:20px;font-weight:bold;margin-top:6px">Nous avons bien reçu ${what}</div></div>
 <div style="border:1px solid #e1e5ec;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;font-size:15px;line-height:1.6">
 <p>Bonjour ${esc(data.prenom)},</p><p>Nous avons bien reçu ${what}, enregistré${e} sous la référence <strong>${esc(ref)}</strong>.</p>
-<p>Notre équipe revient vers vous dans les meilleurs délais.</p><p style="color:#535c6e">Academy Twenty One University<br>Learn. Lead. Transform.</p></div></div>`;
+<p>Notre équipe revient vers vous dans les meilleurs délais.</p>${feeHtml}<p style="color:#535c6e">Academy Twenty One University<br>Learn. Lead. Transform.</p></div></div>`;
   return { subject: `Academy 21 University — nous avons bien reçu ${what} (${ref})`, text, html };
 }
 
@@ -239,7 +200,7 @@ module.exports = async function handler(req, res) {
   }
 
   const ref = reference();
-  const mail = buildEmail(type, data, ref);
+  const mail = buildEmail(type, data, ref, siteUrl(req));
 
   try {
     const jobs = [];

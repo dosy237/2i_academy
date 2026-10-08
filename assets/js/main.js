@@ -645,6 +645,205 @@
     }
   }
 
+  (function () {
+  /* ------------------------------------------------------------------
+     Paiement des frais d'étude de dossier
+  ------------------------------------------------------------------ */
+  function api(url, opts) {
+    return fetch(url, opts).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { j._status = r.status; return j; });
+    });
+  }
+  function fill(scope, attr, map) {
+    Object.keys(map).forEach(function (k) {
+      $$("[" + attr + "='" + k + "']", scope).forEach(function (el) { el.textContent = map[k] || "—"; });
+    });
+  }
+  function frDate(iso) {
+    try { return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return ""; }
+  }
+
+  var payBox = $("[data-pay]");
+  if (payBox) {
+    var token = params.get("t") || "";
+    var show = function (name) {
+      $$("[data-pay-state]", payBox).forEach(function (el) { el.hidden = el.getAttribute("data-pay-state") !== name; });
+    };
+    var payError = function (title, text) {
+      show("error");
+      if (title) $("[data-pay-error-title]", payBox).textContent = title;
+      if (text) $("[data-pay-error-text]", payBox).textContent = text;
+      $("[data-pay-error-title]", payBox).focus();
+    };
+    var payStatus = $("[data-pay-status]", payBox);
+    var setPayStatus = function (kind, html) {
+      payStatus.className = "form-status" + (kind ? " is-" + kind : "");
+      payStatus.innerHTML = html || "";
+    };
+
+    if (!token) {
+      payError("Lien de paiement incomplet", "Ouvrez cette page depuis le lien personnel reçu par e-mail après l'étude de votre dossier.");
+    } else {
+      api("/api/payment?action=session&t=" + encodeURIComponent(token)).then(function (s) {
+        if (!s.ok) {
+          if (s.error === "expired") return payError("Ce lien de paiement a expiré", "Pour votre sécurité, les liens de paiement ont une durée limitée. Écrivez-nous : nous vous en adressons un nouveau.");
+          if (s.error === "not_configured" || s._status >= 500) return payError("Paiement momentanément indisponible", "Le paiement en ligne n'est pas encore ouvert. Écrivez-nous pour régler vos frais d'étude de dossier.");
+          return payError();
+        }
+        fill(payBox, "data-f", {
+          ref: s.ref, name: ((s.prenom || "") + " " + (s.nom || "")).trim(), programme: s.programme,
+          eur: s.labelEur, fcfa: s.labelFcfa, expires: frDate(s.expires)
+        });
+        // Zones Mobile Money (XAF / XOF)
+        var zones = s.zones || [];
+        if (zones.length > 1) {
+          var list = $("[data-zones-list]", payBox);
+          list.innerHTML = "";
+          zones.forEach(function (z, i) {
+            var lab = d.createElement("label");
+            var inp = d.createElement("input");
+            inp.type = "radio"; inp.name = "zone"; inp.value = z.code; inp.checked = i === 0;
+            lab.appendChild(inp);
+            lab.appendChild(d.createTextNode(" " + z.label));
+            list.appendChild(lab);
+          });
+          $("[data-zones]", payBox).hidden = false;
+        }
+        ["card", "mobile"].forEach(function (m) {
+          var on = s.methods && s.methods[m];
+          var art = $(".pay-method[data-method='" + m + "']", payBox);
+          art.classList.toggle("is-off", !on);
+          $("[data-off]", art).hidden = !!on;
+          $("[data-pay-go]", art).hidden = !on;
+          if (!on && m === "mobile") $("[data-zones]", art).hidden = true;
+        });
+        if (params.get("annule")) $("[data-pay-cancel]", payBox).hidden = false;
+        show("ready");
+      }).catch(function () {
+        payError("Connexion impossible", "Vérifiez votre connexion internet puis rechargez la page.");
+      });
+    }
+
+    $$("[data-pay-go]", payBox).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var method = btn.getAttribute("data-pay-go");
+        var zone = $("input[name='zone']:checked", payBox);
+        var label = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Redirection vers le paiement sécurisé…';
+        setPayStatus("", "");
+        api("/api/payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ action: method, t: token, currency: zone ? zone.value : "" })
+        }).then(function (r) {
+          if (r.ok && r.url) { window.location.href = r.url; return; }
+          btn.disabled = false; btn.innerHTML = label;
+          if (r.error === "expired") return payError("Ce lien de paiement a expiré", "Écrivez-nous : nous vous en adressons un nouveau.");
+          setPayStatus("error", "Le service de paiement ne répond pas pour le moment. Réessayez dans quelques instants ou choisissez un autre moyen de paiement.");
+        }).catch(function () {
+          btn.disabled = false; btn.innerHTML = label;
+          setPayStatus("error", "Connexion impossible. Vérifiez votre connexion internet puis réessayez.");
+        });
+      });
+    });
+  }
+
+  /* Confirmation de paiement : statut relu chez le prestataire, nouvelles tentatives si en attente */
+  var paidBox = $("[data-paid-box]");
+  if (paidBox) {
+    var m = params.get("m") === "mobile" ? "mobile" : "card";
+    var pid = params.get("id") || "";
+    var tries = 0;
+    var title = $("[data-paid-title]"), lead = $("[data-paid-lead]"), mark = $("[data-paid-mark]"), wait = $("[data-paid-wait]");
+    var end = function (kind, t, l) {
+      wait.hidden = true;
+      mark.hidden = false;
+      mark.className = "success-mark" + (kind === "paid" ? "" : kind === "failed" ? " success-mark--fail" : " success-mark--warn");
+      if (kind === "failed") mark.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      if (kind === "pending") mark.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+      title.textContent = t; lead.textContent = l;
+      title.focus();
+    };
+    var check = function () {
+      if (!pid) return end("pending", "Paiement en cours de traitement", "Si votre paiement a été validé, vous recevrez votre reçu par e-mail. Sinon, utilisez à nouveau le lien reçu par e-mail.");
+      api("/api/payment?action=status&m=" + m + "&id=" + encodeURIComponent(pid)).then(function (r) {
+        if (r.ok && r.status === "paid") {
+          d.title = "Paiement confirmé — Academy 21 University";
+          fill(d, "data-p", { ref: r.ref, name: ((r.prenom || "") + " " + (r.nom || "")).trim(), amount: r.amount, provider: m === "card" ? "Carte bancaire" : "Mobile Money (" + (r.provider || "CinetPay") + ")", transaction: r.transaction });
+          $("[data-paid-details]").hidden = false;
+          return end("paid", "Merci, votre paiement est confirmé", "Vos frais d'étude de dossier sont réglés. Un reçu vous a été envoyé par e-mail ; notre équipe vous recontacte pour la suite de votre admission.");
+        }
+        if (r.ok && r.status === "failed") {
+          return end("failed", "Le paiement n'a pas abouti", "Aucun montant n'a été débité. Vous pouvez réessayer depuis le lien reçu par e-mail.");
+        }
+        if (r.ok && tries < 8) { tries += 1; return setTimeout(check, 4000); }
+        end("pending", "Paiement en cours de confirmation", "La confirmation peut prendre quelques minutes, notamment en Mobile Money. Vous recevrez votre reçu par e-mail dès sa validation.");
+      }).catch(function () {
+        end("pending", "Vérification impossible pour le moment", "Si votre paiement a été validé, vous recevrez votre reçu par e-mail.");
+      });
+    };
+    check();
+  }
+
+  /* Espace école : création et envoi du lien de paiement */
+  var feeForm = $("#fee-form");
+  if (feeForm) {
+    ["ref", "prenom", "nom", "email", "programme"].forEach(function (n) {
+      var v = params.get(n);
+      var el = feeForm.elements[n];
+      if (!v || !el) return;
+      if (el.tagName === "SELECT") { if (el.querySelector("option[value='" + v.replace(/[^a-z0-9-]/g, "") + "']")) el.value = v; }
+      else el.value = v.slice(0, 160);
+    });
+    wireLiveValidation(feeForm);
+    var linkBox = $("[data-link-box]");
+    var linkOut = $("#pay-link-out");
+    feeForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!validate(feeForm, feeForm)) return;
+      var payload = collect(feeForm);
+      payload.send = feeForm.elements.send.checked ? "1" : "0";
+      var btn = $("[data-submit]", feeForm);
+      busy(btn, true);
+      setStatus(feeForm, "", "");
+      linkBox.hidden = true;
+      api("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        busy(btn, false);
+        if (r.link) { linkOut.value = r.link; linkBox.hidden = false; }
+        if (r.ok) {
+          setStatus(feeForm, "success", r.sent
+            ? "Lien envoyé à " + feeForm.elements.email.value + " (copie à l'école). Montant : " + r.labelEur + " · " + r.labelFcfa + ", valable jusqu'au " + frDate(r.expires) + "."
+            : "Lien créé (aucun e-mail envoyé). Copiez-le ci-dessous pour le transmettre au candidat.");
+          return;
+        }
+        var msg = {
+          key: "Clé d'accès incorrecte.",
+          not_configured: "Le paiement n'est pas encore configuré : renseignez ADMIN_KEY (12 caractères minimum) et PAYMENT_SECRET dans Vercel.",
+          validation: "Champs à vérifier : " + (r.fields || []).join(", ") + ".",
+          delivery: "Le lien a été créé mais l'e-mail n'a pas pu partir : copiez le lien ci-dessous et vérifiez la configuration des e-mails."
+        }[r.error] || "Une erreur est survenue. Réessayez dans quelques instants.";
+        setStatus(feeForm, "error", msg);
+      }).catch(function () {
+        busy(btn, false);
+        setStatus(feeForm, "error", "Connexion impossible. Vérifiez votre connexion internet puis réessayez.");
+      });
+    });
+    var copyBtn = $("[data-copy]");
+    if (copyBtn) copyBtn.addEventListener("click", function () {
+      linkOut.select();
+      var done = function () { setStatus(feeForm, "success", "Lien copié dans le presse-papiers."); };
+      if (navigator.clipboard) navigator.clipboard.writeText(linkOut.value).then(done, function () { d.execCommand("copy"); done(); });
+      else { d.execCommand("copy"); done(); }
+    });
+  }
+  })();
+
+  (function () {
   /* ------------------------------------------------------------------
      Visionneuse de photos : zoom depuis la vignette (FLIP), galerie
   ------------------------------------------------------------------ */
@@ -798,6 +997,7 @@
   } else {
     zoomBtns.forEach(function (b) { b.hidden = true; });
   }
+  })();
 
   /* ------------------------------------------------------------------
      Apparition douce

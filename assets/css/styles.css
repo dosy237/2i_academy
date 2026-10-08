@@ -1068,3 +1068,78 @@ a.pathway__card:hover { background: rgba(255,255,255,.1); transform: translateY(
 .lightbox :focus-visible { box-shadow: 0 0 0 3px var(--navy), 0 0 0 6px var(--logo-yellow); }
 @media (max-width: 640px) { .lightbox__prev, .lightbox__next { top: auto; bottom: 1.2rem; translate: none; } .lightbox__prev { left: 1.2rem; } .lightbox__next { right: 1.2rem; } }
 body.lightbox-open { overflow: hidden; }
+
+/* =====================================================================
+   Paiement des frais d'étude de dossier
+   ===================================================================== */
+.spinner--dark { border-color: rgba(23,32,51,.18); border-top-color: var(--navy); display: inline-block; vertical-align: -3px; margin-right: .5rem; }
+.pay { margin-top: 1rem; }
+.pay-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+.pay-state--error { max-width: 40rem; margin: 0 auto; padding: 2.4rem 1.6rem; border-radius: var(--radius-lg); background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--ink); }
+.pay-state__icon { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 1rem; background: var(--gold-50); color: var(--gold-text); }
+.pay-state__icon svg { width: 30px; height: 30px; }
+.pay-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(1.5rem, 3vw, 2.6rem); align-items: start; }
+.pay-summary { position: sticky; top: 6.5rem; overflow: hidden; isolation: isolate; border-radius: var(--radius-lg); padding: clamp(1.5rem, 3vw, 2.2rem); color: #d6dbe4;
+  background: radial-gradient(420px 260px at 100% 0%, rgba(252,205,1,.16), transparent 70%), linear-gradient(160deg, var(--navy-700), var(--navy-950)); box-shadow: var(--shadow-lg); }
+.pay-summary svg.deco { position: absolute; right: -70px; top: -70px; width: 220px; opacity: .35; z-index: -1; pointer-events: none; }
+.pay-summary__list { margin: 0 0 1.4rem; display: grid; gap: .9rem; }
+.pay-summary__list div { display: grid; gap: .15rem; }
+.pay-summary__list dt { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: #aab3c2; }
+.pay-summary__list dd { margin: 0; color: var(--white); font-weight: 600; overflow-wrap: anywhere; }
+.pay-summary__list div:first-child dd { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: .04em; }
+.pay-summary__amount { display: grid; gap: .2rem; padding: 1.2rem 0; border-top: 1px solid var(--glass-dark-border); border-bottom: 1px solid var(--glass-dark-border); }
+.pay-summary__amount > span:first-child { font-size: .9rem; color: #c3cad6; }
+.pay-summary__amount strong { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 1.8rem + 1.6vw, 3rem); color: var(--white); line-height: 1.1; letter-spacing: -.02em; }
+.pay-summary__fx { color: #c3cad6; } .pay-summary__fx b { color: var(--logo-yellow); font-weight: 700; }
+.pay-summary__note { margin: 1rem 0 0; font-size: .82rem; color: #aab3c2; }
+.pay-main > h2 { font-size: var(--step-1, 1.35rem); margin-top: .2rem; }
+.pay-methods { display: grid; gap: 1rem; }
+.pay-method { position: relative; display: grid; gap: .8rem; padding: 1.4rem; border-radius: var(--radius-lg); background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); transition: border-color .2s, box-shadow .2s var(--ease), transform .2s var(--ease); }
+.pay-method:hover { border-color: var(--line-strong); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.pay-method p { margin: 0; }
+.pay-method__head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 1rem; align-items: center; }
+.pay-method__head h3 { margin: 0; font-size: 1.12rem; }
+.pay-method__brands { font-size: .84rem; color: var(--muted); }
+.pay-method__icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; }
+.pay-method__icon svg { width: 24px; height: 24px; }
+.pay-method__icon--card { background: #fdecec; color: var(--red); }
+.pay-method__icon--mobile { background: #fff4d1; color: #8a6400; }
+.pay-method__amount { font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); white-space: nowrap; }
+.pay-method__off { font-size: .88rem; color: var(--muted); }
+.pay-method.is-off { background: #f7f8fa; box-shadow: none; }
+.pay-method.is-off:hover { transform: none; }
+.pay-zones { border: 0; padding: 0; margin: 0; }
+.pay-zones legend { font-weight: 700; font-size: .88rem; margin-bottom: .4rem; color: var(--ink); }
+.pay-zones__list { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pay-zones__list label { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: .4rem .9rem; border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer; font-size: .9rem; font-weight: 600; }
+.pay-zones__list input { accent-color: var(--navy); width: 18px; height: 18px; margin: 0; }
+.pay-zones__list label:has(input:checked) { border-color: var(--navy); background: #eef1f6; }
+.pay-trust { list-style: none; padding: 0; margin: 1.6rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.pay-trust li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; font-size: .84rem; color: var(--muted); }
+.pay-trust svg { width: 20px; height: 20px; color: var(--green-text, #3f6e12); margin-top: .1rem; }
+.pay-trust strong { display: block; color: var(--ink); font-size: .88rem; }
+.pay-wait { display: grid; place-items: center; width: 92px; height: 92px; margin: 0 auto 1.6rem; border-radius: 50%; background: var(--glass-dark); border: 1px solid var(--glass-dark-border); }
+.pay-wait .spinner { width: 34px; height: 34px; border-width: 3px; }
+.pay-receipt dl { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1.4rem; margin: 0; padding: 1.2rem 1.4rem; border: 1px solid var(--line); border-radius: var(--radius); }
+.pay-receipt dt { font-weight: 600; color: var(--muted); }
+.pay-receipt dd { margin: 0; overflow-wrap: anywhere; }
+.success-mark--warn { background: var(--logo-yellow); }
+.success-mark--fail { background: #fdecec; color: #8a1414; }
+.mini-steps { margin: 0; padding-left: 1.2rem; display: grid; gap: .6rem; font-size: .92rem; color: var(--muted); }
+.aside-card h2 svg { width: 20px; height: 20px; vertical-align: -3px; margin-right: .3rem; }
+.pay-link { margin-top: 1.4rem; padding: 1.2rem; border-radius: var(--radius); background: #eef8e2; border: 1px solid #d4ebb9; }
+.pay-link label { display: block; font-weight: 700; margin-bottom: .5rem; color: #24400c; }
+.pay-link__row { display: flex; gap: .6rem; }
+.pay-link__row input { flex: 1; min-width: 0; font-size: .88rem; }
+@media (max-width: 960px) { .pay-grid { grid-template-columns: 1fr; } .pay-summary { position: relative; top: 0; } }
+@media (max-width: 640px) {
+  .pay-trust { grid-template-columns: 1fr; }
+  .pay-method__head { grid-template-columns: auto minmax(0, 1fr); }
+  .pay-method__amount { grid-column: 1 / -1; font-size: 1.3rem; }
+  .pay-receipt dl { grid-template-columns: 1fr; gap: .1rem; } .pay-receipt dd { margin-bottom: .6rem; }
+  .pay-link__row { flex-direction: column; }
+}
+[data-pay-cancel] .notice { margin-bottom: 1.4rem; }
+[data-paid-title]:focus, [data-pay-error-title]:focus, #methods-title:focus { outline: none; box-shadow: none; }
+.aside-card h2:has(svg) { display: flex; align-items: center; gap: .4rem; }
+.pay-link__row input { min-height: 44px; padding: .55rem .8rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--white); color: var(--ink); font-family: inherit; }
