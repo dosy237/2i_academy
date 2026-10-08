@@ -90,6 +90,8 @@ Tant qu'un moyen de paiement n'est pas configuré, la page l'affiche comme « pa
 
 ## Héberger chez Hostinger (au lieu de Vercel)
 
+Guide complet, pas à pas (comptes, domaine, e-mails, paiements, tests) : [docs/GUIDE-MISE-EN-LIGNE.md](docs/GUIDE-MISE-EN-LIGNE.md).
+
 Le site fonctionne à l'identique avec `server.js` (Node.js 20 ou plus, aucune autre dépendance que nodemailer).
 
 1. Offre Hostinger compatible **Node.js** : *Business* ou *Cloud* (l'hébergement de base ne fait pas tourner Node.js).
