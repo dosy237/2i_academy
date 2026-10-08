@@ -51,6 +51,34 @@ def dims_cards(items, navy=False):
     return out
 
 
+def unfold_program(groups, label):
+    """Cartes dépliables : une par année ou par bloc ; au clic, les enseignements avec leur volume et leur contenu."""
+    out = ""
+    for g in groups:
+        kicker, title, hours, intro, modules = g
+        items = "".join(
+            f'<li><div class="unfold__mod"><strong>{m[0]}</strong><span class="unfold__h">{m[1]}</span></div>'
+            + (f'<p>{m[2]}</p>' if len(m) > 2 and m[2] else "") + "</li>" for m in modules)
+        out += (f'<details class="unfold"><summary><span class="unfold__kicker">{kicker}</span>'
+                f'<span class="unfold__title">{title}</span><span class="unfold__meta"><b>{hours}</b> · {len(modules)} enseignement{"s" if len(modules) > 1 else ""}</span>'
+                f'<span class="unfold__intro">{intro}</span><span class="unfold__cta" aria-hidden="true">Voir les enseignements</span></summary>'
+                f'<ul class="unfold__list" aria-label="{label} — {kicker}">{items}</ul></details>')
+    return f'<div class="unfold-grid">{out}</div>'
+
+
+def unfold_outcomes(groups):
+    """Débouchés : une carte par famille de métiers ; au clic, les compétences mobilisées pour ces métiers."""
+    out = ""
+    for title, jobs, skills in groups:
+        chips = "".join(f"<li>{j}</li>" for j in jobs)
+        sk = "".join(f"<li>{k}</li>" for k in skills)
+        out += (f'<details class="unfold unfold--jobs"><summary><span class="unfold__title">{title}</span>'
+                f'<ul class="chips chips--sm" aria-label="Métiers">{chips}</ul>'
+                f'<span class="unfold__cta" aria-hidden="true">Compétences associées</span></summary>'
+                f'<div class="unfold__body"><p class="unfold__label">Compétences mobilisées</p><ul class="check-list">{sk}</ul></div></details>')
+    return f'<div class="unfold-grid unfold-grid--jobs">{out}</div>'
+
+
 def build_bachelor():
     rows = [
         ["Stratégie, veille &amp; diagnostic d'activité", "35 h", "Marché, concurrence, tendances, zone de chalandise, diagnostic stratégique, RSE et orientations de développement."],
@@ -74,7 +102,7 @@ def build_bachelor():
 {hero("bachelor", "Bachelor · Bac+3", "Management Stratégique &amp; <span class='serif'>Opérationnel</span>", "Piloter la performance • Développer l'activité • Manager les équipes",
   [("award", "Titre RNCP38666"), ("clock", "420 h"), ("layers", "Présentiel · Distanciel · Hybride")],
   [("Niveau de sortie", "Bac+3 — Niveau 6"), ("Durée", "420 h de formation"), ("Certification", "Titre professionnel — RNCP38666"), ("Modalités", "Présentiel • Distanciel • Hybride"), ("Admission", "Bac+2, ou 5 ans d'expérience significative")], photo="livres")}
-{subnav([("apercu", "Aperçu"), ("admission", "Admission"), ("dimensions", "Les 4 dimensions"), ("programme", "Programme"), ("competences", "Compétences"), ("certification", "Certification"), ("debouches", "Débouchés")], "bachelor")}
+{subnav([("apercu", "Aperçu"), ("admission", "Admission"), ("dimensions", "Les 4 dimensions"), ("programme", "Programme"), ("debouches", "Débouchés"), ("pedagogie", "Pédagogie"), ("certification", "Certification")], "bachelor")}
 <div class="section">
   <div class="container layout-aside">
     <div>
@@ -106,25 +134,38 @@ def build_bachelor():
         <div class="grid grid--2 reveal-stagger">{dims_cards(dims)}</div>
       </section>
       <section class="content-block" id="programme" aria-labelledby="t-prog">
-        <p class="eyebrow">Programme</p>
+        <p class="eyebrow">Programme · une année</p>
         <h2 id="t-prog">420 heures d'enseignements</h2>
-        {table("Programme du Bachelor — 420 heures", ["Enseignement", "Volume", "Contenu"], rows, ["Total", "420 h", ""])}
+        <p>Le Bachelor se suit sur <strong>une année</strong>, après un Bac+2 ou une expérience significative. Les enseignements sont présentés par bloc de compétences du titre préparé : cliquez sur un bloc pour afficher son contenu.</p>
+        {unfold_program([
+          ("Bloc 1", "Activité commerciale, offre &amp; expérience client", "140 h", "Piloter l'offre, les approvisionnements et le parcours client.", [rows[1], rows[2], rows[3], rows[8]]),
+          ("Bloc 2", "Stratégie, prévisionnels &amp; performance économique", "84 h", "Traduire la stratégie en objectifs chiffrés et piloter la rentabilité.", [rows[0], rows[4]]),
+          ("Bloc 3", "Management des équipes &amp; conduite de projets", "140 h", "Recruter, organiser, animer et mobiliser autour du changement.", [rows[5], rows[6], rows[7], rows[9]]),
+          ("Socle", "Management responsable &amp; préparation au titre", "56 h", "Qualité, prévention, dossier professionnel et entraînement au jury.", [rows[10], rows[11]]),
+        ], "Enseignements du Bachelor")}
+        <details class="table-toggle"><summary>Voir le programme complet sous forme de tableau</summary>
+        {table("Programme du Bachelor — 420 heures", ["Enseignement", "Volume", "Contenu"], rows, ["Total", "420 h", ""])}</details>
       </section>
-      <section class="content-block" id="competences" aria-labelledby="t-comp">
-        <p class="eyebrow">Compétences</p>
-        <h2 id="t-comp">Des compétences directement mobilisables</h2>
-        <ul class="check-list check-list--cols">
-          <li>Piloter l'activité commerciale et sécuriser les approvisionnements.</li>
-          <li>Construire et faire évoluer une offre adaptée au marché.</li>
-          <li>Concevoir une expérience client performante, inclusive et fidélisante.</li>
-          <li>Traduire les orientations stratégiques en actions opérationnelles.</li>
-          <li>Élaborer et présenter budgets, prévisionnels et tableaux de bord.</li>
-          <li>Analyser la performance économique et décider des actions correctives.</li>
-          <li>Piloter le recrutement, l'intégration et le développement des collaborateurs.</li>
-          <li>Organiser le travail, manager la performance et renforcer la cohésion.</li>
-          <li>Conduire des projets et mobiliser les équipes autour du changement.</li>
-        </ul>
-        <h3>Une pédagogie professionnalisante</h3>
+      <section class="content-block" id="debouches" aria-labelledby="t-deb">
+        <p class="eyebrow">Débouchés</p>
+        <h2 id="t-deb">Les métiers visés et leurs compétences</h2>
+        <p>Cliquez sur une famille de métiers pour voir les compétences que le Bachelor vous permet d'y mobiliser.</p>
+        {unfold_outcomes([
+          ("Direction de point de vente &amp; centre de profit",
+           ["Manager de centre de profit", "Responsable de point de vente", "Responsable de boutique", "Directeur de magasin", "Directeur adjoint", "Responsable de succursale"],
+           ["Piloter l'activité commerciale et sécuriser les approvisionnements.", "Élaborer et présenter budgets, prévisionnels et tableaux de bord.", "Analyser la performance économique et décider des actions correctives.", "Organiser le travail, manager la performance et renforcer la cohésion.", "Piloter le recrutement, l'intégration et le développement des collaborateurs."]),
+          ("Commerce, département &amp; e-commerce",
+           ["Responsable commercial", "Responsable e-commerce", "Responsable de département"],
+           ["Construire et faire évoluer une offre adaptée au marché.", "Concevoir une expérience client performante, inclusive et fidélisante.", "Traduire les orientations stratégiques en actions opérationnelles.", "Analyser la performance économique et décider des actions correctives."]),
+          ("Entrepreneuriat &amp; gestion d'activité",
+           ["Entrepreneur", "Gestionnaire d'activité"],
+           ["Traduire les orientations stratégiques en actions opérationnelles.", "Construire et faire évoluer une offre adaptée au marché.", "Élaborer et présenter budgets, prévisionnels et tableaux de bord.", "Conduire des projets et mobiliser les équipes autour du changement."]),
+        ])}
+        <div class="card card--surface mt-2"><h3>Et après ?</h3><p>Poursuivez avec le Mastère Stratégie, Leadership &amp; Transformation des Organisations pour passer du pilotage d'une activité à la conduite d'une transformation.</p><a class="link-arrow" href="mastere.html">Découvrir le Mastère {I["arrow"]}</a></div>
+      </section>
+      <section class="content-block" id="pedagogie" aria-labelledby="t-peda">
+        <p class="eyebrow">Pédagogie</p>
+        <h2 id="t-peda">Une pédagogie professionnalisante</h2>
         <p>Chaque séquence conduit à une production : diagnostic, tableau de bord, budget, plan commercial, planning, dossier de recrutement, analyse de performance, support de réunion, plan d'action ou projet de transformation.</p>
         <ul class="chips" aria-label="Formats pédagogiques"><li>Cas d'entreprise</li><li>Business games</li><li>Simulations managériales</li><li>Ateliers Excel &amp; KPI</li><li>Jeux de rôle</li><li>Projet fil rouge</li><li>Soutenances professionnelles</li></ul>
       </section>
@@ -140,12 +181,6 @@ def build_bachelor():
         <h3 class="mt-2">Évaluation &amp; préparation au jury</h3>
         <p>L'évaluation est progressive : études de cas, travaux chiffrés, mises en situation, projets et soutenances. La préparation finale reproduit les exigences de la certification : étude de cas sur poste informatique, présentation et argumentation des travaux, productions professionnelles, puis entraînement à l'entretien final.</p>
         {notice("<p>Une période en entreprise d'au moins <strong>350 heures</strong> est requise pour le candidat présenté au titre après un parcours de formation ; pour l'alternant, cette période est intégrée au temps de travail en entreprise.</p>", "info")}
-      </section>
-      <section class="content-block" id="debouches" aria-labelledby="t-deb">
-        <p class="eyebrow">Débouchés</p>
-        <h2 id="t-deb">Les métiers visés</h2>
-        <ul class="chips"><li>Manager de centre de profit</li><li>Responsable de point de vente</li><li>Responsable de boutique</li><li>Responsable de département</li><li>Responsable commercial</li><li>Responsable e-commerce</li><li>Directeur adjoint</li><li>Directeur de magasin</li><li>Responsable de succursale</li><li>Entrepreneur / gestionnaire d'activité</li></ul>
-        <div class="card card--surface mt-2"><h3>Et après ?</h3><p>Poursuivez avec le Mastère Stratégie, Leadership &amp; Transformation des Organisations pour passer du pilotage d'une activité à la conduite d'une transformation.</p><a class="link-arrow" href="mastere.html">Découvrir le Mastère {I["arrow"]}</a></div>
         <div class="mt-2">{notice("<p>Parcours préparant au Titre professionnel Responsable d'établissement marchand — RNCP38666 — niveau 6. En partenariat avec <strong>GREEN UP ACADEMY</strong>, partenaire habilité pour la préparation et la présentation à la certification.</p>")}</div>
       </section>
     </div>
@@ -202,15 +237,11 @@ def build_mastere():
       <section class="content-block" id="programme" aria-labelledby="t-prog">
         <p class="eyebrow">Architecture pédagogique</p>
         <h2 id="t-prog">900 heures sur deux ans</h2>
-        <p>Le M1 consolide les fondamentaux du management stratégique et prépare au pilotage des transformations. Le M2 place l'apprenant dans une posture de décision, de direction et de conseil.</p>
-        <div data-tabs>
-          <div class="tabs__list" role="tablist" aria-label="Années du Mastère">
-            <button class="tabs__tab" type="button" role="tab" id="tab-m1" aria-controls="panel-m1" aria-selected="true">M1 · 420 h</button>
-            <button class="tabs__tab" type="button" role="tab" id="tab-m2" aria-controls="panel-m2" aria-selected="false" tabindex="-1">M2 · 480 h</button>
-          </div>
-          <div class="tabs__panel" role="tabpanel" id="panel-m1" aria-labelledby="tab-m1" tabindex="0">{table("M1 — Construire la vision et maîtriser les leviers de pilotage", ["Enseignement", "Volume"], m1, ["Total M1", "420 h"])}</div>
-          <div class="tabs__panel" role="tabpanel" id="panel-m2" aria-labelledby="tab-m2" tabindex="0" hidden>{table("M2 — Diriger la transformation et créer de la valeur durable", ["Enseignement", "Volume"], m2, ["Total M2", "480 h"])}</div>
-        </div>
+        <p>Le Mastère se déroule sur <strong>deux années</strong>. Cliquez sur une année pour afficher ses enseignements et leur volume horaire. Entrée directe en M2 possible après étude du dossier.</p>
+        {unfold_program([
+          ("Année 1 · M1", "Construire la vision et maîtriser les leviers de pilotage", "420 h", "Fondamentaux du management stratégique et préparation au pilotage des transformations.", m1),
+          ("Année 2 · M2", "Diriger la transformation et créer de la valeur durable", "480 h", "Posture de décision, de direction et de conseil ; mémoire ou consulting project et Grand Oral.", m2),
+        ], "Enseignements du Mastère")}
       </section>
       <section class="content-block" id="rncp" aria-labelledby="t-rncp">
         <p class="eyebrow">Alignement RNCP niveau 7</p>
@@ -242,13 +273,18 @@ def build_mastere():
       </section>
       <section class="content-block" id="debouches" aria-labelledby="t-deb">
         <p class="eyebrow">Débouchés &amp; trajectoires</p>
-        <h2 id="t-deb">Quatre trajectoires</h2>
-        <div class="grid grid--2 reveal-stagger">
-          <article class="card card--hover"><span class="icon-badge">{I["building"]}</span><h3>Direction</h3><p>Directeur d'unité • Directeur de BU • Directeur adjoint • Responsable transformation</p></article>
-          <article class="card card--hover"><span class="icon-badge icon-badge--blue">{I["chart"]}</span><h3>Management</h3><p>Manager d'activité • Manager de projet • Responsable performance • Responsable développement</p></article>
-          <article class="card card--hover"><span class="icon-badge icon-badge--yellow">{I["bulb"]}</span><h3>Conseil</h3><p>Consultant en management • Consultant en organisation • Consultant transformation</p></article>
-          <article class="card card--hover"><span class="icon-badge icon-badge--green">{I["rocket"]}</span><h3>Entrepreneuriat</h3><p>Créateur / repreneur d'entreprise • Entrepreneur • Développeur de nouveaux projets</p></article>
-        </div>
+        <h2 id="t-deb">Quatre trajectoires et leurs compétences</h2>
+        <p>Cliquez sur une trajectoire pour voir les compétences du programme qui y préparent.</p>
+        {unfold_outcomes([
+          ("Direction", ["Directeur d'unité", "Directeur de BU", "Directeur adjoint", "Responsable transformation"],
+           ["Orienter la stratégie : diagnostic, scénarios et choix stratégiques.", "Piloter la performance économique et sociale : finance, KPI, création de valeur.", "Exercer le leadership exécutif, la gouvernance et la prise de décision.", "Intégrer la RSE et la transition écologique à la performance globale."]),
+          ("Management", ["Manager d'activité", "Manager de projet", "Responsable performance", "Responsable développement"],
+           ["Conduire le changement : planification, mobilisation des équipes, gestion des tensions.", "Piloter la démarche compétences : métiers, talents, inclusion.", "Conduire des projets complexes avec des méthodes agiles.", "Communiquer, négocier et créer l'adhésion."]),
+          ("Conseil", ["Consultant en management", "Consultant en organisation", "Consultant transformation"],
+           ["Réaliser un diagnostic stratégique et une veille d'intelligence économique.", "Conduire une mission de conseil en organisation et de transformation.", "Mobiliser la data et l'intelligence artificielle au service de la décision.", "Formaliser des recommandations et les défendre à l'oral."]),
+          ("Entrepreneuriat", ["Créateur ou repreneur d'entreprise", "Entrepreneur", "Développeur de nouveaux projets"],
+           ["Concevoir des business models innovants et développer de nouvelles activités.", "Construire le pilotage financier et la création de valeur.", "Développer l'activité à l'international et en contexte interculturel.", "Maîtriser le droit des affaires, les risques et la conformité."]),
+        ])}
         <div class="mt-2">{notice("<p><strong>Note réglementaire.</strong> RNCP39994 « Manager des transformations des organisations », niveau 7, certificateur IRUP, échéance d'enregistrement au 18/12/2027. Le référentiel prévoit un accès avec un niveau 6 ou, par dérogation, un niveau 5 assorti d'au moins trois années d'expérience sur des fonctions managériales. L'obtention de la certification suppose la validation des quatre blocs et l'inscription auprès du certificateur.</p><p>* Programme pédagogique conçu en cohérence avec le RNCP39994 ; la présentation effective à la certification suppose le cadre conventionnel et l'inscription auprès du certificateur. Le présent descriptif ne vaut pas, à lui seul, habilitation du certificateur.</p>")}</div>
       </section>
     </div>
@@ -329,7 +365,18 @@ def build_emba():
       <p class="eyebrow">Architecture du programme</p>
       <h2 id="t-prog">360 heures de séminaires de haute intensité</h2>
       <p>Chaque module part d'une problématique de direction et conduit à une décision, un arbitrage ou une feuille de route. Les apports conceptuels sont systématiquement confrontés aux situations réelles des participants.</p>
-      {table("Modules de l'Executive MBA", ["Module", "Vol.", "Focus Executive"], rows, ["Total", "360 h", ""])}
+      <p>Les douze modules sont regroupés selon les <strong>six responsabilités du dirigeant</strong> : cliquez sur une responsabilité pour afficher ses modules.</p>
+      {unfold_program([
+        ("01 · Donner le cap", "Vision, stratégie &amp; gouvernance", "90 h", "Prospective, stratégie corporate et dynamique du conseil.", [rows[0], rows[1], rows[3]]),
+        ("02 · Arbitrer", "Capital, risques &amp; création de valeur", "60 h", "Allocation du capital, crise, continuité et réputation.", [rows[2], rows[8]]),
+        ("03 · Mobiliser", "Leadership, culture &amp; talents", "60 h", "Pouvoir, influence, équipe dirigeante et succession.", [rows[4], rows[5]]),
+        ("04 · Transformer", "IA, digital &amp; transformation", "35 h", "Gouvernance technologique et transformation des métiers.", [rows[6]]),
+        ("05 · Développer", "Croissance, international &amp; alliances", "50 h", "Internationalisation, partenariats et négociation de haut niveau.", [rows[7], rows[10]]),
+        ("06 · Assumer", "Impact &amp; responsabilité", "20 h", "ESG, transition et création de valeur durable.", [rows[9]]),
+        ("Projet", "Executive Impact Project &amp; Board Presentation", "45 h", "Une problématique réelle, défendue devant un Board.", [rows[11]]),
+      ], "Modules de l'Executive MBA")}
+      <details class="table-toggle"><summary>Voir tous les modules sous forme de tableau</summary>
+      {table("Modules de l'Executive MBA", ["Module", "Vol.", "Focus Executive"], rows, ["Total", "360 h", ""])}</details>
     </section>
     <section class="content-block" id="experience" aria-labelledby="t-exp">
       <p class="eyebrow">Pédagogie</p>

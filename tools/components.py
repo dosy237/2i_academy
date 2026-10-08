@@ -1,5 +1,6 @@
 # Composants partagés du site Academy 21 University (en-tête, pied, icônes, blocs).
 import os
+import re
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
@@ -216,7 +217,12 @@ def footer():
 <button class="to-top" type="button" aria-label="Revenir en haut de la page">{I["arrow-up"]}</button>
 <script src="assets/js/main.js" defer></script>'''
 
+# Pas de pictogrammes décoratifs dans les cartes (demande de l'école) : on retire les pastilles d'icônes.
+_DECO_ICON = re.compile(r'<span class="(?:icon-badge|float-card__icon)[^"]*"[^>]*>\s*<svg.*?</svg>\s*</span>', re.S)
+
+
 def page(fname, title, desc, body, active=None, noindex=False):
+    body = _DECO_ICON.sub("", body)
     robots = '\n<meta name="robots" content="noindex">' if noindex else ""
     html = f'''<!doctype html>
 <html lang="fr" class="no-js">

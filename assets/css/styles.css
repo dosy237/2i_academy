@@ -1158,3 +1158,40 @@ body.lightbox-open { overflow: hidden; }
   .pay-batch td::before { content: attr(data-label); font-weight: 700; color: var(--muted); }
 }
 @media (max-width: 360px) { .brand { gap: .4rem; } .brand__name { font-size: .78rem; } .brand .brand__mark { height: 34px; } .nav-toggle { padding-inline: .7rem; gap: .4rem; } }
+
+/* =====================================================================
+   Cartes dépliables (programmes par année / par bloc, débouchés)
+   ===================================================================== */
+.unfold-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; margin-top: 1.4rem; }
+.unfold { border-radius: var(--radius-lg); background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); transition: box-shadow .2s var(--ease), border-color .2s; overflow: hidden; }
+.unfold:hover { border-color: var(--line-strong); box-shadow: var(--shadow-lg); }
+.unfold[open] { grid-column: 1 / -1; border-color: var(--amb, var(--red)); }
+.unfold summary { list-style: none; cursor: pointer; display: grid; gap: .35rem; padding: 1.3rem 1.4rem; position: relative; border-top: 4px solid var(--amb, var(--red)); }
+.unfold summary::-webkit-details-marker { display: none; }
+.unfold summary:focus-visible { outline: 3px solid var(--logo-blue); outline-offset: -3px; }
+.unfold__kicker { font: 800 .74rem var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--amb, var(--red)); }
+.unfold__title { font: 800 1.12rem/1.25 var(--font-display); color: var(--ink); padding-right: 2.4rem; }
+.unfold__meta { font-size: .9rem; color: var(--muted); } .unfold__meta b { color: var(--ink); }
+.unfold__intro { font-size: .92rem; color: var(--muted); }
+.unfold__cta { margin-top: .35rem; font: 700 .88rem var(--font-display); color: var(--amb, var(--red)); }
+.unfold summary::after { content: ""; position: absolute; top: 1.35rem; right: 1.3rem; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--amb-soft, var(--surface)) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23172033' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / 16px no-repeat; transition: transform .25s var(--ease); }
+.unfold[open] summary::after { transform: rotate(180deg); }
+.unfold[open] .unfold__cta { display: none; }
+.unfold__list { list-style: none; margin: 0; padding: 0 1.4rem 1.2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.unfold__list li { padding: .9rem 1rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.unfold__list p { margin: .35rem 0 0; font-size: .88rem; color: var(--muted); }
+.unfold__mod { display: flex; justify-content: space-between; gap: .8rem; align-items: baseline; }
+.unfold__mod strong { font-size: .95rem; }
+.unfold__h { flex: none; font: 800 .82rem var(--font-display); color: var(--ink); background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
+.unfold__body { padding: 0 1.4rem 1.2rem; }
+.unfold__body .check-list { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.unfold__label { font: 800 .74rem var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .7rem; }
+.unfold--jobs .chips { margin-top: .3rem; padding-right: 2rem; }
+.chips--sm li { padding: .3rem .7rem; font-size: .82rem; box-shadow: none; background: var(--surface); }
+.table-toggle { margin-top: 1.2rem; }
+.table-toggle > summary { cursor: pointer; font: 700 .9rem var(--font-display); color: var(--ink); text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: inline-flex; align-items: center; }
+.table-toggle[open] > summary { margin-bottom: .8rem; }
+@media (max-width: 760px) {
+  .unfold-grid, .unfold__list, .unfold__body .check-list { grid-template-columns: 1fr; }
+}
